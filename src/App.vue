@@ -1,42 +1,144 @@
 <template>
   <v-app>
-    <v-app-bar app color="primary" dark>
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
+    <v-navigation-drawer v-model="drawerRight" app clipped right width="400">
+      <v-list dense class="body-2" expand>
+        <v-list-group value="true" disabled>
+          <template v-slot:activator>
+            <v-list-item>Process of scenario based projection</v-list-item>
+          </template>
 
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
+          <v-list-group sub-group no-action disabled v-model="tmp" value="2">
+            <template v-slot:activator>
+              <v-list-item :input-value="activeStep === 1"
+                >Step 1: Draw the context diagram</v-list-item
+              >
+            </template>
+            <v-list-item :input-value="activeStep === 1 && subStep === 1">
+              <v-list-item-action>1.1: Designate machine.</v-list-item-action>
+            </v-list-item>
+            <v-list-item :input-value="activeStep === 1 && subStep === 2">
+              <v-list-item-action>1.2: Identify domains.</v-list-item-action>
+            </v-list-item>
+            <v-list-item :input-value="activeStep === 1 && subStep === 3">
+              <v-list-item-action
+                >1.3: Identify interactions.</v-list-item-action
+              >
+            </v-list-item>
+            <v-list-item :input-value="activeStep === 1 && subStep === 4">
+              <v-list-item-action
+                >1.4: Check context diagram.</v-list-item-action
+              >
+            </v-list-item>
+          </v-list-group>
+          <v-list-group value="true" sub-group no-action disabled>
+            <template v-slot:activator>
+              <v-list-item :input-value="activeStep === 2"
+                >Step 2: Draw the problem diagram</v-list-item
+              >
+            </template>
+            <v-list-item :input-value="activeStep === 2 && subStep === 1">
+              <v-list-item-action
+                >2.1: Identity requirements.</v-list-item-action
+              >
+            </v-list-item>
+            <v-list-item :input-value="activeStep === 2 && subStep === 2">
+              <v-list-item-action>2.1: Identify references.</v-list-item-action>
+            </v-list-item>
+            <v-list-item :input-value="activeStep === 2 && subStep === 3">
+              <v-list-item-action
+                >2.3: Check problem diagram.</v-list-item-action
+              >
+            </v-list-item>
+          </v-list-group>
+        </v-list-group>
+        <v-container>
+          <v-row align="center" justify="space-around">
+            <v-btn color="deep-purple accent-4" dark @click="back">BACK</v-btn>
+            <v-btn color="deep-purple accent-4" dark @click="next">NEXT</v-btn>
+          </v-row>
+        </v-container>
+        <v-list-group value="true">
+          <template v-slot:activator>
+            <v-list-item>Diagram</v-list-item>
+          </template>
+        </v-list-group>
+        <v-list-group value="true">
+          <template v-slot:activator>
+            <v-list-item>Phenomenon</v-list-item>
+          </template>
+        </v-list-group>
+        <v-list-group value="true">
+          <template v-slot:activator>
+            <v-list-item>Interaction</v-list-item>
+          </template>
+        </v-list-group>
+        <v-list-group value="true">
+          <template v-slot:activator>
+            <v-list-item>Reference</v-list-item>
+          </template>
+        </v-list-group>
+        <v-list-group value="true">
+          <template v-slot:activator>
+            <v-list-item>Other Information</v-list-item>
+          </template>
+        </v-list-group>
+      </v-list>
+    </v-navigation-drawer>
 
+    <v-navigation-drawer
+      permanent
+      mini-variant
+      v-model="drawerRight"
+      app
+      clipped
+      left
+    >
+      <v-list dense>
+        <v-list-item @click.stop="right = !right">
+          <v-list-item-action>
+            <v-icon>mdi-exit-to-app</v-icon>
+          </v-list-item-action>
+        </v-list-item>
+        <v-list-item @click.stop="right = !right">
+          <v-list-item-action>
+            <v-icon>mdi-exit-to-app</v-icon>
+          </v-list-item-action>
+        </v-list-item>
+        <v-list-item @click.stop="right = !right">
+          <v-list-item-action>
+            <v-icon>mdi-exit-to-app</v-icon>
+          </v-list-item-action>
+        </v-list-item>
+        <v-list-item @click.stop="right = !right">
+          <v-list-item-action>
+            <v-icon>mdi-exit-to-app</v-icon>
+          </v-list-item-action>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+
+    <v-app-bar app clipped-right clipped-left color="deep-purple accent-4" dark>
+      <v-toolbar-title>Context Diagram</v-toolbar-title>
       <v-spacer />
-
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
+      <v-btn text>New</v-btn>
+      <v-btn text>Merge</v-btn>
+      <v-btn text>Upload</v-btn>
+      <v-btn text>Open</v-btn>
+      <v-btn text>Save</v-btn>
+      <v-btn text>Download</v-btn>
+      <v-btn text>Ontology</v-btn>
+      <v-btn text>Help</v-btn>
     </v-app-bar>
 
-    <v-content>
-      <!--      <HelloWorld />-->
-      <div id="canvas"></div>
+    <v-content class="grey lighten-1">
+      <v-container class="fill-height" fluid>
+        <v-row justify="center" align="center">
+          <div id="canvas"></div>
+        </v-row>
+      </v-container>
     </v-content>
+
+    <v-navigation-drawer v-model="right" fixed right temporary />
   </v-app>
 </template>
 
@@ -44,7 +146,8 @@
 import HelloWorld from './components/HelloWorld.vue'
 import { Vue, Component } from 'vue-property-decorator'
 import * as PIXI from 'pixi.js'
-import img from './assets/ball.jpg'
+import img from './assets/bonny.jpg'
+import sub = PIXI.groupD8.sub
 
 @Component({
   components: {
@@ -52,11 +155,9 @@ import img from './assets/ball.jpg'
   },
   mounted() {
     let app: PIXI.Application = new PIXI.Application({
-      width: 256,
-      height: 256
+      width: 700,
+      height: 450
     })
-
-    app.renderer.backgroundColor = 0x061639
 
     app.loader.add(img).load(setup)
 
@@ -67,39 +168,10 @@ import img from './assets/ball.jpg'
         app.loader.resources[img].texture
       )
 
-      let rectangle = new PIXI.Graphics()
-      rectangle.beginFill(0xffffff)
-      rectangle.drawCircle(100, 100, 50)
-      rectangle.endFill()
-
-      let style = new PIXI.TextStyle({
-        fontFamily: 'Arial',
-        fontSize: 36,
-        fill: 'white',
-        stroke: '#ff3300',
-        strokeThickness: 4,
-        dropShadow: true,
-        dropShadowColor: '#000000',
-        dropShadowBlur: 4,
-        dropShadowAngle: Math.PI / 6,
-        dropShadowDistance: 6
-      })
-      let message = new PIXI.Text('Hello World', style)
-
       app.stage.addChild(sprite)
-      app.stage.addChild(rectangle)
-      app.stage.addChild(message)
 
-      sprite.x = 100
-      sprite.y = 100
-      sprite.width = 100
-      sprite.rotation = 0.5
-
-      app.ticker.add(delta => gameLoop(delta, sprite))
-    }
-
-    function gameLoop(delta: number, sprite: PIXI.Sprite) {
-      sprite.rotation += 1
+      sprite.x = 0
+      sprite.y = 0
     }
 
     let element: null | HTMLElement = document.getElementById('canvas')
@@ -108,5 +180,31 @@ import img from './assets/ball.jpg'
     }
   }
 })
-export default class App extends Vue {}
+export default class App extends Vue {
+  drawerRight: any = null
+  right: boolean = false
+  tmp: any = 2
+  activeStep: number = 1
+  subStep: number = 1
+
+  back(): void {
+    if (this.subStep > 1) {
+      this.subStep--
+    } else if (this.activeStep === 2) {
+      this.activeStep = 1
+      this.subStep = 4
+    }
+  }
+
+  next(): void {
+    if (this.subStep < 3) {
+      this.subStep++
+    } else if (this.activeStep === 1 && this.subStep === 4) {
+      this.activeStep = 2
+      this.subStep = 1
+    } else if (this.activeStep === 1) {
+      this.subStep++
+    }
+  }
+}
 </script>
