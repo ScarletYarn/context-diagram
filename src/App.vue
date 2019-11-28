@@ -96,7 +96,12 @@
       <v-list dense>
         <v-list-item @click.stop="right = !right">
           <v-list-item-action>
-            <v-icon>mdi-exit-to-app</v-icon>
+            <v-img
+              alt="img"
+              width="1em"
+              height="1em"
+              :lazy-src="require('./assets/machine.png')"
+            />
           </v-list-item-action>
         </v-list-item>
         <v-list-item @click.stop="right = !right">
