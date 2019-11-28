@@ -53,8 +53,8 @@
         </v-list-group>
         <v-container>
           <v-row align="center" justify="space-around">
-            <v-btn color="deep-purple accent-4" dark @click="back">BACK</v-btn>
-            <v-btn color="deep-purple accent-4" dark @click="next">NEXT</v-btn>
+            <v-btn color="deep-purple darken-1" dark @click="back">BACK</v-btn>
+            <v-btn color="deep-purple darken-1" dark @click="next">NEXT</v-btn>
           </v-row>
         </v-container>
         <v-list-group value="true">
@@ -117,7 +117,7 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar app clipped-right clipped-left color="deep-purple accent-4" dark>
+    <v-app-bar app clipped-right clipped-left color="deep-purple darken-1" dark>
       <v-toolbar-title>Context Diagram</v-toolbar-title>
       <v-spacer />
       <v-btn text>New</v-btn>
