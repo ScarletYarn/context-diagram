@@ -147,7 +147,6 @@ import HelloWorld from './components/HelloWorld.vue'
 import { Vue, Component } from 'vue-property-decorator'
 import * as PIXI from 'pixi.js'
 import img from './assets/bonny.jpg'
-import sub = PIXI.groupD8.sub
 
 @Component({
   components: {
