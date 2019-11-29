@@ -98,15 +98,18 @@
           <v-list-item-action>
             <v-img
               alt="img"
-              width="1em"
-              height="1em"
-              :lazy-src="require('./assets/machine.png')"
+              width=".5em"
+              src="@/assets/machine.png"
             />
           </v-list-item-action>
         </v-list-item>
         <v-list-item @click.stop="right = !right">
           <v-list-item-action>
-            <v-icon>mdi-exit-to-app</v-icon>
+            <v-img
+              alt="img"
+              width=".5em"
+              src="@/assets/dashed-oval.png"
+            />
           </v-list-item-action>
         </v-list-item>
         <v-list-item @click.stop="right = !right">
@@ -150,38 +153,17 @@
 <script lang="ts">
 import HelloWorld from './components/HelloWorld.vue'
 import { Vue, Component } from 'vue-property-decorator'
-import * as PIXI from 'pixi.js'
-import img from './assets/bonny.jpg'
+import Canvas from '@/app/Canvas'
+import Machine from '@/app/Machine'
 
 @Component({
   components: {
     HelloWorld
   },
   mounted() {
-    let app: PIXI.Application = new PIXI.Application({
-      width: 700,
-      height: 450
-    })
-
-    app.loader.add(img).load(setup)
-
-    function setup() {
-      console.log('set up')
-
-      let sprite: PIXI.Sprite = new PIXI.Sprite(
-        app.loader.resources[img].texture
-      )
-
-      app.stage.addChild(sprite)
-
-      sprite.x = 0
-      sprite.y = 0
-    }
-
-    let element: null | HTMLElement = document.getElementById('canvas')
-    if (element) {
-      element.appendChild(app.view)
-    }
+    // new Test().simpleTest()
+    let canvas = new Canvas()
+    canvas.addComponent(new Machine())
   }
 })
 export default class App extends Vue {
