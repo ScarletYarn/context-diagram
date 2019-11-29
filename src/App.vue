@@ -96,20 +96,12 @@
       <v-list dense>
         <v-list-item @click.stop="right = !right">
           <v-list-item-action>
-            <v-img
-              alt="img"
-              width=".5em"
-              src="@/assets/machine.png"
-            />
+            <v-img alt="img" width=".5em" src="@/assets/machine.png" />
           </v-list-item-action>
         </v-list-item>
         <v-list-item @click.stop="right = !right">
           <v-list-item-action>
-            <v-img
-              alt="img"
-              width=".5em"
-              src="@/assets/dashed-oval.png"
-            />
+            <v-img alt="img" width=".5em" src="@/assets/dashed-oval.png" />
           </v-list-item-action>
         </v-list-item>
         <v-list-item @click.stop="right = !right">

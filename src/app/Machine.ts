@@ -2,15 +2,29 @@ import Component from '@/app/Component'
 import * as PIXI from 'pixi.js'
 
 class Machine extends Component {
-  register(stage: PIXI.Container): void {
-    let roundBox = new PIXI.Graphics()
-    roundBox.lineStyle(4, 0x99ccff, 1)
-    roundBox.beginFill(0, 0)
-    roundBox.drawRoundedRect(0, 0, 84, 36, 10)
-    roundBox.endFill()
-    roundBox.x = 48
-    roundBox.y = 190
-    stage.addChild(roundBox)
+  private x: number
+  private y: number
+
+  constructor(x: number, y: number) {
+    super()
+    this.x = x
+    this.y = y
+  }
+
+  paint(): Array<PIXI.Container> {
+    let g = new PIXI.Graphics()
+    g.lineStyle(2, 0x000000, 1)
+    g.beginFill(0, 0)
+    g.drawRoundedRect(0, 0, this.width, this.height, this.radius)
+    g.moveTo(this.interval, 0)
+    g.lineTo(this.interval, this.height)
+    g.moveTo(2 * this.interval, 0)
+    g.lineTo(2 * this.interval, this.height)
+    g.endFill()
+    g.x = this.x
+    g.y = this.y
+
+    return [g]
   }
 }
 
