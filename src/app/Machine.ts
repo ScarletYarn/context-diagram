@@ -22,7 +22,7 @@ class Machine extends Component {
     g.y = this.y
 
     let text = new PIXI.Text('Default Machine', this.textStyle)
-    text.x = this.x + 3 * this.interval
+    text.x = this.x + 2.5 * this.interval
     text.y = this.y + this.height / 2 - this.textStyle.fontSize
 
     return [g, text]

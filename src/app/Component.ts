@@ -1,15 +1,15 @@
 import * as PIXI from 'pixi.js'
 
 abstract class Component {
-  protected width: number = 150
-  protected height: number = 75
-  protected radius: number = 3
+  protected width: number = 120
+  protected height: number = 60
+  protected radius: number = 5
   protected interval: number = 10
   protected x: number = 0
   protected y: number = 0
   protected textStyle = {
     fontFamily: 'Arial',
-    fontSize: 13
+    fontSize: 12
   }
 
   protected abstract paint(): Array<PIXI.Container>
