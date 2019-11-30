@@ -11,6 +11,10 @@ class Canvas {
   private height: number = 450
 
   private componentsList: Array<Component>
+  private draggingComponent: Component | undefined
+  // record the last delta value
+  private lastDeltaX = 0
+  private lastDeltaY = 0
 
   // It should never be set in this class, for it's to be set in Vue instance
   public activePen: number = 0
@@ -24,7 +28,7 @@ class Canvas {
       height: this.height,
       antialias: true,
       transparent: false,
-      resolution: 1.5
+      resolution: window.devicePixelRatio
     })
 
     this.app.renderer.backgroundColor = 0xffffff
@@ -34,16 +38,14 @@ class Canvas {
     let element = document.getElementById('canvas')
     if (element) {
       element.appendChild(this.app.view)
-      let dpr = window.devicePixelRatio
-      // this.app.view.width = dpr * this.width
-      // this.app.view.height = dpr * this.height
+      /* Handle the HiDPI problem by setting the resolution of the PIXI Application and set the css size here */
       this.app.view.style.width = this.width.toString() + 'px'
       this.app.view.style.height = this.height.toString() + 'px'
-      // @ts-ignore
-      // this.app.view.getContext('2d').scale(dpr, dpr)
 
       let hammertime = new Hammer(this.app.view)
+      hammertime.get('pan').set({ direction: Hammer.DIRECTION_ALL })
       hammertime.on('tap', this.tapHandler.bind(this))
+      hammertime.on('pan panstart panend', this.panHandler.bind(this))
     }
   }
 
@@ -55,16 +57,42 @@ class Canvas {
   private tapHandler(e: HammerInput): void {
     // For now, we simply add a rectangle to the canvas.
     if ('layerX' in e.srcEvent && 'layerY' in e.srcEvent) {
-      console.log(e.srcEvent.layerX, e.srcEvent.layerY)
       if (this.activePen === 0) {
         let machine = new Machine(e.srcEvent.layerX, e.srcEvent.layerY)
         this.addComponent(machine)
       } else if (this.activePen === undefined) {
         let component = this.hit(e.srcEvent.layerX, e.srcEvent.layerY)
-        console.log(component)
+        // console.log(component)
       }
 
       this._Vue.$data['activePen'] = undefined
+    }
+  }
+
+  private panHandler(e: HammerInput): void {
+    if (!('layerX' in e.srcEvent && 'layerY' in e.srcEvent)) return
+    switch (e.type) {
+      case 'panstart':
+        console.log(`start with ${e.srcEvent.layerX}`)
+        // eslint-disable-next-line no-case-declarations
+        let comp = this.hit(e.srcEvent.layerX, e.srcEvent.layerY)
+        if (comp) this.draggingComponent = comp
+        break
+      case 'pan':
+        if (this.draggingComponent) {
+          this.draggingComponent.move(
+            e.deltaX - this.lastDeltaX,
+            e.deltaY - this.lastDeltaY
+          )
+          this.lastDeltaX = e.deltaX
+          this.lastDeltaY = e.deltaY
+        }
+        break
+      case 'panend':
+        this.draggingComponent = undefined
+        this.lastDeltaX = 0
+        this.lastDeltaY = 0
+        break
     }
   }
 

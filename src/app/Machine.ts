@@ -6,9 +6,10 @@ class Machine extends Component {
     super()
     this.x = x
     this.y = y
+    this.paint()
   }
 
-  paint(): Array<PIXI.Container> {
+  paint(): void {
     let g = new PIXI.Graphics()
     g.lineStyle(2, 0x000000, 1)
     g.beginFill(0, 0)
@@ -25,7 +26,7 @@ class Machine extends Component {
     text.x = this.x + 2.5 * this.interval
     text.y = this.y + this.height / 2 - this.textStyle.fontSize
 
-    return [g, text]
+    this.spriteGroup = [g, text]
   }
 }
 

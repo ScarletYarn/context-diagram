@@ -1,21 +1,22 @@
 import * as PIXI from 'pixi.js'
+import Config from '@/app/Config'
+
+const config = new Config()
 
 abstract class Component {
-  protected width: number = 120
-  protected height: number = 60
-  protected radius: number = 5
-  protected interval: number = 10
+  protected width: number = config.spriteWidth
+  protected height: number = config.spriteHeight
+  protected radius: number = config.squareRadius
+  protected interval: number = config.lineInterval
   protected x: number = 0
   protected y: number = 0
-  protected textStyle = {
-    fontFamily: 'Arial',
-    fontSize: 12
-  }
+  protected textStyle = config.textStyle
+  protected spriteGroup: Array<PIXI.Container> = []
 
-  protected abstract paint(): Array<PIXI.Container>
+  protected abstract paint(): void
 
   public register(stage: PIXI.Container): void {
-    for (let item of this.paint()) {
+    for (let item of this.spriteGroup) {
       stage.addChild(item)
     }
   }
@@ -28,6 +29,15 @@ abstract class Component {
       y >= this.y &&
       y <= this.y + this.height
     )
+  }
+
+  public move(deltaX: number, deltaY: number): void {
+    this.x += deltaX
+    this.y += deltaY
+    for (let sprite of this.spriteGroup) {
+      sprite.x += deltaX
+      sprite.y += deltaY
+    }
   }
 }
 
