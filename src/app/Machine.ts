@@ -2,9 +2,6 @@ import Component from '@/app/Component'
 import * as PIXI from 'pixi.js'
 
 class Machine extends Component {
-  private x: number
-  private y: number
-
   constructor(x: number, y: number) {
     super()
     this.x = x
@@ -24,7 +21,11 @@ class Machine extends Component {
     g.x = this.x
     g.y = this.y
 
-    return [g]
+    let text = new PIXI.Text('Default Machine', this.textStyle)
+    text.x = this.x + 3 * this.interval
+    text.y = this.y + this.height / 2 - this.textStyle.fontSize
+
+    return [g, text]
   }
 }
 

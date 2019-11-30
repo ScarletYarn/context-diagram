@@ -94,26 +94,28 @@
       left
     >
       <v-list dense>
-        <v-list-item @click.stop="right = !right">
-          <v-list-item-action>
-            <v-img alt="img" width=".5em" src="@/assets/machine.png" />
-          </v-list-item-action>
-        </v-list-item>
-        <v-list-item @click.stop="right = !right">
-          <v-list-item-action>
-            <v-img alt="img" width=".5em" src="@/assets/dashed-oval.png" />
-          </v-list-item-action>
-        </v-list-item>
-        <v-list-item @click.stop="right = !right">
-          <v-list-item-action>
-            <v-icon>mdi-exit-to-app</v-icon>
-          </v-list-item-action>
-        </v-list-item>
-        <v-list-item @click.stop="right = !right">
-          <v-list-item-action>
-            <v-icon>mdi-exit-to-app</v-icon>
-          </v-list-item-action>
-        </v-list-item>
+        <v-list-item-group v-model="activePen">
+          <v-list-item>
+            <v-list-item-action>
+              <v-img alt="img" width=".5em" src="@/assets/machine.svg" />
+            </v-list-item-action>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-action>
+              <v-img alt="img" width=".5em" src="@/assets/dashed-oval.png" />
+            </v-list-item-action>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-action>
+              <v-icon>mdi-exit-to-app</v-icon>
+            </v-list-item-action>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-action>
+              <v-icon>mdi-exit-to-app</v-icon>
+            </v-list-item-action>
+          </v-list-item>
+        </v-list-item-group>
       </v-list>
     </v-navigation-drawer>
 
@@ -137,8 +139,6 @@
         </v-row>
       </v-container>
     </v-content>
-
-    <v-navigation-drawer v-model="right" fixed right temporary />
   </v-app>
 </template>
 
@@ -146,24 +146,29 @@
 import HelloWorld from './components/HelloWorld.vue'
 import { Vue, Component } from 'vue-property-decorator'
 import Canvas from '@/app/Canvas'
-import Machine from '@/app/Machine'
 
 @Component({
   components: {
     HelloWorld
   },
+  watch: {
+    activePen(val) {
+      // @ts-ignore
+      this.canvas.activePen = val
+    }
+  },
   mounted() {
-    // new Test().simpleTest()
-    let canvas = new Canvas()
-    canvas.addComponent(new Machine())
+    // @ts-ignore
+    this.canvas = new Canvas(this)
   }
 })
 export default class App extends Vue {
-  drawerRight: any = null
-  right: boolean = false
+  drawerRight: boolean = true
   tmp: any = 2
   activeStep: number = 1
   subStep: number = 1
+  activePen: number = 0
+  canvas: Canvas | null = null
 
   back(): void {
     if (this.subStep > 1) {
