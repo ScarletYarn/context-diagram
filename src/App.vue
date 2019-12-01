@@ -102,17 +102,27 @@
           </v-list-item>
           <v-list-item>
             <v-list-item-action>
-              <v-img alt="img" width=".5em" src="@/assets/dashed-oval.png" />
+              <v-img alt="img" width=".5em" src="@/assets/domain.jpg" />
             </v-list-item-action>
           </v-list-item>
           <v-list-item>
             <v-list-item-action>
-              <v-icon>mdi-exit-to-app</v-icon>
+              <v-img alt="img" width=".5em" src="@/assets/oval.jpg" />
             </v-list-item-action>
           </v-list-item>
           <v-list-item>
             <v-list-item-action>
-              <v-icon>mdi-exit-to-app</v-icon>
+              <v-img alt="img" width=".5em" src="@/assets/line.jpg" />
+            </v-list-item-action>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-action>
+              <v-img alt="img" width=".5em" src="@/assets/dashed-line.jpg" />
+            </v-list-item-action>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-action>
+              <v-img alt="img" width=".5em" src="@/assets/dashed-arrow.jpg" />
             </v-list-item-action>
           </v-list-item>
         </v-list-item-group>
@@ -132,6 +142,12 @@
       <v-btn text>Help</v-btn>
     </v-app-bar>
 
+    <machine-editor
+      @end-edit-machine="endEditMachine"
+      ref="machine-editor"
+      :active="onEditMachine"
+    />
+
     <v-content class="grey lighten-1">
       <v-container class="fill-height" fluid>
         <v-row justify="center" align="center">
@@ -143,13 +159,14 @@
 </template>
 
 <script lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
 import { Vue, Component } from 'vue-property-decorator'
 import Canvas from '@/app/Canvas'
+import MachineEditor from '@/components/MachineEditor.vue'
+import Machine from '@/app/graph/Machine'
 
 @Component({
   components: {
-    HelloWorld
+    MachineEditor
   },
   watch: {
     activePen(val) {
@@ -160,6 +177,12 @@ import Canvas from '@/app/Canvas'
   mounted() {
     // @ts-ignore
     this.canvas = new Canvas(this)
+  },
+  created() {
+    // @ts-ignore
+    this.$on('editMachine', this.editMachine)
+    // @ts-ignore
+    this.$on('giveWarn', this.giveWarn)
   }
 })
 export default class App extends Vue {
@@ -169,6 +192,9 @@ export default class App extends Vue {
   subStep: number = 1
   activePen: number = 0
   canvas: Canvas | null = null
+
+  onEditMachine: boolean = false
+  editingMachine: Machine | undefined
 
   back(): void {
     if (this.subStep > 1) {
@@ -188,6 +214,24 @@ export default class App extends Vue {
     } else if (this.activeStep === 1) {
       this.subStep++
     }
+  }
+
+  editMachine(machine: Machine): void {
+    this.onEditMachine = true
+    this.editingMachine = machine
+    // @ts-ignore
+    this.$refs['machine-editor'].preSet(machine.description, machine.shortName)
+  }
+
+  endEditMachine(info: { description: string; shortName: string }): void {
+    this.onEditMachine = false
+    if (!this.editingMachine) return
+    this.editingMachine.setInformation(info.description, info.shortName)
+    this.editingMachine = undefined
+  }
+
+  giveWarn(message: string) {
+    alert(message)
   }
 }
 </script>

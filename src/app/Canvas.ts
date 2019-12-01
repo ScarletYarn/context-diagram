@@ -1,8 +1,11 @@
 import * as PIXI from 'pixi.js'
-import Component from '@/app/Component'
-import Machine from '@/app/Machine'
+import Component from '@/app/graph/Component'
+import Machine from '@/app/graph/Machine'
 import Hammer from 'hammerjs'
 import { Vue } from 'vue/types/vue'
+import Config from '@/app/Config'
+import { Domain } from '@/app/graph/Domain'
+const config = new Config()
 
 class Canvas {
   private app: PIXI.Application
@@ -10,8 +13,8 @@ class Canvas {
   private width: number = 700
   private height: number = 450
 
-  private componentsList: Array<Component>
   private draggingComponent: Component | undefined
+  private editingComponent: Component | undefined
   // record the last delta value
   private lastDeltaX = 0
   private lastDeltaY = 0
@@ -20,7 +23,14 @@ class Canvas {
   public activePen: number = 0
   public _Vue: Vue
 
+  private componentsList: Array<Component>
+  private machine: Machine | null
+  private domainList: Array<Domain>
+
   constructor(vue: Vue) {
+    this.componentsList = []
+    this.machine = null
+    this.domainList = []
     this._Vue = vue
 
     this.app = new PIXI.Application({
@@ -33,8 +43,6 @@ class Canvas {
 
     this.app.renderer.backgroundColor = 0xffffff
 
-    this.componentsList = []
-
     let element = document.getElementById('canvas')
     if (element) {
       element.appendChild(this.app.view)
@@ -46,25 +54,57 @@ class Canvas {
       hammertime.get('pan').set({ direction: Hammer.DIRECTION_ALL })
       hammertime.on('tap', this.tapHandler.bind(this))
       hammertime.on('pan panstart panend', this.panHandler.bind(this))
+      hammertime.on('doubletap', this.doubleTapHandler.bind(this))
     }
-  }
-
-  public addComponent(component: Component): void {
-    component.register(this.app.stage)
-    this.componentsList.push(component)
   }
 
   private tapHandler(e: HammerInput): void {
     // For now, we simply add a rectangle to the canvas.
     if ('layerX' in e.srcEvent && 'layerY' in e.srcEvent) {
-      if (this.activePen === 0) {
-        let machine = new Machine(e.srcEvent.layerX, e.srcEvent.layerY)
-        this.addComponent(machine)
-      } else if (this.activePen === undefined) {
-        let component = this.hit(e.srcEvent.layerX, e.srcEvent.layerY)
-        // console.log(component)
+      switch (this.activePen) {
+        case 0:
+          if (this.machine) {
+            this._Vue.$emit('giveWarn', 'There can exist only one machine. ')
+            return
+          }
+          // eslint-disable-next-line no-case-declarations
+          let machine = new Machine(
+            this.app.stage,
+            e.srcEvent.layerX,
+            e.srcEvent.layerY,
+            config.defaultMachineName,
+            config.defaultMachineShortName
+          )
+          this.machine = machine
+          this.componentsList.push(machine)
+          break
+        case 1:
+          // eslint-disable-next-line no-case-declarations
+          let domain = new Domain(
+            this.app.stage,
+            e.srcEvent.layerX,
+            e.srcEvent.layerY,
+            config.defaultDomainName + (this.domainList.length + 1),
+            config.defaultDomainShortName + (this.domainList.length + 1)
+          )
+          this.domainList.push(domain)
+          this.componentsList.push(domain)
+          break
+        case undefined:
+          // eslint-disable-next-line no-case-declarations
+          let comp = this.hit(e.srcEvent.layerX, e.srcEvent.layerY)
+          if (comp) {
+            for (let item of this.componentsList) {
+              if (item === comp) comp.activate()
+              else item.deactivate()
+            }
+          } else {
+            for (let item of this.componentsList) {
+              item.deactivate()
+            }
+          }
+          break
       }
-
       this._Vue.$data['activePen'] = undefined
     }
   }
@@ -73,7 +113,6 @@ class Canvas {
     if (!('layerX' in e.srcEvent && 'layerY' in e.srcEvent)) return
     switch (e.type) {
       case 'panstart':
-        console.log(`start with ${e.srcEvent.layerX}`)
         // eslint-disable-next-line no-case-declarations
         let comp = this.hit(e.srcEvent.layerX, e.srcEvent.layerY)
         if (comp) this.draggingComponent = comp
@@ -96,6 +135,19 @@ class Canvas {
     }
   }
 
+  private doubleTapHandler(e: HammerInput): void {
+    if (!('layerX' in e.srcEvent && 'layerY' in e.srcEvent)) return
+    let comp = this.hit(e.srcEvent.layerX, e.srcEvent.layerY)
+    if (comp) {
+      this.editingComponent = comp
+      this._Vue.$emit('editMachine', <Machine>comp)
+    }
+  }
+
+  /**
+   * Given the tap point, tell the component tapped
+   * @return The component tapped or null if no component tapped
+   */
   private hit(x: number, y: number): Component | null {
     for (let comp of this.componentsList) {
       if (comp.contain(x, y)) return comp

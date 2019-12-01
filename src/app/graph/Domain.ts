@@ -1,0 +1,87 @@
+import Component from '@/app/graph/Component'
+import * as PIXI from 'pixi.js'
+import Config from '@/app/Config'
+const config = new Config()
+
+export enum PhysicalProperty {
+  GivenDomain,
+  DesignDomain
+}
+
+export enum DomainType {
+  Casual,
+  Biddable,
+  Lexical
+}
+
+export class Domain extends Component {
+  public shortName: string
+  public physicalProperty: PhysicalProperty
+  public domainType: DomainType
+
+  constructor(
+    stage: PIXI.Container,
+    x: number,
+    y: number,
+    description: string,
+    shortName: string,
+    physicalProperty?: PhysicalProperty,
+    domainType?: DomainType
+  ) {
+    super(stage, description)
+    this.x = x
+    this.y = y
+    this.description = description
+    this.shortName = shortName
+    if (physicalProperty) this.physicalProperty = physicalProperty
+    else this.physicalProperty = PhysicalProperty.GivenDomain
+    if (domainType) this.domainType = domainType
+    else this.domainType = DomainType.Casual
+    this.paint()
+  }
+
+  public activate(): void {
+    if (this.active) return
+    this.active = true
+    this.spriteGroup[1].visible = false
+    this.spriteGroup[2].visible = true
+  }
+
+  public deactivate(): void {
+    if (!this.active) return
+    this.active = false
+    this.spriteGroup[1].visible = true
+    this.spriteGroup[2].visible = false
+  }
+
+  protected paint(): void {
+    let text = new PIXI.Text(
+      `${this.description}\n(${this.shortName})`,
+      this.textStyle
+    )
+    text.x = this.x + this.interval
+    text.y = this.y + this.height / 2 - this.textStyle.fontSize * 1.25
+
+    let gd = this.drawBorder(config.strokeColor, text.width)
+    let ga = this.drawBorder(config.activeStrokeColor, text.width)
+    ga.visible = false
+
+    this.spriteGroup = [text, gd, ga]
+    for (let item of this.spriteGroup) {
+      this.container.addChild(item)
+    }
+  }
+
+  private drawBorder(color: number, textWidth: number): PIXI.Graphics {
+    this.width = textWidth + 2 * this.interval
+    let g = new PIXI.Graphics()
+    g.lineStyle(2, color, 1)
+    g.beginFill(0, 0)
+    g.drawRoundedRect(0, 0, this.width, this.height, this.radius)
+    g.endFill()
+    g.x = this.x
+    g.y = this.y
+
+    return g
+  }
+}

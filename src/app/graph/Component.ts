@@ -4,6 +4,8 @@ import Config from '@/app/Config'
 const config = new Config()
 
 abstract class Component {
+  public description: string
+
   protected width: number = config.spriteWidth
   protected height: number = config.spriteHeight
   protected radius: number = config.squareRadius
@@ -12,14 +14,19 @@ abstract class Component {
   protected y: number = 0
   protected textStyle = config.textStyle
   protected spriteGroup: Array<PIXI.Container> = []
+  protected container: PIXI.Container
+  protected active: boolean
+
+  protected constructor(stage: PIXI.Container, description: string) {
+    this.container = stage
+    this.description = description
+    this.active = false
+  }
 
   protected abstract paint(): void
 
-  public register(stage: PIXI.Container): void {
-    for (let item of this.spriteGroup) {
-      stage.addChild(item)
-    }
-  }
+  public abstract activate(): void
+  public abstract deactivate(): void
 
   /* Tell whether the given point is contained in the component */
   public contain(x: number, y: number): boolean {
