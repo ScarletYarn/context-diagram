@@ -42,6 +42,7 @@ class Canvas {
     })
 
     this.app.renderer.backgroundColor = 0xffffff
+    this.app.stage.sortableChildren = true
 
     let element = document.getElementById('canvas')
     if (element) {
@@ -73,7 +74,8 @@ class Canvas {
             e.srcEvent.layerX,
             e.srcEvent.layerY,
             config.defaultMachineName,
-            config.defaultMachineShortName
+            config.defaultMachineShortName,
+            this.componentsList.length * config.layerGap
           )
           this.machine = machine
           this.componentsList.push(machine)
@@ -85,7 +87,8 @@ class Canvas {
             e.srcEvent.layerX,
             e.srcEvent.layerY,
             config.defaultDomainName + (this.domainList.length + 1),
-            config.defaultDomainShortName + (this.domainList.length + 1)
+            config.defaultDomainShortName + (this.domainList.length + 1),
+            this.componentsList.length * config.layerGap
           )
           this.domainList.push(domain)
           this.componentsList.push(domain)
@@ -149,10 +152,14 @@ class Canvas {
    * @return The component tapped or null if no component tapped
    */
   private hit(x: number, y: number): Component | null {
-    for (let comp of this.componentsList) {
-      if (comp.contain(x, y)) return comp
+    for (let comp of this.componentsList.reverse()) {
+      if (comp.contain(x, y)) {
+        this.componentsList.reverse()
+        return comp
+      }
     }
 
+    this.componentsList.reverse()
     return null
   }
 }

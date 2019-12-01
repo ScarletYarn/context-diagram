@@ -14,12 +14,22 @@ abstract class Component {
   protected y: number = 0
   protected textStyle = config.textStyle
   protected spriteGroup: Array<PIXI.Container> = []
+
+  /* The PIXI stage for the component for repaint. */
   protected container: PIXI.Container
   protected active: boolean
 
-  protected constructor(stage: PIXI.Container, description: string) {
+  /* The z-index for the component. Used for overlapping. */
+  protected baseIndex: number
+
+  protected constructor(
+    stage: PIXI.Container,
+    description: string,
+    baseIndex: number
+  ) {
     this.container = stage
     this.description = description
+    this.baseIndex = baseIndex
     this.active = false
   }
 
