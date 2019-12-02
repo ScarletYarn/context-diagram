@@ -72,8 +72,6 @@ abstract class Shape extends Component {
 
   protected abstract getTextIndent(): number
 
-  protected abstract getDisplayText(): string
-
   protected getTextY(): number {
     return this.y + this.height / 2 - this.textStyle.fontSize * 1.25
   }

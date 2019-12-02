@@ -3,6 +3,8 @@ import * as PIXI from 'pixi.js'
 import Shape from '@/app/graph/Shape'
 import { Phenomenon } from '@/app/Phenomenon'
 import Point from '@/app/util/Point'
+import Config from '@/app/util/Config'
+const config = new Config()
 
 abstract class Line extends Component {
   protected initiator: Shape
@@ -29,7 +31,34 @@ abstract class Line extends Component {
     this.end = { x: 0, y: 0 }
   }
 
-  public abstract lengthen(p: Point): void
+  public lengthen(p: Point) {
+    this.start = this.getIntersectionPoint(this.initiator, p)
+    this.end = p
+    this.repaint()
+  }
+
+  public attach(shape: Shape) {
+    this.start = this.getIntersectionPoint(this.initiator, shape.center)
+    this.end = this.getIntersectionPoint(shape, this.initiator.center)
+    this.repaint()
+  }
+
+  protected paint(): void {
+    let text = new PIXI.Text(this.getDisplayText(), this.textStyle)
+    text.x = (this.start.x + this.end.x) / 2
+    text.y = (this.start.y + this.end.y) / 2
+    text.zIndex = this.baseIndex + 1
+
+    let gd = this.drawSkeleton(config.strokeColor)
+    let ga = this.drawSkeleton(config.activeStrokeColor)
+    ga.visible = false
+    gd.zIndex = ga.zIndex = this.baseIndex
+
+    this.spriteGroup = [text, gd, ga]
+    for (let item of this.spriteGroup) {
+      this.container.addChild(item)
+    }
+  }
 
   /**
    * Tell whether the point (x, y) is in the line's vicinity.
@@ -51,6 +80,8 @@ abstract class Line extends Component {
   public getIntersectionPoint(shape: Shape, p: Point): Point {
     return { x: -1, y: -1 }
   }
+
+  protected abstract drawSkeleton(color: number): PIXI.Graphics
 }
 
 export default Line

@@ -36,6 +36,7 @@ abstract class Component {
     this.spriteGroup[1].visible = false
     this.spriteGroup[2].visible = true
   }
+
   public deactivate(): void {
     if (!this.active) return
     this.active = false
@@ -43,7 +44,16 @@ abstract class Component {
     this.spriteGroup[2].visible = false
   }
 
+  protected repaint(): void {
+    for (let item of this.spriteGroup) {
+      item.destroy()
+    }
+    this.paint()
+  }
+
   public abstract contain(point: Point): boolean
+
+  protected abstract getDisplayText(): string
 }
 
 export default Component

@@ -23,10 +23,7 @@ class Machine extends Shape {
   public setInformation(description: string, shortName: string): void {
     this.description = description
     this.shortName = shortName
-    for (let item of this.spriteGroup) {
-      item.destroy()
-    }
-    this.paint()
+    this.repaint()
     if (this.active) {
       this.spriteGroup[1].visible = false
       this.spriteGroup[2].visible = true
