@@ -6,6 +6,7 @@ import { Vue } from 'vue/types/vue'
 import Config from '@/app/util/Config'
 import { Domain } from '@/app/graph/Domain'
 import Shape from '@/app/graph/Shape'
+import Requirement from '@/app/graph/Requirement'
 const config = new Config()
 
 class Canvas {
@@ -28,11 +29,13 @@ class Canvas {
   private readonly componentsList: Array<Component>
   private machine: Machine | null
   private domainList: Array<Domain>
+  private requirementList: Array<Requirement>
 
   constructor(vue: Vue) {
     this.componentsList = []
     this.machine = null
     this.domainList = []
+    this.requirementList = []
     this._Vue = vue
 
     this.app = new PIXI.Application({
@@ -92,6 +95,18 @@ class Canvas {
           )
           this.domainList.push(domain)
           this.componentsList.push(domain)
+          break
+        case 2:
+          debugger
+          let requirement = new Requirement(
+            this.app.stage,
+            e.srcEvent.layerX,
+            e.srcEvent.layerY,
+            config.defaultRequirementName + (this.requirementList.length + 1),
+            this.componentsList.length * config.layerGap
+          )
+          this.requirementList.push(requirement)
+          this.componentsList.push(requirement)
           break
         case undefined:
           // eslint-disable-next-line no-case-declarations

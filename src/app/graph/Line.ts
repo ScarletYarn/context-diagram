@@ -42,8 +42,10 @@ abstract class Line extends Component {
   }
 
   /**
-   * A line goes from the centre of a rectangle or a oval to point p in the outside.
+   * A line goes from the centre of a rectangle(Machine or Domain) or an ellipse(Requirement)
+   * to some point p in the outside.
    * Tell the intersection point of the line and the shape.
+   * The top left corner of the shape is (shape.x, shape.y)
    * Return (-1, -1) when p falls within shape.
    */
   public getIntersectionPoint(shape: Shape, p: Point): Point {

@@ -30,8 +30,18 @@ abstract class Component {
 
   protected abstract paint(): void
 
-  public abstract activate(): void
-  public abstract deactivate(): void
+  public activate(): void {
+    if (this.active) return
+    this.active = true
+    this.spriteGroup[1].visible = false
+    this.spriteGroup[2].visible = true
+  }
+  public deactivate(): void {
+    if (!this.active) return
+    this.active = false
+    this.spriteGroup[1].visible = true
+    this.spriteGroup[2].visible = false
+  }
 
   public abstract contain(point: Point): boolean
 }

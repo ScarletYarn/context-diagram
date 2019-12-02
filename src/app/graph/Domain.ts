@@ -30,9 +30,7 @@ export class Domain extends Shape {
     physicalProperty?: PhysicalProperty,
     domainType?: DomainType
   ) {
-    super(stage, description, baseIndex)
-    this.x = x
-    this.y = y
+    super(stage, description, baseIndex, x, y)
     this.description = description
     this.shortName = shortName
     if (physicalProperty) this.physicalProperty = physicalProperty
@@ -42,41 +40,7 @@ export class Domain extends Shape {
     this.paint()
   }
 
-  public activate(): void {
-    if (this.active) return
-    this.active = true
-    this.spriteGroup[1].visible = false
-    this.spriteGroup[2].visible = true
-  }
-
-  public deactivate(): void {
-    if (!this.active) return
-    this.active = false
-    this.spriteGroup[1].visible = true
-    this.spriteGroup[2].visible = false
-  }
-
-  protected paint(): void {
-    let text = new PIXI.Text(
-      `${this.description}\n(${this.shortName})`,
-      this.textStyle
-    )
-    text.x = this.x + this.interval
-    text.y = this.y + this.height / 2 - this.textStyle.fontSize * 1.25
-    text.zIndex = this.baseIndex + 1
-
-    let gd = this.drawBorder(config.strokeColor, text.width)
-    let ga = this.drawBorder(config.activeStrokeColor, text.width)
-    ga.visible = false
-    gd.zIndex = ga.zIndex = this.baseIndex
-
-    this.spriteGroup = [text, gd, ga]
-    for (let item of this.spriteGroup) {
-      this.container.addChild(item)
-    }
-  }
-
-  private drawBorder(color: number, textWidth: number): PIXI.Graphics {
+  protected drawBorder(color: number, textWidth: number): PIXI.Graphics {
     this.width = textWidth + 2 * this.interval
     let g = new PIXI.Graphics()
     g.lineStyle(2, color, 1)
@@ -87,5 +51,17 @@ export class Domain extends Shape {
     g.y = this.y
 
     return g
+  }
+
+  protected getDisplayText(): string {
+    return this.description
+  }
+
+  protected getTextIndent(): number {
+    return this.interval
+  }
+
+  protected getTextY(): number {
+    return this.y + this.height / 2 - this.textStyle.fontSize * 0.6
   }
 }

@@ -17,12 +17,15 @@ class Config {
 
   public machineColor = 0xff0000
   public domainColor = 0x00ff00
+  public requirementColor = 0x0000ff
 
   public defaultMachineName = 'machine'
   public defaultMachineShortName = 'M'
 
   public defaultDomainName = 'problemDomain'
   public defaultDomainShortName = 'PD'
+
+  public defaultRequirementName = 'requirement'
 
   public static instance: Config
   constructor() {
