@@ -1,6 +1,7 @@
 import Component from '@/app/graph/Component'
-import Config from '@/app/Config'
+import Config from '@/app/util/Config'
 import * as PIXI from 'pixi.js'
+import Point from '@/app/util/Point'
 const config = new Config()
 
 abstract class Shape extends Component {
@@ -21,12 +22,12 @@ abstract class Shape extends Component {
   }
 
   /* Tell whether the given point is contained in the component */
-  public contain(x: number, y: number): boolean {
+  public contain(p: Point): boolean {
     return (
-      x >= this.x &&
-      x <= this.x + this.width &&
-      y >= this.y &&
-      y <= this.y + this.height
+      p.x >= this.x &&
+      p.x <= this.x + this.width &&
+      p.y >= this.y &&
+      p.y <= this.y + this.height
     )
   }
 

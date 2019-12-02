@@ -3,7 +3,7 @@ import Component from '@/app/graph/Component'
 import Machine from '@/app/graph/Machine'
 import Hammer from 'hammerjs'
 import { Vue } from 'vue/types/vue'
-import Config from '@/app/Config'
+import Config from '@/app/util/Config'
 import { Domain } from '@/app/graph/Domain'
 import Shape from '@/app/graph/Shape'
 const config = new Config()
@@ -157,7 +157,7 @@ class Canvas {
    */
   private hit(x: number, y: number): Component | null {
     for (let comp of this.componentsList.reverse()) {
-      if (comp.contain(x, y)) {
+      if (comp.contain({ x, y })) {
         this.componentsList.reverse()
         return comp
       }

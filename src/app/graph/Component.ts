@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js'
-import Config from '@/app/Config'
+import Config from '@/app/util/Config'
+import Point from '@/app/util/Point'
 
 const config = new Config()
 
@@ -32,7 +33,7 @@ abstract class Component {
   public abstract activate(): void
   public abstract deactivate(): void
 
-  public abstract contain(x: number, y: number): boolean
+  public abstract contain(point: Point): boolean
 }
 
 export default Component

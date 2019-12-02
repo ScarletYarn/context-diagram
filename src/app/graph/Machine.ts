@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js'
-import Config from '@/app/Config'
+import Config from '@/app/util/Config'
 import Shape from '@/app/graph/Shape'
 
 const config = new Config()
