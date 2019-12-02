@@ -162,7 +162,7 @@
 import { Vue, Component } from 'vue-property-decorator'
 import Canvas from '@/app/Canvas'
 import MachineEditor from '@/components/MachineEditor.vue'
-import Machine from '@/app/graph/Machine'
+import Machine from '@/app/graph/shape/Machine'
 
 @Component({
   components: {

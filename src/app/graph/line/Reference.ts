@@ -1,8 +1,8 @@
-import Line from '@/app/graph/Line'
+import Line from '@/app/graph/line'
 import * as PIXI from 'pixi.js'
-import Shape from '@/app/graph/Shape'
+import Shape from '@/app/graph/shape/Shape'
 
-class Constraint extends Line {
+class Reference extends Line {
   constructor(
     stage: PIXI.Container,
     description: string,
@@ -14,7 +14,7 @@ class Constraint extends Line {
   }
 
   /**
-   * Draw a dashed line together with an arrow head from start to end.
+   * Draw a dashed line from start to end.
    * Use g.lineTo and g.moveTo
    * @param color
    */
@@ -34,4 +34,4 @@ class Constraint extends Line {
   }
 }
 
-export default Constraint
+export default Reference

@@ -19,7 +19,6 @@
         <v-btn color="blue darken-1" text @click="cancel">Close</v-btn>
         <v-btn color="blue darken-1" text @click="submit">Save</v-btn>
       </v-card-actions>
-
     </v-card>
   </v-dialog>
 </template>

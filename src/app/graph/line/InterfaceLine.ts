@@ -1,6 +1,6 @@
-import Line from '@/app/graph/Line'
+import Line from '@/app/graph/line/Line'
 import * as PIXI from 'pixi.js'
-import Shape from '@/app/graph/Shape'
+import Shape from '@/app/graph/shape/Shape'
 
 class InterfaceLine extends Line {
   constructor(

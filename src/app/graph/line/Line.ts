@@ -1,6 +1,6 @@
 import Component from '@/app/graph/Component'
 import * as PIXI from 'pixi.js'
-import Shape from '@/app/graph/Shape'
+import Shape from '@/app/graph/shape/Shape'
 import { Phenomenon } from '@/app/Phenomenon'
 import Point from '@/app/util/Point'
 import Config from '@/app/util/Config'
@@ -31,15 +31,22 @@ abstract class Line extends Component {
     this.end = { x: 0, y: 0 }
   }
 
-  public lengthen(p: Point) {
+  public lengthen(p: Point): void {
     this.start = this.getIntersectionPoint(this.initiator, p)
     this.end = p
     this.repaint()
   }
 
-  public attach(shape: Shape) {
+  public attach(shape: Shape): void {
     this.start = this.getIntersectionPoint(this.initiator, shape.center)
     this.end = this.getIntersectionPoint(shape, this.initiator.center)
+    this.repaint()
+  }
+
+  public updateLine(): void {
+    if (!this.receiver) return
+    this.start = this.getIntersectionPoint(this.initiator, this.receiver.center)
+    this.end = this.getIntersectionPoint(this.receiver, this.initiator.center)
     this.repaint()
   }
 
