@@ -1,10 +1,10 @@
-import Component from '@/app/graph/Component'
 import * as PIXI from 'pixi.js'
 import Config from '@/app/Config'
+import Shape from '@/app/graph/Shape'
 
 const config = new Config()
 
-class Machine extends Component {
+class Machine extends Shape {
   public shortName: string
 
   constructor(

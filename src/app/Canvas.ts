@@ -5,6 +5,7 @@ import Hammer from 'hammerjs'
 import { Vue } from 'vue/types/vue'
 import Config from '@/app/Config'
 import { Domain } from '@/app/graph/Domain'
+import Shape from '@/app/graph/Shape'
 const config = new Config()
 
 class Canvas {
@@ -13,8 +14,9 @@ class Canvas {
   private width: number = 700
   private height: number = 450
 
-  private draggingComponent: Component | undefined
+  private draggingComponent: Shape | undefined
   private editingComponent: Component | undefined
+  private lineSourceComponent: Shape | undefined
   // record the last delta value
   private lastDeltaX = 0
   private lastDeltaY = 0
@@ -23,7 +25,7 @@ class Canvas {
   public activePen: number = 0
   public _Vue: Vue
 
-  private componentsList: Array<Component>
+  private readonly componentsList: Array<Component>
   private machine: Machine | null
   private domainList: Array<Domain>
 
@@ -68,7 +70,6 @@ class Canvas {
             this._Vue.$emit('giveWarn', 'There can exist only one machine. ')
             return
           }
-          // eslint-disable-next-line no-case-declarations
           let machine = new Machine(
             this.app.stage,
             e.srcEvent.layerX,
@@ -81,7 +82,6 @@ class Canvas {
           this.componentsList.push(machine)
           break
         case 1:
-          // eslint-disable-next-line no-case-declarations
           let domain = new Domain(
             this.app.stage,
             e.srcEvent.layerX,
@@ -116,9 +116,13 @@ class Canvas {
     if (!('layerX' in e.srcEvent && 'layerY' in e.srcEvent)) return
     switch (e.type) {
       case 'panstart':
-        // eslint-disable-next-line no-case-declarations
         let comp = this.hit(e.srcEvent.layerX, e.srcEvent.layerY)
-        if (comp) this.draggingComponent = comp
+        if (!(comp instanceof Shape)) return
+        if (this.activePen >= 3) {
+          if (comp) this.lineSourceComponent = comp
+        } else {
+          if (comp) this.draggingComponent = comp
+        }
         break
       case 'pan':
         if (this.draggingComponent) {

@@ -27,6 +27,7 @@ class Config {
   public static instance: Config
   constructor() {
     if (Config.instance) return Config.instance
+    Config.instance = this
   }
 }
 

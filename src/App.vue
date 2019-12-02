@@ -95,34 +95,34 @@
     >
       <v-list dense>
         <v-list-item-group v-model="activePen">
-          <v-list-item>
+          <v-list-item title="machine">
             <v-list-item-action>
               <v-img alt="img" width=".5em" src="@/assets/machine.svg" />
             </v-list-item-action>
           </v-list-item>
-          <v-list-item>
+          <v-list-item title="domain">
             <v-list-item-action>
-              <v-img alt="img" width=".5em" src="@/assets/domain.jpg" />
+              <v-img alt="img" width=".5em" src="@/assets/problem-domain.svg" />
             </v-list-item-action>
           </v-list-item>
-          <v-list-item>
+          <v-list-item title="requirement">
             <v-list-item-action>
-              <v-img alt="img" width=".5em" src="@/assets/oval.jpg" />
+              <v-img alt="img" width=".5em" src="@/assets/requirement.svg" />
             </v-list-item-action>
           </v-list-item>
-          <v-list-item>
+          <v-list-item title="interface">
             <v-list-item-action>
-              <v-img alt="img" width=".5em" src="@/assets/line.jpg" />
+              <v-img alt="img" width=".5em" src="@/assets/interface.svg" />
             </v-list-item-action>
           </v-list-item>
-          <v-list-item>
+          <v-list-item title="reference">
             <v-list-item-action>
-              <v-img alt="img" width=".5em" src="@/assets/dashed-line.jpg" />
+              <v-img alt="img" width=".5em" src="@/assets/reference.svg" />
             </v-list-item-action>
           </v-list-item>
-          <v-list-item>
+          <v-list-item title="constraint">
             <v-list-item-action>
-              <v-img alt="img" width=".5em" src="@/assets/dashed-arrow.jpg" />
+              <v-img alt="img" width=".5em" src="@/assets/constraint.svg" />
             </v-list-item-action>
           </v-list-item>
         </v-list-item-group>

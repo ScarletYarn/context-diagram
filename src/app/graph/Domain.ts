@@ -1,6 +1,7 @@
 import Component from '@/app/graph/Component'
 import * as PIXI from 'pixi.js'
 import Config from '@/app/Config'
+import Shape from '@/app/graph/Shape'
 const config = new Config()
 
 export enum PhysicalProperty {
@@ -14,7 +15,7 @@ export enum DomainType {
   Lexical
 }
 
-export class Domain extends Component {
+export class Domain extends Shape {
   public shortName: string
   public physicalProperty: PhysicalProperty
   public domainType: DomainType
