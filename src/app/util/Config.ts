@@ -30,6 +30,12 @@ class Config {
 
   public defaultRequirementName = 'requirement'
 
+  public defaultInterfaceName = 'interface'
+
+  public defaultReferenceName = 'reference'
+
+  public defaultConstraintName = 'constraint'
+
   public static instance: Config
   constructor() {
     if (Config.instance) return Config.instance

@@ -15,6 +15,8 @@ abstract class Line extends Component {
   protected start: Point
   protected end: Point
 
+  public attached: boolean
+
   protected constructor(
     stage: PIXI.Container,
     description: string,
@@ -29,18 +31,28 @@ abstract class Line extends Component {
 
     this.start = { x: -1, y: -1 }
     this.end = { x: 0, y: 0 }
+
+    this.attached = false
   }
 
   public lengthen(p: Point): void {
     this.start = this.getIntersectionPoint(this.initiator, p)
     this.end = p
+    this.attached = false
+    this.receiver = null
     this.repaint()
   }
 
   public attach(shape: Shape): void {
     this.start = this.getIntersectionPoint(this.initiator, shape.center)
     this.end = this.getIntersectionPoint(shape, this.initiator.center)
+    this.attached = true
+    this.receiver = shape
     this.repaint()
+  }
+
+  public mount(): void {
+    if (this.receiver) this.receiver.attachedLines.push(this)
   }
 
   public updateLine(): void {
@@ -67,6 +79,10 @@ abstract class Line extends Component {
     }
   }
 
+  public selfContain(p: Point): boolean {
+    return this.initiator.contain(p)
+  }
+
   /**
    * Tell whether the point (x, y) is in the line's vicinity.
    * The line begins at (this.startX, this.startY) and ends at (endX, endY)
@@ -74,6 +90,7 @@ abstract class Line extends Component {
    * @param d The max distance.
    */
   public contain(p: Point, d: number = 5): boolean {
+    // todo
     return false
   }
 
@@ -85,6 +102,7 @@ abstract class Line extends Component {
    * Return (-1, -1) when p falls within shape.
    */
   public getIntersectionPoint(shape: Shape, p: Point): Point {
+    // todo
     return { x: -1, y: -1 }
   }
 

@@ -51,6 +51,12 @@ abstract class Component {
     this.paint()
   }
 
+  public destroy(): void {
+    for (let item of this.spriteGroup) {
+      item.destroy()
+    }
+  }
+
   public abstract contain(point: Point): boolean
 
   protected abstract getDisplayText(): string

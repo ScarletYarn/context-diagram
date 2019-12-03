@@ -23,6 +23,7 @@ class Constraint extends Line {
     g.lineStyle(2, color, 1)
     g.beginFill(0, 1)
     g.moveTo(this.start.x, this.start.y)
+    // todo
     // g.lineTo(this.end.x, this.end.y)
     g.endFill()
 

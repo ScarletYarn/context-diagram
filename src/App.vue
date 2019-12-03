@@ -143,7 +143,7 @@
     </v-app-bar>
 
     <machine-editor
-      @end-edit-machine="endEditMachine"
+      @end-edit="endEditMachine"
       ref="machine-editor"
       :active="onEditMachine"
     />
@@ -163,10 +163,24 @@ import { Vue, Component } from 'vue-property-decorator'
 import Canvas from '@/app/Canvas'
 import MachineEditor from '@/components/MachineEditor.vue'
 import Machine from '@/app/graph/shape/Machine'
+import { Domain } from '@/app/graph/shape/Domain'
+import Interface from '@/components/Interface.vue'
+import Reference from '@/app/graph/line/Reference'
+import Constraint from '@/app/graph/line/Constraint'
+import DomainEditor from '@/components/DomainEditor.vue'
+import RequirementEditor from '@/components/RequirementEditor.vue'
+import InterfaceEditor from '@/components/InterfaceEditor.vue'
+import ReferenceEditor from '@/components/ReferenceEditor.vue'
+import ConstraintEditor from '@/components/ConstraintEditor.vue'
 
 @Component({
   components: {
-    MachineEditor
+    MachineEditor,
+    DomainEditor,
+    RequirementEditor,
+    InterfaceEditor,
+    ReferenceEditor,
+    ConstraintEditor
   },
   watch: {
     activePen(val) {
@@ -181,6 +195,16 @@ import Machine from '@/app/graph/shape/Machine'
   created() {
     // @ts-ignore
     this.$on('editMachine', this.editMachine)
+    // @ts-ignore
+    this.$on('editDomain', this.editDomain)
+    // @ts-ignore
+    this.$on('editRequirement', this.editRequirement)
+    // @ts-ignore
+    this.$on('editInterface', this.editInterface)
+    // @ts-ignore
+    this.$on('editReference', this.editReference)
+    // @ts-ignore
+    this.$on('editConstraint', this.editConstraint)
     // @ts-ignore
     this.$on('giveWarn', this.giveWarn)
   }
@@ -222,6 +246,14 @@ export default class App extends Vue {
     // @ts-ignore
     this.$refs['machine-editor'].preSet(machine.description, machine.shortName)
   }
+
+  editDomain(domain: Domain): void {}
+
+  editInterface(interfaceLine: Interface): void {}
+
+  editReference(reference: Reference): void {}
+
+  editConstraint(constraint: Constraint): void {}
 
   endEditMachine(info: { description: string; shortName: string }): void {
     this.onEditMachine = false

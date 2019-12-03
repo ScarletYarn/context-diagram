@@ -7,6 +7,10 @@ import Config from '@/app/util/Config'
 import { Domain } from '@/app/graph/shape/Domain'
 import Shape from '@/app/graph/shape/Shape'
 import Requirement from '@/app/graph/shape/Requirement'
+import Line from '@/app/graph/line/Line'
+import InterfaceLine from '@/app/graph/line/InterfaceLine'
+import Reference from '@/app/graph/line/Reference'
+import Constraint from '@/app/graph/line/Constraint'
 const config = new Config()
 
 class Canvas {
@@ -17,7 +21,7 @@ class Canvas {
 
   private draggingComponent: Shape | undefined
   private editingComponent: Component | undefined
-  private lineSourceComponent: Shape | undefined
+  private drawingLine: Line | undefined
   // record the last delta value
   private lastDeltaX = 0
   private lastDeltaY = 0
@@ -27,15 +31,23 @@ class Canvas {
   public _Vue: Vue
 
   private readonly componentsList: Array<Component>
+
   private machine: Machine | null
   private domainList: Array<Domain>
   private requirementList: Array<Requirement>
+
+  private interfaceList: Array<InterfaceLine>
+  private referenceList: Array<Reference>
+  private constraintList: Array<Constraint>
 
   constructor(vue: Vue) {
     this.componentsList = []
     this.machine = null
     this.domainList = []
     this.requirementList = []
+    this.interfaceList = []
+    this.referenceList = []
+    this.constraintList = []
     this._Vue = vue
 
     this.app = new PIXI.Application({
@@ -132,11 +144,36 @@ class Canvas {
     switch (e.type) {
       case 'panstart':
         let comp = this.hit(e.srcEvent.layerX, e.srcEvent.layerY)
+        if (!comp) return
         if (!(comp instanceof Shape)) return
-        if (this.activePen >= 3) {
-          if (comp) this.lineSourceComponent = comp
-        } else {
-          if (comp) this.draggingComponent = comp
+        switch (this.activePen) {
+          case 3:
+            this.drawingLine = new InterfaceLine(
+              this.app.stage,
+              config.defaultInterfaceName + (this.interfaceList.length + 1),
+              (this.componentsList.length + 1) * 10,
+              comp
+            )
+            break
+          case 4:
+            this.drawingLine = new Reference(
+              this.app.stage,
+              config.defaultInterfaceName + (this.referenceList.length + 1),
+              (this.componentsList.length + 1) * 10,
+              comp
+            )
+            break
+          case 5:
+            this.drawingLine = new Constraint(
+              this.app.stage,
+              config.defaultInterfaceName + (this.constraintList.length + 1),
+              (this.componentsList.length + 1) * 10,
+              comp
+            )
+            break
+          default:
+            this.draggingComponent = comp
+            break
         }
         break
       case 'pan':
@@ -148,11 +185,33 @@ class Canvas {
           this.lastDeltaX = e.deltaX
           this.lastDeltaY = e.deltaY
         }
+        if (this.drawingLine) {
+          let p = { x: e.srcEvent.layerX, y: e.srcEvent.layerY }
+          if (!this.drawingLine.selfContain(p)) {
+            let hover = this.hit(e.srcEvent.layerX, e.srcEvent.layerY)
+            if (hover instanceof Shape) this.drawingLine.attach(hover)
+            else this.drawingLine.lengthen(p)
+          }
+        }
         break
       case 'panend':
         this.draggingComponent = undefined
         this.lastDeltaX = 0
         this.lastDeltaY = 0
+        if (this.drawingLine) {
+          if (this.drawingLine.attached) {
+            this.drawingLine.mount()
+          } else {
+            this.componentsList.pop()
+            if (this.drawingLine instanceof InterfaceLine)
+              this.interfaceList.pop()
+            else if (this.drawingLine instanceof Reference)
+              this.referenceList.pop()
+            else this.constraintList.pop()
+            this.drawingLine.destroy()
+          }
+          this.drawingLine = undefined
+        }
         break
     }
   }

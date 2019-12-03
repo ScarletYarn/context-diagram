@@ -10,9 +10,6 @@
             <v-select :items="['M', 'PD1']" label="Initiator" required />
           </v-row>
           <v-row>
-            <v-select :items="['PD1', 'PD2']" label="Reciever" required />
-          </v-row>
-          <v-row>
             <v-select
               :items="['Causal', 'Biddable', 'Lexical']"
               label="Phenomenon"
@@ -27,13 +24,12 @@
             />
           </v-row>
           <v-row>
-            <v-checkbox
-              v-model="checkbox"
-              :label="`constraint: ${checkbox.toString()}`"
+            <v-textarea
+              label="PhenomenonList"
+              no-resize
+              rows="6"
+              :value="value"
             />
-          </v-row>
-          <v-row>
-            <v-textarea label="Text" no-resize rows="6" :value="value" />
           </v-row>
         </v-container>
       </v-card-text>
@@ -52,7 +48,7 @@
 import { Vue, Component, Prop } from 'vue-property-decorator'
 
 @Component({})
-export default class ConstraintEditor extends Vue {}
+export default class InterfaceEditor extends Vue {}
 </script>
 
 <style scoped />

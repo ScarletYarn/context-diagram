@@ -33,7 +33,12 @@
             />
           </v-row>
           <v-row>
-            <v-textarea label="Text" no-resize rows="6" :value="value" />
+            <v-textarea
+              label="PhenomenonList"
+              no-resize
+              rows="6"
+              :value="value"
+            />
           </v-row>
         </v-container>
       </v-card-text>
@@ -52,7 +57,7 @@
 import { Vue, Component, Prop } from 'vue-property-decorator'
 
 @Component({})
-export default class ConstraintEditor extends Vue {}
+export default class ReferenceEditor extends Vue {}
 </script>
 
 <style scoped />

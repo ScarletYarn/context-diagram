@@ -2,45 +2,34 @@
   <v-dialog v-model="dialog" persistent max-width="600px">
     <v-card>
       <v-card-title>
-        <span class="headline">Interface Information</span>
+        <span class="headline">ProblemDomain Information</span>
       </v-card-title>
       <v-card-text>
         <v-container>
           <v-row>
-            <v-select :items="['M', 'PD1']" label="Initiator" required />
+            <v-text-field label="description" v-model="description" />
           </v-row>
           <v-row>
-            <v-select :items="['PD1', 'PD2']" label="Reciever" required />
+            <v-text-field label="shortname" v-model="shortname" />
+          </v-row>
+          <v-row>
+            <v-select
+              :items="['GivenDomain', 'DesignDomain']"
+              label="Physical Property"
+              required
+            />
           </v-row>
           <v-row>
             <v-select
               :items="['Causal', 'Biddable', 'Lexical']"
-              label="Phenomenon"
+              label="DomainType"
               required
             />
-          </v-row>
-          <v-row>
-            <v-select
-              :items="['event', 'state', 'value']"
-              label="Type"
-              required
-            />
-          </v-row>
-          <v-row>
-            <v-checkbox
-              v-model="checkbox"
-              :label="`constraint: ${checkbox.toString()}`"
-            />
-          </v-row>
-          <v-row>
-            <v-textarea label="Text" no-resize rows="6" :value="value" />
           </v-row>
         </v-container>
       </v-card-text>
       <v-card-actions>
         <v-spacer />
-        <v-btn color="blue darken-1" text @click="dialog = false">Add</v-btn>
-        <v-btn color="blue darken-1" text @click="dialog = false">Delete</v-btn>
         <v-btn color="blue darken-1" text @click="dialog = false">Close</v-btn>
         <v-btn color="blue darken-1" text @click="dialog = false">Save</v-btn>
       </v-card-actions>
@@ -52,7 +41,7 @@
 import { Vue, Component, Prop } from 'vue-property-decorator'
 
 @Component({})
-export default class ConstraintEditor extends Vue {}
+export default class DomainEditor extends Vue {}
 </script>
 
 <style scoped />

@@ -2,6 +2,7 @@ import Component from '@/app/graph/Component'
 import Config from '@/app/util/Config'
 import * as PIXI from 'pixi.js'
 import Point from '@/app/util/Point'
+import Line from '@/app/graph/line/Line'
 const config = new Config()
 
 abstract class Shape extends Component {
@@ -13,6 +14,8 @@ abstract class Shape extends Component {
   protected x: number
   protected y: number
 
+  public attachedLines: Array<Line>
+
   protected constructor(
     stage: PIXI.Container,
     description: string,
@@ -23,6 +26,7 @@ abstract class Shape extends Component {
     super(stage, description, baseIndex)
     this.x = x
     this.y = y
+    this.attachedLines = []
   }
 
   protected paint(): void {
@@ -58,6 +62,9 @@ abstract class Shape extends Component {
     for (let sprite of this.spriteGroup) {
       sprite.x += deltaX
       sprite.y += deltaY
+    }
+    for (let line of this.attachedLines) {
+      line.updateLine()
     }
   }
 
