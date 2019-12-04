@@ -414,6 +414,18 @@ export default class App extends Vue {
     console.log(inputObj)
   }
 
-  download() {}
+  download() {
+    let final = {}
+    let buffer = JSON.stringify(final)
+    let downloadBlobURL = URL.createObjectURL(
+      new Blob([buffer], {
+        type: 'text/json'
+      })
+    )
+    let tmpNode = document.createElement('a')
+    tmpNode.setAttribute('href', downloadBlobURL)
+    tmpNode.setAttribute('download', 'map.json')
+    tmpNode.click()
+  }
 }
 </script>

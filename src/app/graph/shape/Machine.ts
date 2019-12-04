@@ -59,6 +59,13 @@ class Machine extends Shape {
   protected getDisplayText(): string {
     return `${this.description}\n(${this.shortName})`
   }
+
+  public toString(): string {
+    return JSON.stringify({
+      description: this.description,
+      shortName: this.shortName
+    })
+  }
 }
 
 export default Machine

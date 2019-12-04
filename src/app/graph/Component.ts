@@ -61,6 +61,8 @@ abstract class Component {
   public abstract contain(point: Point): boolean
 
   protected abstract getDisplayText(): string
+
+  public abstract toString(): string
 }
 
 export default Component
