@@ -48,16 +48,12 @@
               required
             />
           </v-row>
-          <v-select :items="globalPhenomenonList" />
-          <v-textarea
-            label="PhenomenonList"
-            no-resize
-            rows="6"
-            :value="phenomenonEdit"
-          />
+          <v-row>
+            <v-select :items="globalPhenomenonList" v-model="phenomenonEdit" />
+          </v-row>
           <v-row>
             <v-list disabled>
-              <v-list-item-group>
+              <v-list-item-group v-model="phenomenonSelect">
                 <v-subheader>PhenomenonList</v-subheader>
                 <v-list-item v-for="item in phenomenonList" :key="item">{{
                   `${initiator.description}:${item.name} ${item.type}`
@@ -69,8 +65,8 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer />
-        <v-btn color="blue darken-1" text @click="dialog = false">Add</v-btn>
-        <v-btn color="blue darken-1" text @click="dialog = false">Delete</v-btn>
+        <v-btn color="blue darken-1" text @click="add">Add</v-btn>
+        <v-btn color="blue darken-1" text @click="del">Delete</v-btn>
         <v-btn color="blue darken-1" text @click="cancel">Close</v-btn>
         <v-btn color="blue darken-1" text @click="submit">Save</v-btn>
       </v-card-actions>
@@ -95,6 +91,7 @@ export default class InterfaceEditor extends Vue {
   actors: [Shape, Shape]
   phenomenonEdit: string
   globalPhenomenonList: Array<Phenomenon> = Phenomenon.PhenomenonList
+  phenomenonSelect: number
 
   submit() {
     this.interfaceLine.description = this.description
@@ -114,6 +111,16 @@ export default class InterfaceEditor extends Vue {
     this.phenomenonList = interfaceLine.phenomenonList
     this.type = interfaceLine.type
     this.actors = [this.interfaceLine.initiator, this.interfaceLine.receiver]
+  }
+
+  add(): void {
+    let p = new Phenomenon(this.phenomenonEdit, this.type)
+    this.interfaceLine.phenomenonList.push(p)
+    Phenomenon.PhenomenonList.push(p)
+  }
+
+  del(): void {
+    this.interfaceLine.phenomenonList.splice(this.phenomenonSelect, 1)
   }
 }
 </script>

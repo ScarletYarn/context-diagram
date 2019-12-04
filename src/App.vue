@@ -132,7 +132,7 @@
     <v-app-bar app clipped-right clipped-left color="deep-purple darken-1" dark>
       <v-toolbar-title>Context Diagram</v-toolbar-title>
       <v-spacer />
-      <v-dialog v-model="dialog" persistent max-width="300px">
+      <v-dialog v-model="newDialog" persistent max-width="300px">
         <template v-slot:activator="{ on }">
           <v-btn text dark v-on="on">New</v-btn>
         </template>
@@ -143,16 +143,19 @@
           <v-card-text>
             <v-container>
               <v-row>
-                <v-text-field label="description" v-model="description" />
+                <v-text-field
+                  label="description"
+                  v-model="projectDescription"
+                />
               </v-row>
             </v-container>
           </v-card-text>
           <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" text @click="dialog = false"
+            <v-spacer />
+            <v-btn color="blue darken-1" text @click="newProject"
               >Confirm</v-btn
             >
-            <v-btn color="blue darken-1" text @click="dialog = false"
+            <v-btn color="blue darken-1" text @click="newDialog = false"
               >Cancel</v-btn
             >
           </v-card-actions>
@@ -252,10 +255,7 @@ import { InterfaceLine } from '@/app/graph/line/InterfaceLine'
       this.canvas.activePen = val
     }
   },
-  mounted() {
-    Canvas.init(this)
-    this.canvas = new Canvas()
-  },
+  mounted() {},
   created() {
     // @ts-ignore
     this.$on('editMachine', this.editMachine)
@@ -274,6 +274,8 @@ import { InterfaceLine } from '@/app/graph/line/InterfaceLine'
   }
 })
 export default class App extends Vue {
+  newDialog: boolean = false
+  projectDescription: string = ''
   drawerRight: boolean = true
   tmp: any = 2
   activeStep: number = 1
@@ -409,9 +411,20 @@ export default class App extends Vue {
     inputObj.setAttribute('name', 'file')
     inputObj.setAttribute('style', 'visibility:hidden')
     document.body.appendChild(inputObj)
-    inputObj.value
+    // inputObj.value
     inputObj.click()
-    console.log(inputObj)
+    inputObj.onchange = e => {
+      // @ts-ignore
+      let files = e.target.files
+
+      let fr = new FileReader()
+      fr.onload = e => {
+        // @ts-ignore
+        let r = JSON.parse(e.target.result)
+        console.log(r)
+      }
+      fr.readAsText(files[0])
+    }
   }
 
   download() {
@@ -433,6 +446,12 @@ export default class App extends Vue {
     tmpNode.setAttribute('href', downloadBlobURL)
     tmpNode.setAttribute('download', 'map.json')
     tmpNode.click()
+  }
+
+  newProject(): void {
+    Canvas.init(this)
+    this.canvas = new Canvas()
+    this.newDialog = false
   }
 }
 </script>

@@ -42,7 +42,6 @@ class Constraint extends Line {
       receiver: this.receiver
     })
   }
-
 }
 
 export default Constraint
