@@ -132,13 +132,59 @@
     <v-app-bar app clipped-right clipped-left color="deep-purple darken-1" dark>
       <v-toolbar-title>Context Diagram</v-toolbar-title>
       <v-spacer />
-      <v-btn text>New</v-btn>
+      <v-dialog v-model="dialog" persistent max-width="300px">
+        <template v-slot:activator="{ on }">
+          <v-btn text dark v-on="on">New</v-btn>
+        </template>
+        <v-card>
+          <v-card-title>
+            <span class="headline">New Project</span>
+          </v-card-title>
+          <v-card-text>
+            <v-container>
+              <v-row>
+                <v-text-field label="description" v-model="description" />
+              </v-row>
+            </v-container>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" text @click="dialog = false"
+              >Confirm</v-btn
+            >
+            <v-btn color="blue darken-1" text @click="dialog = false"
+              >Cancel</v-btn
+            >
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
       <v-btn text>Merge</v-btn>
-      <v-btn text>Upload</v-btn>
-      <v-btn text>Open</v-btn>
+      <v-menu open-on-hover bottom offset-y>
+        <template v-slot:activator="{ on }">
+          <v-btn text v-on="on">Import</v-btn>
+        </template>
+        <v-list>
+          <v-list-item v-for="n in 1" :key="n" @click="() => {}">
+            <v-list-item-title @click="upload()"
+              >Import Project</v-list-item-title
+            >
+          </v-list-item>
+        </v-list>
+      </v-menu>
       <v-btn text>Save</v-btn>
-      <v-btn text>Download</v-btn>
-      <v-btn text>Ontology</v-btn>
+      <v-menu open-on-hover bottom offset-y>
+        <template v-slot:activator="{ on }">
+          <v-btn text v-on="on">Export</v-btn>
+        </template>
+        <v-list>
+          <v-list-item v-for="n in 1" :key="n" @click="() => {}">
+            <v-list-item-title @click="download()"
+              >Export Project</v-list-item-title
+            >
+          </v-list-item>
+        </v-list>
+      </v-menu>
+
       <v-btn text>Help</v-btn>
     </v-app-bar>
 
@@ -355,5 +401,19 @@ export default class App extends Vue {
   giveWarn(message: string) {
     alert(message)
   }
+
+  upload() {
+    let inputObj = document.createElement('input')
+    inputObj.setAttribute('id', 'file')
+    inputObj.setAttribute('type', 'file')
+    inputObj.setAttribute('name', 'file')
+    inputObj.setAttribute('style', 'visibility:hidden')
+    document.body.appendChild(inputObj)
+    inputObj.value
+    inputObj.click()
+    console.log(inputObj)
+  }
+
+  download() {}
 }
 </script>

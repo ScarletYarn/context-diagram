@@ -74,7 +74,12 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 export default class ReferenceEditor extends Vue {
   @Prop(Boolean) active!: boolean
   description: string = ''
+<<<<<<< HEAD
   domainType: number = 0
+=======
+  value: string =''
+  checkbox: boolean = false
+>>>>>>> c6b5520c31374fdfd5380ebca8cb0b0fd0b71406
 
   submit() {
     this.$emit('end-edit-reference', {
