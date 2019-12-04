@@ -143,9 +143,15 @@
     </v-app-bar>
 
     <machine-editor
-      @end-edit="endEditMachine"
+      @end-edit-machine="endEditMachine"
       ref="machine-editor"
       :active="onEditMachine"
+    />
+
+    <domain-editor
+      @end-edit-machine="endEditDomain"
+      ref="domain-editor"
+      :active="onEditDomain"
     />
 
     <v-content class="grey lighten-1">
@@ -172,6 +178,7 @@ import RequirementEditor from '@/components/RequirementEditor.vue'
 import InterfaceEditor from '@/components/InterfaceEditor.vue'
 import ReferenceEditor from '@/components/ReferenceEditor.vue'
 import ConstraintEditor from '@/components/ConstraintEditor.vue'
+import Requirement from '@/app/graph/shape/Requirement'
 
 @Component({
   components: {
@@ -190,7 +197,7 @@ import ConstraintEditor from '@/components/ConstraintEditor.vue'
   },
   mounted() {
     // @ts-ignore
-    this.canvas = new Canvas(this)
+    this.canvas = Canvas.getInstance(this)
   },
   created() {
     // @ts-ignore
@@ -220,6 +227,12 @@ export default class App extends Vue {
   onEditMachine: boolean = false
   editingMachine: Machine | undefined
 
+  onEditDomain: boolean = false
+  editingDomain: Domain | undefined
+
+  onEditRequirement: boolean = false
+  editingRequirement: Requirement | undefined
+
   back(): void {
     if (this.subStep > 1) {
       this.subStep--
@@ -247,7 +260,10 @@ export default class App extends Vue {
     this.$refs['machine-editor'].preSet(machine.description, machine.shortName)
   }
 
-  editDomain(domain: Domain): void {}
+  editDomain(domain: Domain): void {
+    this.onEditDomain = true
+    this.editingDomain = domain
+  }
 
   editInterface(interfaceLine: Interface): void {}
 
@@ -260,6 +276,12 @@ export default class App extends Vue {
     if (!this.editingMachine) return
     this.editingMachine.setInformation(info.description, info.shortName)
     this.editingMachine = undefined
+  }
+
+  endEditDomain(): void {
+    this.onEditDomain = false
+    if (!this.editingDomain) return
+    this.editingDomain = undefined
   }
 
   giveWarn(message: string) {

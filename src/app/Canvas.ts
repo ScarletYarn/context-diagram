@@ -40,7 +40,22 @@ class Canvas {
   private referenceList: Array<Reference>
   private constraintList: Array<Constraint>
 
-  constructor(vue: Vue) {
+  private static instance: Canvas | null
+
+  public static getInstance(vue?: Vue): Canvas | null {
+    if (Canvas.instance) return Canvas.instance
+    if (vue) {
+      Canvas.instance = new Canvas(vue)
+      return Canvas.instance
+    }
+    return null
+  }
+
+  public destroy(): void {
+    Canvas.instance = null
+  }
+
+  private constructor(vue: Vue) {
     this.componentsList = []
     this.machine = null
     this.domainList = []
@@ -135,6 +150,7 @@ class Canvas {
           }
           break
       }
+      console.log(this._Vue)
       this._Vue.$data['activePen'] = undefined
     }
   }
@@ -221,7 +237,11 @@ class Canvas {
     let comp = this.hit(e.srcEvent.layerX, e.srcEvent.layerY)
     if (comp) {
       this.editingComponent = comp
-      this._Vue.$emit('editMachine', <Machine>comp)
+      if (comp instanceof Machine) {
+        this._Vue.$emit('editMachine', <Machine>comp)
+      } else if (comp instanceof Domain) {
+        this._Vue.$emit('editDomain', <Domain>comp)
+      }
     }
   }
 
