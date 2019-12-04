@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js'
 import Config from '@/app/util/Config'
 import Shape from '@/app/graph/shape/Shape'
+import Canvas from '@/app/Canvas'
 
 const config = new Config()
 

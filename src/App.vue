@@ -160,6 +160,12 @@
       :active="onEditReference"
     />
 
+    <requirement-editor
+      @end-edit-requirement="endEditRequirement"
+      ref="requirement-editor"
+      :active="onEditRequirement"
+    />
+
     <v-content class="grey lighten-1">
       <v-container class="fill-height" fluid>
         <v-row justify="center" align="center">
@@ -176,7 +182,6 @@ import Canvas from '@/app/Canvas'
 import MachineEditor from '@/components/MachineEditor.vue'
 import Machine from '@/app/graph/shape/Machine'
 import { Domain } from '@/app/graph/shape/Domain'
-import Interface from '@/components/Interface.vue'
 import Reference from '@/app/graph/line/Reference'
 import Constraint from '@/app/graph/line/Constraint'
 import DomainEditor from '@/components/DomainEditor.vue'
@@ -185,6 +190,7 @@ import InterfaceEditor from '@/components/InterfaceEditor.vue'
 import ReferenceEditor from '@/components/ReferenceEditor.vue'
 import ConstraintEditor from '@/components/ConstraintEditor.vue'
 import Requirement from '@/app/graph/shape/Requirement'
+import { InterfaceLine } from '@/app/graph/line/InterfaceLine'
 
 @Component({
   components: {
@@ -197,13 +203,12 @@ import Requirement from '@/app/graph/shape/Requirement'
   },
   watch: {
     activePen(val) {
-      // @ts-ignore
       this.canvas.activePen = val
     }
   },
   mounted() {
-    // @ts-ignore
-    this.canvas = Canvas.getInstance(this)
+    Canvas.init(this)
+    this.canvas = new Canvas()
   },
   created() {
     // @ts-ignore
@@ -239,8 +244,14 @@ export default class App extends Vue {
   onEditRequirement: boolean = false
   editingRequirement: Requirement | undefined
 
+  onEditInterface: boolean = false
+  editingInterface: InterfaceLine | undefined
+
   onEditReference: boolean = false
   editingReference: Reference | undefined
+
+  onEditConstraint: boolean = false
+  editingConstraint: Constraint | undefined
 
   back(): void {
     if (this.subStep > 1) {
@@ -273,7 +284,26 @@ export default class App extends Vue {
     this.onEditDomain = true
     this.editingDomain = domain
     // @ts-ignore
-    this.$refs['domain-editor'].preSet(domain.description, domain.shortName)
+    this.$refs['domain-editor'].preSet(
+      domain.description,
+      domain.shortName,
+      domain.domainType,
+      domain.physicalProperty
+    )
+  }
+
+  editRequirement(requirement: Requirement): void {
+    this.onEditRequirement = true
+    this.editingRequirement = requirement
+    // @ts-ignore
+    this.$refs['requirement-editor'].preSet(requirement.description)
+  }
+
+  editInterface(interfaceLine: InterfaceLine): void {
+    this.onEditInterface = true
+    this.editingInterface = interfaceLine
+    // @ts-ignore
+    this.$refs['interface-editor'].preSet(interfaceLine)
   }
 
   editReference(reference: Reference): void {
@@ -282,8 +312,6 @@ export default class App extends Vue {
     // @ts-ignore
     this.$refs['reference-editor'].preSet(domain.description, domain.shortName)
   }
-
-  editInterface(interfaceLine: Interface): void {}
 
   editConstraint(constraint: Constraint): void {}
 
@@ -294,11 +322,28 @@ export default class App extends Vue {
     this.editingMachine = undefined
   }
 
-  endEditDomain(info: { description: string; shortName: string }): void {
+  endEditDomain(info: {
+    description: string
+    shortName: string
+    domainType: number
+    physicalProperty: number
+  }): void {
     this.onEditDomain = false
     if (!this.editingDomain) return
-    this.editingDomain.setInformation(info.description, info.shortName)
+    this.editingDomain.setInformation(
+      info.description,
+      info.shortName,
+      info.domainType,
+      info.physicalProperty
+    )
     this.editingDomain = undefined
+  }
+
+  endEditRequirement(info: { description: string }): void {
+    this.onEditRequirement = false
+    if (!this.editingRequirement) return
+    this.editingRequirement.setInformation(info.description)
+    this.editingRequirement = undefined
   }
 
   endEditReference(): void {

@@ -8,62 +8,51 @@ import { Domain } from '@/app/graph/shape/Domain'
 import Shape from '@/app/graph/shape/Shape'
 import Requirement from '@/app/graph/shape/Requirement'
 import Line from '@/app/graph/line/Line'
-import InterfaceLine from '@/app/graph/line/InterfaceLine'
+import { InterfaceLine } from '@/app/graph/line/InterfaceLine'
 import Reference from '@/app/graph/line/Reference'
 import Constraint from '@/app/graph/line/Constraint'
 const config = new Config()
 
 class Canvas {
-  private app: PIXI.Application
+  private app: PIXI.Application = null
 
   private width: number = 700
   private height: number = 450
 
-  private draggingComponent: Shape | undefined
-  private editingComponent: Component | undefined
-  private drawingLine: Line | undefined
+  private draggingComponent: Shape = null
+  private editingComponent: Component = null
+  private drawingLine: Line = null
   // record the last delta value
   private lastDeltaX = 0
   private lastDeltaY = 0
 
   // It should never be set in this class, for it's to be set in Vue instance
   public activePen: number = 0
-  public _Vue: Vue
+  public _Vue: Vue = null
 
-  private readonly componentsList: Array<Component>
+  private readonly componentsList: Array<Component> = []
 
-  private machine: Machine | null
-  private domainList: Array<Domain>
-  private requirementList: Array<Requirement>
+  private machine: Machine = null
+  private domainList: Array<Domain> = []
+  private requirementList: Array<Requirement> = []
 
-  private interfaceList: Array<InterfaceLine>
-  private referenceList: Array<Reference>
-  private constraintList: Array<Constraint>
+  private interfaceList: Array<InterfaceLine> = []
+  private referenceList: Array<Reference> = []
+  private constraintList: Array<Constraint> = []
 
-  private static instance: Canvas | null
+  private static instance: Canvas
 
-  public static getInstance(vue?: Vue): Canvas | null {
-    if (Canvas.instance) return Canvas.instance
-    if (vue) {
-      Canvas.instance = new Canvas(vue)
-      return Canvas.instance
-    }
-    return null
+  public static init(vue: Vue): void {
+    Canvas.instance = new Canvas(vue)
   }
 
-  public destroy(): void {
+  public static destroy(): void {
     Canvas.instance = null
   }
 
-  private constructor(vue: Vue) {
-    this.componentsList = []
-    this.machine = null
-    this.domainList = []
-    this.requirementList = []
-    this.interfaceList = []
-    this.referenceList = []
-    this.constraintList = []
-    this._Vue = vue
+  constructor(vue?: Vue) {
+    if (Canvas.instance) return Canvas.instance
+    if (vue) this._Vue = vue
 
     this.app = new PIXI.Application({
       width: this.width,
@@ -124,7 +113,6 @@ class Canvas {
           this.componentsList.push(domain)
           break
         case 2:
-          debugger
           let requirement = new Requirement(
             this.app.stage,
             e.srcEvent.layerX,
@@ -150,7 +138,6 @@ class Canvas {
           }
           break
       }
-      console.log(this._Vue)
       this._Vue.$data['activePen'] = undefined
     }
   }
@@ -211,23 +198,25 @@ class Canvas {
         }
         break
       case 'panend':
-        this.draggingComponent = undefined
+        this.draggingComponent = null
         this.lastDeltaX = 0
         this.lastDeltaY = 0
         if (this.drawingLine) {
           if (this.drawingLine.attached) {
             this.drawingLine.mount()
-          } else {
-            this.componentsList.pop()
+            this.componentsList.push(this.drawingLine)
             if (this.drawingLine instanceof InterfaceLine)
-              this.interfaceList.pop()
+              this.interfaceList.push(this.drawingLine)
             else if (this.drawingLine instanceof Reference)
-              this.referenceList.pop()
-            else this.constraintList.pop()
+              this.referenceList.push(this.drawingLine)
+            else if (this.drawingLine instanceof Constraint)
+              this.constraintList.push(this.drawingLine)
+          } else {
             this.drawingLine.destroy()
           }
-          this.drawingLine = undefined
+          this.drawingLine = null
         }
+        this._Vue.$data['activePen'] = undefined
         break
     }
   }
@@ -241,8 +230,14 @@ class Canvas {
         this._Vue.$emit('editMachine', <Machine>comp)
       } else if (comp instanceof Domain) {
         this._Vue.$emit('editDomain', <Domain>comp)
+      } else if (comp instanceof Requirement) {
+        this._Vue.$emit('editRequirement', <Requirement>comp)
+      } else if (comp instanceof InterfaceLine) {
+        this._Vue.$emit('editInterface', <InterfaceLine>comp)
       } else if (comp instanceof Reference) {
         this._Vue.$emit('editReference', <Reference>comp)
+      } else if (comp instanceof Constraint) {
+        this._Vue.$emit('editConstraint', <Constraint>comp)
       }
     }
   }

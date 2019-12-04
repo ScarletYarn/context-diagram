@@ -23,8 +23,20 @@ class Reference extends Line {
     g.lineStyle(2, color, 1)
     g.beginFill(0, 1)
     g.moveTo(this.start.x, this.start.y)
-    // todo
-    // g.lineTo(this.end.x, this.end.y)
+    let total =
+      (this.start.x - this.end.x) * (this.start.x - this.end.x) +
+      (this.start.y - this.end.y) * (this.start.y - this.end.y)
+    let k = Math.floor(Math.sqrt(total) / 10)
+    let rate = 0.6
+    let distanceX = (this.end.x - this.start.x) / k
+    let distanceY = (this.end.y - this.start.y) / k
+    for (let i = 0; i < k; i++) {
+      g.moveTo(this.start.x + i * distanceX, this.start.y + i * distanceY)
+      g.lineTo(
+        this.start.x + i * distanceX + rate * distanceX,
+        this.start.y + i * distanceY + rate * distanceY
+      )
+    }
     g.endFill()
 
     return g

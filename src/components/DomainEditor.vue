@@ -14,16 +14,40 @@
           </v-row>
           <v-row>
             <v-select
-              :items="['GivenDomain', 'DesignDomain']"
+              :items="[
+                {
+                  text: 'GivenDomain',
+                  value: 0
+                },
+                {
+                  text: 'DesignDomain',
+                  value: 1
+                }
+              ]"
               label="Physical Property"
               required
+              v-model="physicalProperty"
             />
           </v-row>
           <v-row>
             <v-select
-              :items="['Causal', 'Biddable', 'Lexical']"
+              :items="[
+                {
+                  text: 'Causal',
+                  value: 0
+                },
+                {
+                  text: 'Biddable',
+                  value: 1
+                },
+                {
+                  text: 'Lexical',
+                  value: 2
+                }
+              ]"
               label="DomainType"
               required
+              v-model="domainType"
             />
           </v-row>
         </v-container>
@@ -45,11 +69,15 @@ export default class DomainEditor extends Vue {
   @Prop(Boolean) active!: boolean
   description: string = ''
   shortName: string = ''
+  domainType: number = 0
+  physicalProperty: number = 0
 
   submit() {
     this.$emit('end-edit-domain', {
       description: this.description,
-      shortName: this.shortName
+      shortName: this.shortName,
+      domainType: this.domainType,
+      physicalProperty: this.physicalProperty
     })
   }
 
@@ -57,9 +85,16 @@ export default class DomainEditor extends Vue {
     this.$emit('end-edit-domain')
   }
 
-  preSet(description: string, shortName: string) {
+  preSet(
+    description: string,
+    shortName: string,
+    domainType: number,
+    physicalProperty: number
+  ) {
     this.description = description
     this.shortName = shortName
+    this.domainType = domainType
+    this.physicalProperty = physicalProperty
   }
 }
 </script>

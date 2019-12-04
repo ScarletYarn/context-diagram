@@ -14,9 +14,23 @@
           </v-row>
           <v-row>
             <v-select
-              :items="['Causal', 'Biddable', 'Lexical']"
-              label="Phenomenon"
+              :items="[
+                {
+                  text: 'Causal',
+                  value: 0
+                },
+                {
+                  text: 'Biddable',
+                  value: 1
+                },
+                {
+                  text: 'Lexical',
+                  value: 2
+                }
+              ]"
+              label="DomainType"
               required
+              v-model="domainType"
             />
           </v-row>
           <v-row>
@@ -60,6 +74,7 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 export default class ReferenceEditor extends Vue {
   @Prop(Boolean) active!: boolean
   description: string = ''
+  domainType: number = 0
 
   submit() {
     this.$emit('end-edit-reference', {

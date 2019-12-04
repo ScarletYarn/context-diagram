@@ -3,7 +3,7 @@ import VueRouter from 'vue-router'
 
 Vue.use(VueRouter)
 
-const routes: never[] = []
+const routes: any[] = []
 
 const router = new VueRouter({
   mode: 'history',

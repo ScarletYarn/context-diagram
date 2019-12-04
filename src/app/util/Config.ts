@@ -5,7 +5,6 @@ class Config {
   public squareRadius = 5
   public lineInterval = 10
   public dashedLinePieceLength = 5
-  public dashedLinePieceInterval = 5
   public arrowHead = 5
 
   /* The z-index gap between each component. */

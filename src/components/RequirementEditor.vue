@@ -13,8 +13,8 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer />
-        <v-btn color="blue darken-1" text @click="dialog = false">Close</v-btn>
-        <v-btn color="blue darken-1" text @click="dialog = false">Save</v-btn>
+        <v-btn color="blue darken-1" text @click="cancel">Close</v-btn>
+        <v-btn color="blue darken-1" text @click="submit">Save</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -24,7 +24,24 @@
 import { Vue, Component, Prop } from 'vue-property-decorator'
 
 @Component({})
-export default class RequirementEditor extends Vue {}
+export default class RequirementEditor extends Vue {
+  @Prop(Boolean) active!: boolean
+  description: string = ''
+
+  submit() {
+    this.$emit('end-edit-requirement', {
+      description: this.description
+    })
+  }
+
+  cancel() {
+    this.$emit('end-edit-requirement')
+  }
+
+  preSet(description: string) {
+    this.description = description
+  }
+}
 </script>
 
 <style scoped />

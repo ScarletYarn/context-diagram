@@ -6,13 +6,13 @@ import Line from '@/app/graph/line/Line'
 const config = new Config()
 
 abstract class Shape extends Component {
-  protected width: number = config.spriteWidth
-  protected height: number = config.spriteHeight
+  public width: number = config.spriteWidth
+  public height: number = config.spriteHeight
   protected radius: number = config.squareRadius
   protected interval: number = config.lineInterval
 
-  protected x: number
-  protected y: number
+  public x: number
+  public y: number
 
   public attachedLines: Array<Line>
 

@@ -28,6 +28,15 @@ class Requirement extends Shape {
     return g
   }
 
+  public setInformation(description: string): void {
+    this.description = description
+    this.repaint()
+    if (this.active) {
+      this.spriteGroup[1].visible = false
+      this.spriteGroup[2].visible = true
+    }
+  }
+
   protected getDisplayText(): string {
     return this.description
   }

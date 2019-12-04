@@ -40,9 +40,16 @@ export class Domain extends Shape {
     this.paint()
   }
 
-  public setInformation(description: string, shortName: string): void {
+  public setInformation(
+    description: string,
+    shortName: string,
+    domainType: DomainType,
+    physicalProperty: PhysicalProperty
+  ): void {
     this.description = description
     this.shortName = shortName
+    this.domainType = domainType
+    this.physicalProperty = physicalProperty
     this.repaint()
     if (this.active) {
       this.spriteGroup[1].visible = false
@@ -64,7 +71,7 @@ export class Domain extends Shape {
   }
 
   protected getDisplayText(): string {
-    return this.description
+    return `${this.description}\n(${this.shortName})`
   }
 
   protected getTextIndent(): number {

@@ -2,7 +2,14 @@ import Line from '@/app/graph/line/Line'
 import * as PIXI from 'pixi.js'
 import Shape from '@/app/graph/shape/Shape'
 
-class InterfaceLine extends Line {
+export enum InterfaceType {
+  Event,
+  State,
+  Value
+}
+
+export class InterfaceLine extends Line {
+  public type: InterfaceType
   constructor(
     stage: PIXI.Container,
     description: string,
@@ -11,6 +18,7 @@ class InterfaceLine extends Line {
     receiver: Shape | null = null
   ) {
     super(stage, description, baseIndex, initiator, receiver)
+    this.type = InterfaceType.Event
   }
 
   protected drawSkeleton(color: number): PIXI.Graphics {
@@ -28,5 +36,3 @@ class InterfaceLine extends Line {
     return this.description
   }
 }
-
-export default InterfaceLine
