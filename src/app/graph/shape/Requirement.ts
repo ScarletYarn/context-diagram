@@ -48,6 +48,15 @@ class Requirement extends Shape {
   protected getTextY(): number {
     return this.y + this.height / 2 - this.textStyle.fontSize * 0.75
   }
+
+  public toString(): string {
+    return JSON.stringify({
+      x: this.x,
+      y: this.y,
+      description: this.description,
+      baseIndex: this.baseIndex
+    })
+  }
 }
 
 export default Requirement

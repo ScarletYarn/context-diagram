@@ -32,13 +32,13 @@ class Canvas {
 
   private readonly componentsList: Array<Component> = []
 
-  private machine: Machine = null
-  private domainList: Array<Domain> = []
-  private requirementList: Array<Requirement> = []
+  public machine: Machine = null
+  public domainList: Array<Domain> = []
+  public requirementList: Array<Requirement> = []
 
-  private interfaceList: Array<InterfaceLine> = []
-  private referenceList: Array<Reference> = []
-  private constraintList: Array<Constraint> = []
+  public interfaceList: Array<InterfaceLine> = []
+  public referenceList: Array<Reference> = []
+  public constraintList: Array<Constraint> = []
 
   private static instance: Canvas
 

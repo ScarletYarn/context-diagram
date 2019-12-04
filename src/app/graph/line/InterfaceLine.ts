@@ -35,4 +35,13 @@ export class InterfaceLine extends Line {
   protected getDisplayText(): string {
     return this.description
   }
+
+  public toString(): string {
+    return JSON.stringify({
+      description: this.description,
+      baseIndex: this.baseIndex,
+      initiator: this.initiator,
+      receiver: this.receiver
+    })
+  }
 }

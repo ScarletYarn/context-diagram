@@ -415,7 +415,14 @@ export default class App extends Vue {
   }
 
   download() {
-    let final = {}
+    let final = {
+      machine: this.canvas.machine.toString(),
+      domain: this.canvas.domainList.toString(),
+      requirement: this.canvas.referenceList.toString(),
+      interface: this.canvas.interfaceList.toString(),
+      reference: this.canvas.referenceList.toString(),
+      constraint: this.canvas.constraintList.toString()
+    }
     let buffer = JSON.stringify(final)
     let downloadBlobURL = URL.createObjectURL(
       new Blob([buffer], {
