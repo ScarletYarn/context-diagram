@@ -60,6 +60,8 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 export default class ReferenceEditor extends Vue {
   @Prop(Boolean) active!: boolean
   description: string = ''
+  value: string =''
+  checkbox: boolean = false
 
   submit() {
     this.$emit('end-edit-reference', {
