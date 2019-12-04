@@ -241,6 +241,8 @@ class Canvas {
         this._Vue.$emit('editMachine', <Machine>comp)
       } else if (comp instanceof Domain) {
         this._Vue.$emit('editDomain', <Domain>comp)
+      } else if (comp instanceof Reference) {
+        this._Vue.$emit('editReference', <Reference>comp)
       }
     }
   }

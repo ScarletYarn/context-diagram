@@ -149,9 +149,15 @@
     />
 
     <domain-editor
-      @end-edit-machine="endEditDomain"
+      @end-edit-domain="endEditDomain"
       ref="domain-editor"
       :active="onEditDomain"
+    />
+
+    <reference-editor
+      @end-edit-reference="endEditReference"
+      ref="reference-editor"
+      :active="onEditReference"
     />
 
     <v-content class="grey lighten-1">
@@ -233,6 +239,9 @@ export default class App extends Vue {
   onEditRequirement: boolean = false
   editingRequirement: Requirement | undefined
 
+  onEditReference: boolean = false
+  editingReference: Reference | undefined
+
   back(): void {
     if (this.subStep > 1) {
       this.subStep--
@@ -263,11 +272,18 @@ export default class App extends Vue {
   editDomain(domain: Domain): void {
     this.onEditDomain = true
     this.editingDomain = domain
+    // @ts-ignore
+    this.$refs['domain-editor'].preSet(domain.description, domain.shortName)
+  }
+
+  editReference(reference: Reference): void {
+    this.onEditReference = true
+    this.editingReference = reference
+    // @ts-ignore
+    this.$refs['reference-editor'].preSet(domain.description, domain.shortName)
   }
 
   editInterface(interfaceLine: Interface): void {}
-
-  editReference(reference: Reference): void {}
 
   editConstraint(constraint: Constraint): void {}
 
@@ -278,10 +294,17 @@ export default class App extends Vue {
     this.editingMachine = undefined
   }
 
-  endEditDomain(): void {
+  endEditDomain(info: { description: string; shortName: string }): void {
     this.onEditDomain = false
     if (!this.editingDomain) return
+    this.editingDomain.setInformation(info.description, info.shortName)
     this.editingDomain = undefined
+  }
+
+  endEditReference(): void {
+    this.onEditReference = false
+    if (!this.editingReference) return
+    this.editingReference = undefined
   }
 
   giveWarn(message: string) {
