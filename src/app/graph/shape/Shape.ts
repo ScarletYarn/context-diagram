@@ -67,7 +67,6 @@ abstract class Shape extends Component {
       line.updateLine()
     }
   }
-
   get center(): { x: number; y: number } {
     return {
       x: this.x + this.width / 2,

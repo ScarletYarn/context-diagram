@@ -40,6 +40,16 @@ export class Domain extends Shape {
     this.paint()
   }
 
+  public setInformation(description: string, shortName: string): void {
+    this.description = description
+    this.shortName = shortName
+    this.repaint()
+    if (this.active) {
+      this.spriteGroup[1].visible = false
+      this.spriteGroup[2].visible = true
+    }
+  }
+
   protected drawBorder(color: number, textWidth: number): PIXI.Graphics {
     this.width = textWidth + 2 * this.interval
     let g = new PIXI.Graphics()

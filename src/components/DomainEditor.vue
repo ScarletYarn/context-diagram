@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" persistent max-width="600px">
+  <v-dialog v-model="active" persistent max-width="600px">
     <v-card>
       <v-card-title>
         <span class="headline">ProblemDomain Information</span>
@@ -10,7 +10,7 @@
             <v-text-field label="description" v-model="description" />
           </v-row>
           <v-row>
-            <v-text-field label="shortname" v-model="shortname" />
+            <v-text-field label="shortname" v-model="shortName" />
           </v-row>
           <v-row>
             <v-select
@@ -41,7 +41,27 @@
 import { Vue, Component, Prop } from 'vue-property-decorator'
 
 @Component({})
-export default class DomainEditor extends Vue {}
+export default class DomainEditor extends Vue {
+  @Prop(Boolean) active!: boolean
+  description: string = ''
+  shortName: string = ''
+
+  submit() {
+    this.$emit('end-edit-domain', {
+      description: this.description,
+      shortName: this.shortName
+    })
+  }
+
+  cancel() {
+    this.$emit('end-edit-domain')
+  }
+
+  preSet(description: string, shortName: string) {
+    this.description = description
+    this.shortName = shortName
+  }
+}
 </script>
 
 <style scoped />
