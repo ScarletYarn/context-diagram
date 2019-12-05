@@ -57,6 +57,15 @@ class Requirement extends Shape {
       baseIndex: this.baseIndex
     })
   }
+
+  toSerializable(): Object {
+    return {
+      x: this.x,
+      y: this.y,
+      description: this.description,
+      baseIndex: this.baseIndex
+    }
+  }
 }
 
 export default Requirement

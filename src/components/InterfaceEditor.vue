@@ -45,6 +45,7 @@
                 }
               ]"
               label="Type"
+              v-model="type"
               required
             />
           </v-row>

@@ -11,6 +11,7 @@ import Line from '@/app/graph/line/Line'
 import { InterfaceLine } from '@/app/graph/line/InterfaceLine'
 import Reference from '@/app/graph/line/Reference'
 import Constraint from '@/app/graph/line/Constraint'
+
 const config = new Config()
 
 class Canvas {
@@ -68,8 +69,14 @@ class Canvas {
   }
 
   public exportImage(): void {
-    this.app.view.toDataURL()
-    let buffer = this.app.view.toBlob(e => console.log(e), 'image/jpeg')
+    const image = this.app.renderer.plugins.extract.image(this.app.stage)
+    image.onload = e => {
+      let tmp = document.createElement('a')
+      // @ts-ignore
+      tmp.href = e.path[0].src
+      tmp.download = 'img.png'
+      tmp.click()
+    }
   }
 
   constructor(vue?: Vue) {

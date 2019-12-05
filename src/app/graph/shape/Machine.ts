@@ -68,6 +68,16 @@ class Machine extends Shape {
       baseIndex: this.baseIndex
     })
   }
+
+  toSerializable(): Object {
+    return {
+      x: this.x,
+      y: this.y,
+      description: this.description,
+      shortName: this.shortName,
+      baseIndex: this.baseIndex
+    }
+  }
 }
 
 export default Machine

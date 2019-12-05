@@ -42,6 +42,15 @@ class Constraint extends Line {
       receiver: this.receiver
     })
   }
+
+  toSerializable(): Object {
+    return {
+      description: this.description,
+      baseIndex: this.baseIndex,
+      initiator: this.initiator,
+      receiver: this.receiver
+    }
+  }
 }
 
 export default Constraint

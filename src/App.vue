@@ -180,10 +180,11 @@
           <v-btn text v-on="on">Export</v-btn>
         </template>
         <v-list>
-          <v-list-item v-for="n in 1" :key="n" @click="() => {}">
-            <v-list-item-title @click="download()"
-              >Export Project</v-list-item-title
-            >
+          <v-list-item @click="download">
+            <v-list-item-title>Export Project</v-list-item-title>
+          </v-list-item>
+          <v-list-item @click="downloadPNG">
+            <v-list-item-title>Export As PNG</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -203,16 +204,28 @@
       :active="onEditDomain"
     />
 
+    <requirement-editor
+      @end-edit-requirement="endEditRequirement"
+      ref="requirement-editor"
+      :active="onEditRequirement"
+    />
+
+    <interface-editor
+      @end-edit-requirement="endEditInterface"
+      ref="interface-editor"
+      :active="onEditInterface"
+    />
+
     <reference-editor
       @end-edit-reference="endEditReference"
       ref="reference-editor"
       :active="onEditReference"
     />
 
-    <requirement-editor
-      @end-edit-requirement="endEditRequirement"
-      ref="requirement-editor"
-      :active="onEditRequirement"
+    <constraint-editor
+      @end-edit-constraint="endEditConstraint"
+      ref="constraint-editor"
+      :active="onEditConstraint"
     />
 
     <v-content class="grey lighten-1">
@@ -358,10 +371,15 @@ export default class App extends Vue {
     this.onEditReference = true
     this.editingReference = reference
     // @ts-ignore
-    this.$refs['reference-editor'].preSet(domain.description, domain.shortName)
+    this.$refs['reference-editor'].preSet(reference)
   }
 
-  editConstraint(constraint: Constraint): void {}
+  editConstraint(constraint: Constraint): void {
+    this.onEditConstraint = true
+    this.editingConstraint = constraint
+    // @ts-ignore
+    this.$refs['constraint-editor'].preSet(constraint)
+  }
 
   endEditMachine(info: { description: string; shortName: string }): void {
     this.onEditMachine = false
@@ -394,10 +412,22 @@ export default class App extends Vue {
     this.editingRequirement = undefined
   }
 
+  endEditInterface(): void {
+    this.onEditInterface = false
+    if (!this.editingInterface) return
+    this.editingInterface = undefined
+  }
+
   endEditReference(): void {
     this.onEditReference = false
     if (!this.editingReference) return
     this.editingReference = undefined
+  }
+
+  endEditConstraint(): void {
+    this.onEditConstraint = false
+    if (!this.editingConstraint) return
+    this.editingConstraint = undefined
   }
 
   giveWarn(message: string) {
@@ -429,15 +459,14 @@ export default class App extends Vue {
   }
 
   download() {
-    console.log(this.canvas.referenceList.toString())
     let final = {
       projectName: this.projectDescription,
-      machine: JSON.parse(this.canvas.machine.toString()),
-      domain: JSON.parse(this.canvas.domainList.toString()),
-      requirement: JSON.parse(this.canvas.referenceList.toString()),
-      interface: JSON.parse(this.canvas.interfaceList.toString()),
-      reference: JSON.parse(this.canvas.referenceList.toString()),
-      constraint: JSON.parse(this.canvas.constraintList.toString())
+      machine: this.canvas.machine.toSerializable(),
+      domain: this.canvas.domainList.map(e => e.toSerializable()),
+      requirement: this.canvas.referenceList.map(e => e.toSerializable()),
+      interface: this.canvas.interfaceList.map(e => e.toSerializable()),
+      reference: this.canvas.referenceList.map(e => e.toSerializable()),
+      constraint: this.canvas.constraintList.map(e => e.toSerializable())
     }
     let buffer = JSON.stringify(final)
     let downloadBlobURL = URL.createObjectURL(
@@ -449,6 +478,10 @@ export default class App extends Vue {
     tmpNode.setAttribute('href', downloadBlobURL)
     tmpNode.setAttribute('download', 'map.json')
     tmpNode.click()
+  }
+
+  downloadPNG(): void {
+    this.canvas.exportImage()
   }
 
   newProject(): void {

@@ -93,4 +93,16 @@ export class Domain extends Shape {
       domainType: this.domainType
     })
   }
+
+  toSerializable(): Object {
+    return {
+      x: this.x,
+      y: this.y,
+      description: this.description,
+      shortName: this.shortName,
+      baseIndex: this.baseIndex,
+      physicalProperty: this.physicalProperty,
+      domainType: this.domainType
+    }
+  }
 }
