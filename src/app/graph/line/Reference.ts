@@ -21,11 +21,10 @@ class Reference extends Line {
   protected drawSkeleton(color: number): PIXI.Graphics {
     let g = new PIXI.Graphics()
     g.lineStyle(2, color, 1)
-    g.beginFill(0, 1)
+    g.beginFill(color, 1)
     g.moveTo(this.start.x, this.start.y)
     let total =
-      (this.start.x - this.end.x) * (this.start.x - this.end.x) +
-      (this.start.y - this.end.y) * (this.start.y - this.end.y)
+      (this.start.x - this.end.x) ** 2 + (this.start.y - this.end.y) ** 2
     let k = Math.floor(Math.sqrt(total) / 10)
     let rate = 0.6
     let distanceX = (this.end.x - this.start.x) / k

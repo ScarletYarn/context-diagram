@@ -1,6 +1,13 @@
 <template>
   <v-app>
-    <v-navigation-drawer v-model="drawerRight" app clipped right width="400">
+    <v-navigation-drawer
+      v-model="drawerRight"
+      app
+      clipped
+      permanent
+      right
+      width="400"
+    >
       <v-list dense class="body-2" expand>
         <v-list-group value="true" disabled>
           <template v-slot:activator>
@@ -95,34 +102,14 @@
     >
       <v-list dense>
         <v-list-item-group v-model="activePen">
-          <v-list-item title="machine">
+          <v-list-item
+            v-for="item in pens"
+            :title="item.name"
+            :key="item.name"
+            :disabled="!item.allow"
+          >
             <v-list-item-action>
-              <v-img alt="img" width=".5em" src="@/assets/machine.svg" />
-            </v-list-item-action>
-          </v-list-item>
-          <v-list-item title="domain">
-            <v-list-item-action>
-              <v-img alt="img" width=".5em" src="@/assets/problem-domain.svg" />
-            </v-list-item-action>
-          </v-list-item>
-          <v-list-item title="requirement">
-            <v-list-item-action>
-              <v-img alt="img" width=".5em" src="@/assets/requirement.svg" />
-            </v-list-item-action>
-          </v-list-item>
-          <v-list-item title="interface">
-            <v-list-item-action>
-              <v-img alt="img" width=".5em" src="@/assets/interface.svg" />
-            </v-list-item-action>
-          </v-list-item>
-          <v-list-item title="reference">
-            <v-list-item-action>
-              <v-img alt="img" width=".5em" src="@/assets/reference.svg" />
-            </v-list-item-action>
-          </v-list-item>
-          <v-list-item title="constraint">
-            <v-list-item-action>
-              <v-img alt="img" width=".5em" src="@/assets/constraint.svg" />
+              <v-img :alt="item.name" width=".5em" :src="item.src" />
             </v-list-item-action>
           </v-list-item>
         </v-list-item-group>
@@ -186,11 +173,6 @@
           <v-list-item @click="downloadPNG">
             <v-list-item-title>Export As PNG</v-list-item-title>
           </v-list-item>
-          <v-list-item @click="() => {}">
-            <v-list-item-title @click="downloadImage()">
-              Export Image
-            </v-list-item-title>
-          </v-list-item>
         </v-list>
       </v-menu>
 
@@ -216,7 +198,7 @@
     />
 
     <interface-editor
-      @end-edit-requirement="endEditInterface"
+      @end-edit-interface="endEditInterface"
       ref="interface-editor"
       :active="onEditInterface"
     />
@@ -258,6 +240,7 @@ import ReferenceEditor from '@/components/ReferenceEditor.vue'
 import ConstraintEditor from '@/components/ConstraintEditor.vue'
 import Requirement from '@/app/graph/shape/Requirement'
 import { InterfaceLine } from '@/app/graph/line/InterfaceLine'
+import Procedure from '@/app/Procedure'
 
 @Component({
   components: {
@@ -275,31 +258,58 @@ import { InterfaceLine } from '@/app/graph/line/InterfaceLine'
   },
   mounted() {},
   created() {
-    // @ts-ignore
     this.$on('editMachine', this.editMachine)
-    // @ts-ignore
     this.$on('editDomain', this.editDomain)
-    // @ts-ignore
     this.$on('editRequirement', this.editRequirement)
-    // @ts-ignore
     this.$on('editInterface', this.editInterface)
-    // @ts-ignore
     this.$on('editReference', this.editReference)
-    // @ts-ignore
     this.$on('editConstraint', this.editConstraint)
-    // @ts-ignore
     this.$on('giveWarn', this.giveWarn)
+    this.$on('flushAllow', this.flushAllow)
   }
 })
 export default class App extends Vue {
   newDialog: boolean = false
   projectDescription: string = ''
   drawerRight: boolean = true
+  pens = [
+    {
+      name: 'machine',
+      src: require('@/assets/machine.svg'),
+      allow: true
+    },
+    {
+      name: 'domain',
+      src: require('@/assets/problem-domain.svg'),
+      allow: true
+    },
+    {
+      name: 'requirement',
+      src: require('@/assets/requirement.svg'),
+      allow: true
+    },
+    {
+      name: 'interface',
+      src: require('@/assets/interface.svg'),
+      allow: true
+    },
+    {
+      name: 'reference',
+      src: require('@/assets/reference.svg'),
+      allow: true
+    },
+    {
+      name: 'constraint',
+      src: require('@/assets/constraint.svg'),
+      allow: true
+    }
+  ]
   tmp: any = 2
   activeStep: number = 1
   subStep: number = 1
   activePen: number = 0
   canvas: Canvas | null = null
+  procedure: Procedure | null = null
 
   onEditMachine: boolean = false
   editingMachine: Machine | undefined
@@ -437,6 +447,12 @@ export default class App extends Vue {
 
   giveWarn(message: string) {
     alert(message)
+  }
+
+  flushAllow(allow: Array<boolean>): void {
+    allow.forEach((item, index) => {
+      this.pens[index].allow = item
+    })
   }
 
   upload() {

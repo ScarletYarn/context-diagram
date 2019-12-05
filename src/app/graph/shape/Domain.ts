@@ -79,7 +79,7 @@ export class Domain extends Shape {
   }
 
   protected getTextY(): number {
-    return this.y + this.height / 2 - this.textStyle.fontSize * 0.6
+    return this.y + this.height / 2 - this.textStyle.fontSize * 1.25
   }
 
   toSerializable(): Object {

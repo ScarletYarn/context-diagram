@@ -95,7 +95,7 @@
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import Reference from '@/app/graph/line/Reference'
 import Shape from '@/app/graph/shape/Shape'
-import { Phenomenon } from '@/app/Phenomenon'
+import { Phenomenon } from '@/app/graph/Phenomenon'
 
 @Component({})
 export default class ReferenceEditor extends Vue {

@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="dialog" persistent max-width="600px">
+  <v-dialog v-model="active" persistent max-width="600px">
     <v-card>
       <v-card-title>
         <span class="headline">Interface Information</span>
@@ -11,22 +11,28 @@
           </v-row>
           <v-row>
             <v-select
-              :items="[
-                {
-                  text: actors[0].description,
-                  value: actors[0]
-                },
-                {
-                  text: actors[1].description,
-                  value: actors[1]
-                }
-              ]"
+              :items="actorName"
               label="Initiator"
+              v-model="initiator"
               required
             />
           </v-row>
           <v-row>
-            <v-select :items="[]" label="Phenomenon" required />
+            <v-menu absolute offset-y>
+              <template v-slot:activator="{ on }">
+                <v-text-field v-model="phenomenonNameEdit" label="Phenomenon" />
+              </template>
+              <v-list>
+                <v-list-item-group>
+                  <v-list-item
+                    v-for="item in globalPhenomenonListName"
+                    :key="item.text"
+                    @click="selectPhenomenon(item.value)"
+                    >{{ item.name }}</v-list-item
+                  >
+                </v-list-item-group>
+              </v-list>
+            </v-menu>
           </v-row>
           <v-row>
             <v-select
@@ -50,14 +56,11 @@
             />
           </v-row>
           <v-row>
-            <v-select :items="globalPhenomenonList" v-model="phenomenonEdit" />
-          </v-row>
-          <v-row>
-            <v-list disabled>
+            <v-list>
               <v-list-item-group v-model="phenomenonSelect">
                 <v-subheader>PhenomenonList</v-subheader>
                 <v-list-item v-for="item in phenomenonList" :key="item">{{
-                  `${initiator.description}:${item.name} ${item.type}`
+                  `${interfaceLine.initiator.description}:${item.name} ${item.type}`
                 }}</v-list-item>
               </v-list-item-group>
             </v-list>
@@ -79,24 +82,46 @@
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import Shape from '@/app/graph/shape/Shape'
 import { InterfaceLine } from '@/app/graph/line/InterfaceLine'
-import { Phenomenon } from '@/app/Phenomenon'
+import { Phenomenon } from '@/app/graph/Phenomenon'
 
 @Component({})
 export default class InterfaceEditor extends Vue {
   @Prop(Boolean) active!: boolean
+  interfaceLine: InterfaceLine = null
+
   description: string = ''
-  initiator: Shape
-  phenomenonList: Array<Phenomenon>
-  type: number
-  interfaceLine: InterfaceLine
-  actors: [Shape, Shape]
-  phenomenonEdit: string
-  globalPhenomenonList: Array<Phenomenon> = Phenomenon.PhenomenonList
-  phenomenonSelect: number
+
+  initiator: number = 0
+  get actorName() {
+    return this.actors.map((e, index) => {
+      return {
+        text: e.description,
+        value: index
+      }
+    })
+  }
+  actors: Array<Shape> = []
+
+  type: number = 0
+
+  phenomenonNameEdit: string = ''
+  phenomenonEdit: Phenomenon = null
+  globalPhenomenonList: Array<Phenomenon> = []
+  get globalPhenomenonListName() {
+    return this.globalPhenomenonList.map((e, index) => {
+      return {
+        text: e.name,
+        value: index
+      }
+    })
+  }
+
+  phenomenonSelect: number = 0
+  phenomenonList: Array<Phenomenon> = []
 
   submit() {
     this.interfaceLine.description = this.description
-    this.interfaceLine.initiator = this.initiator
+    this.interfaceLine.initiator = this.actors[this.initiator]
     this.interfaceLine.phenomenonList = this.phenomenonList
     this.interfaceLine.type = this.type
     this.$emit('end-edit-interface')
@@ -112,16 +137,31 @@ export default class InterfaceEditor extends Vue {
     this.phenomenonList = interfaceLine.phenomenonList
     this.type = interfaceLine.type
     this.actors = [this.interfaceLine.initiator, this.interfaceLine.receiver]
+    this.initiator = 0
+    this.globalPhenomenonList = Phenomenon.PhenomenonList
+    this.phenomenonNameEdit = ''
+    this.phenomenonSelect = 0
   }
 
   add(): void {
-    let p = new Phenomenon(this.phenomenonEdit, this.type)
-    this.interfaceLine.phenomenonList.push(p)
-    Phenomenon.PhenomenonList.push(p)
+    if (
+      this.phenomenonEdit &&
+      this.phenomenonNameEdit === this.phenomenonEdit.name
+    ) {
+      this.interfaceLine.phenomenonList.push(this.phenomenonEdit)
+    } else {
+      let p = new Phenomenon(this.phenomenonNameEdit, this.type)
+      this.interfaceLine.phenomenonList.push(p)
+      Phenomenon.PhenomenonList.push(p)
+    }
   }
 
   del(): void {
     this.interfaceLine.phenomenonList.splice(this.phenomenonSelect, 1)
+  }
+
+  selectPhenomenon(index): void {
+    this.phenomenonEdit = this.phenomenonList[index]
   }
 }
 </script>

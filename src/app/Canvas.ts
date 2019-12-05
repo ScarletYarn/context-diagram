@@ -52,7 +52,6 @@ class Canvas {
   }
 
   public static load(vue: Vue, r: any): Canvas {
-    console.log(r)
     let c = (Canvas.instance = new Canvas(vue))
     let m = r.machine
     let machine = new Machine(

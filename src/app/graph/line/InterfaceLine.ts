@@ -24,7 +24,7 @@ export class InterfaceLine extends Line {
   protected drawSkeleton(color: number): PIXI.Graphics {
     let g = new PIXI.Graphics()
     g.lineStyle(2, color, 1)
-    g.beginFill(0, 1)
+    g.beginFill(color, 1)
     g.moveTo(this.start.x, this.start.y)
     g.lineTo(this.end.x, this.end.y)
     g.endFill()

@@ -31,7 +31,6 @@ abstract class Component {
   protected abstract paint(): void
 
   public activate(): void {
-    console.log('active')
     if (this.active) return
     this.active = true
     this.spriteGroup[1].visible = false

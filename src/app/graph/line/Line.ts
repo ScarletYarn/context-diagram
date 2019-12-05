@@ -1,7 +1,7 @@
 import Component from '@/app/graph/Component'
 import * as PIXI from 'pixi.js'
 import Shape from '@/app/graph/shape/Shape'
-import { Phenomenon } from '@/app/Phenomenon'
+import { Phenomenon } from '@/app/graph/Phenomenon'
 import Point from '@/app/util/Point'
 import Config from '@/app/util/Config'
 import Requirement from '@/app/graph/shape/Requirement'
@@ -37,13 +37,10 @@ abstract class Line extends Component {
   }
 
   public lengthen(p: Point): void {
-    this.start = this.getIntersectionPoint(this.initiator, p)
+    this.start = this.getIntersectionPoint(this.initiator, { x: p.x, y: p.y })
     this.end = p
-    console.log(this.start)
     this.attached = false
     this.receiver = null
-    // console.log(`the right x is ${this.initiator.x + this.initiator.width}`)
-    // console.log(p)
     this.repaint()
   }
 
@@ -97,12 +94,11 @@ abstract class Line extends Component {
    * @param d The max distance.
    */
   public contain(p: Point, d: number = 5): boolean {
-    let A = (this.start.x - this.end.x) / (this.end.y - this.start.y)
-    let B = -A * this.end.y + this.end.x
-    let distance = (p.x + p.y * A + B) / Math.sqrt(A * A + 1)
+    let a = -(this.end.x - this.start.x) / (this.end.y - this.start.y)
+    let b = -a * this.end.y - this.end.x
+    let distance = Math.abs(p.x + p.y * a + b) / Math.sqrt(a * a + 1)
     let containX = (p.x - this.start.x) * (p.x - this.end.x)
     let containY = (p.y - this.start.y) * (p.y - this.end.y)
-    // console.log(distance < d && containX < 0 && containY < 0)
     return distance < d && containX < 0 && containY < 0
   }
 
@@ -115,31 +111,40 @@ abstract class Line extends Component {
    */
   public getIntersectionPoint(shape: Shape, p: Point): Point {
     if (shape.contain(p)) return { x: -1, y: -1 }
-    let a = shape.width / 2
-    let b = shape.height / 2
-    let centerX = shape.x + a
-    let centerY = shape.x + b
-    let relativeX = p.x - centerX
-    let relativeY = p.y - centerY
-    let k = relativeY / relativeX
-    let tempX, tempY
+    let tmpX, tmpY
+    p.x -= shape.center.x
+    p.y -= shape.center.y
+    let a = shape.width / 2,
+      b = shape.height / 2
     if (shape instanceof Requirement) {
-      tempX = (a * b) / Math.sqrt(a * a * k * k + b * b)
-      if (relativeX < 0) tempX = -tempX
-      tempY = k * tempX
-    } else {
-      let kShape = relativeY / relativeX
-      if (k > kShape && k < -kShape) {
-        tempX = relativeX
-        tempY = k * relativeY
-      } else {
-        tempY = relativeY
-        tempX = relativeY / k
+      let k = p.y / p.x
+      tmpX = 1 / Math.sqrt(1 / a ** 2 + (k / b) ** 2)
+      if (p.x < 0) {
+        tmpX = -tmpX
       }
+      tmpY = k * tmpX
+
+      tmpX += shape.center.x
+      tmpY += shape.center.y
+    } else {
+      let k = p.y / p.x
+      let k0 = a / b
+      if (Math.abs(k) > k0) {
+        tmpY = b
+        if (p.y < 0) tmpY = -tmpY
+        tmpX = tmpY / k
+      } else {
+        tmpX = a
+        if (p.x < 0) tmpX = -tmpX
+        tmpY = tmpX * k
+      }
+
+      tmpY = k * tmpX
+
+      tmpX += shape.center.x
+      tmpY += shape.center.y
     }
-    // console.log(`the center x is ${shape.center.x}`)
-    // console.log({ x: tempX + centerX, y: tempY + centerY })
-    return { x: tempX + centerX, y: tempY + centerY }
+    return { x: tmpX, y: tmpY }
   }
 
   protected abstract drawSkeleton(color: number): PIXI.Graphics
