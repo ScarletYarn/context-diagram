@@ -34,6 +34,9 @@ abstract class Line extends Component {
     this.end = { x: 0, y: 0 }
 
     this.attached = false
+    if(receiver){
+      this.attached=true
+    }
   }
 
   public lengthen(p: Point): void {

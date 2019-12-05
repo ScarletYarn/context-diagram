@@ -484,7 +484,7 @@ export default class App extends Vue {
       projectName: this.projectDescription,
       machine: this.canvas.machine.toSerializable(),
       domainList: this.canvas.domainList.map(e => e.toSerializable()),
-      requirementList: this.canvas.referenceList.map(e => e.toSerializable()),
+      requirementList: this.canvas.requirementList.map(e => e.toSerializable()),
       interfaceList: this.canvas.interfaceList.map(e => e.toSerializable()),
       referenceList: this.canvas.referenceList.map(e => e.toSerializable()),
       constraintList: this.canvas.constraintList.map(e => e.toSerializable())
