@@ -73,8 +73,8 @@ class Constraint extends Line {
     return {
       description: this.description,
       baseIndex: this.baseIndex,
-      initiator: this.initiator,
-      receiver: this.receiver
+      initiator: this.initiator.description,
+      receiver: this.receiver.description
     }
   }
 }
