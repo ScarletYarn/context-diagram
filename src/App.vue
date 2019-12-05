@@ -174,7 +174,7 @@
           </v-list-item>
         </v-list>
       </v-menu>
-      <v-btn text>Save</v-btn>
+      <v-btn text @click="download()">Save</v-btn>
       <v-menu open-on-hover bottom offset-y>
         <template v-slot:activator="{ on }">
           <v-btn text v-on="on">Export</v-btn>
@@ -421,20 +421,23 @@ export default class App extends Vue {
       fr.onload = e => {
         // @ts-ignore
         let r = JSON.parse(e.target.result)
-        console.log(r)
+        this.projectDescription = r.projectName
+        // this.canvas = Canvas.load(this, r)
       }
       fr.readAsText(files[0])
     }
   }
 
   download() {
+    console.log(this.canvas.referenceList.toString())
     let final = {
-      machine: this.canvas.machine.toString(),
-      domain: this.canvas.domainList.toString(),
-      requirement: this.canvas.referenceList.toString(),
-      interface: this.canvas.interfaceList.toString(),
-      reference: this.canvas.referenceList.toString(),
-      constraint: this.canvas.constraintList.toString()
+      projectName: this.projectDescription,
+      machine: JSON.parse(this.canvas.machine.toString()),
+      domain: JSON.parse(this.canvas.domainList.toString()),
+      requirement: JSON.parse(this.canvas.referenceList.toString()),
+      interface: JSON.parse(this.canvas.interfaceList.toString()),
+      reference: JSON.parse(this.canvas.referenceList.toString()),
+      constraint: JSON.parse(this.canvas.constraintList.toString())
     }
     let buffer = JSON.stringify(final)
     let downloadBlobURL = URL.createObjectURL(

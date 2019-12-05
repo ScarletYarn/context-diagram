@@ -50,6 +50,28 @@ class Canvas {
     Canvas.instance = null
   }
 
+  public static load(vue: Vue, r: any): Canvas {
+    let c = new Canvas(vue)
+    let m = r.machine
+    let machine = new Machine(
+      c.app.stage,
+      m.x,
+      m.y,
+      m.description,
+      m.shortName,
+      m.baseIndex
+    )
+    c.machine = machine
+    c.componentsList.push(machine)
+
+    return c
+  }
+
+  public exportImage(): void {
+    this.app.view.toDataURL()
+    let buffer = this.app.view.toBlob(e => console.log(e), 'image/jpeg')
+  }
+
   constructor(vue?: Vue) {
     if (Canvas.instance) return Canvas.instance
     if (vue) this._Vue = vue
