@@ -63,7 +63,70 @@ class Canvas {
     )
     c.machine = machine
     c.componentsList.push(machine)
-
+    let d=r.domainList
+    let j=0
+    for (j=0;j<d.length;j++){
+      let domain=new Domain(
+        c.app.stage,
+        d.x,
+        d.y,
+        d.description,
+        d.shortName,
+        d.baseIndex,
+        d.physicalProperty,
+        d.domainType
+      )
+      c.domainList.push(domain)
+      c.componentsList.push(domain)
+    }
+    let req=r.requirementList
+    for (j=0;j<req.length;j++){
+      let requirement=new Requirement(
+        c.app.stage,
+        req.x,
+        req.y,
+        req.description,
+        req.baseIndex
+      )
+      c.requirementList.push(requirement)
+      c.componentsList.push(requirement)
+    }
+    let inter=r.interfaceList
+    for (j=0;j<inter.length;j++){
+      let interfaceLine=new InterfaceLine(
+        c.app.stage,
+        inter.description,
+        inter.baseIndex,
+        inter.initiator,
+        inter.receiver
+      )
+      c.interfaceList.push(interfaceLine)
+      c.componentsList.push(interfaceLine)
+    }
+    let ref=r.referenceList
+    for (j=0;j<ref.length;j++){
+      let reference=new Reference(
+        c.app.stage,
+        ref.description,
+        ref.baseIndex,
+        ref.initiator,
+        ref.receiver
+      )
+      c.referenceList.push(reference)
+      c.componentsList.push(reference)
+    }
+    let cons=r.constraintList
+    for (j=0;j<cons.length;j++){
+      let constraint=new Constraint(
+        c.app.stage,
+        cons.description,
+        cons.baseIndex,
+        cons.initiator,
+        cons.receiver
+      )
+      c.constraintList.push(constraint)
+      c.componentsList.push(constraint)
+    }
     return c
   }
 

@@ -185,6 +185,11 @@
               >Export Project</v-list-item-title
             >
           </v-list-item>
+          <v-list-item @click="() => {}">
+            <v-list-item-title @click="downloadImage()">
+              Export Image
+            </v-list-item-title>
+          </v-list-item>
         </v-list>
       </v-menu>
 
