@@ -128,7 +128,7 @@ abstract class Line extends Component {
       tmpY += shape.center.y
     } else {
       let k = p.y / p.x
-      let k0 = a / b
+      let k0 = b / a
       if (Math.abs(k) > k0) {
         tmpY = b
         if (p.y < 0) tmpY = -tmpY

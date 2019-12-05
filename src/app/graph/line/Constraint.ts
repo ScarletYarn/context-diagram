@@ -19,6 +19,7 @@ class Constraint extends Line {
    * @param color
    */
   protected drawSkeleton(color: number): PIXI.Graphics {
+    console.log('constraint')
     let g = new PIXI.Graphics()
     g.lineStyle(2, color, 1)
     g.beginFill(color, 1)
@@ -38,18 +39,27 @@ class Constraint extends Line {
       )
     }
     // 利用到角公式算斜率，画箭头
-    let k1 = distanceY / distanceX
-    let k2 = -(k1 + 1) / (k1 - 1)
-    let k3 = (k1 - 1) / (k2 + 1)
+    let [x1, y1] = [this.start.x, this.start.y],
+      [x2, y2] = [this.end.x, this.end.y]
+    k = (y2 - y1) / (x2 - x1)
+    let k1 = -(k + 1) / (k - 1)
+    let b1 = y2 - k1 * x2
+    let k2 = (k - 1) / (k + 1)
+    let b2 = y2 - k2 * x2
+    distanceX = x1 - x2
+    distanceY = y1 - y2
     let distanceZ = Math.sqrt(distanceX * distanceX + distanceY * distanceY)
-    let sin = distanceY / distanceZ
     let cos = distanceX / distanceZ
-    let x1 = (Math.sqrt(2) * (sin + cos)) / 2
-    let x2 = (Math.sqrt(2) * (sin - cos)) / 2
+    let sin = distanceY / distanceZ
+    let x3 = x2 + ((Math.sqrt(2) * (cos - sin)) / 2) * 10
+    let y3 = x3 * k1 + b1
+    let x4 = x2 + ((Math.sqrt(2) * (cos + sin)) / 2) * 10
+    let y4 = x4 * k2 + b2
     g.moveTo(this.end.x, this.end.y)
-    g.lineTo(this.end.x + x1, this.start.y + k2 * x1)
+    g.lineTo(x3, y3)
     g.moveTo(this.end.x, this.end.y)
-    g.lineTo(this.end.x + x2, this.start.y + k3 * x2)
+    g.lineTo(x4, y4)
+
     g.endFill()
 
     return g
