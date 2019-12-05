@@ -59,16 +59,6 @@ class Machine extends Shape {
     return `${this.description}\n(${this.shortName})`
   }
 
-  public toString(): string {
-    return JSON.stringify({
-      x: this.x,
-      y: this.y,
-      description: this.description,
-      shortName: this.shortName,
-      baseIndex: this.baseIndex
-    })
-  }
-
   toSerializable(): Object {
     return {
       x: this.x,

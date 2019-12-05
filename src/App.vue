@@ -457,7 +457,7 @@ export default class App extends Vue {
         // @ts-ignore
         let r = JSON.parse(e.target.result)
         this.projectDescription = r.projectName
-        // this.canvas = Canvas.load(this, r)
+        this.canvas = Canvas.load(this, r)
       }
       fr.readAsText(files[0])
     }
@@ -467,11 +467,11 @@ export default class App extends Vue {
     let final = {
       projectName: this.projectDescription,
       machine: this.canvas.machine.toSerializable(),
-      domain: this.canvas.domainList.map(e => e.toSerializable()),
-      requirement: this.canvas.referenceList.map(e => e.toSerializable()),
-      interface: this.canvas.interfaceList.map(e => e.toSerializable()),
-      reference: this.canvas.referenceList.map(e => e.toSerializable()),
-      constraint: this.canvas.constraintList.map(e => e.toSerializable())
+      domainList: this.canvas.domainList.map(e => e.toSerializable()),
+      requirementList: this.canvas.referenceList.map(e => e.toSerializable()),
+      interfaceList: this.canvas.interfaceList.map(e => e.toSerializable()),
+      referenceList: this.canvas.referenceList.map(e => e.toSerializable()),
+      constraintList: this.canvas.constraintList.map(e => e.toSerializable())
     }
     let buffer = JSON.stringify(final)
     let downloadBlobURL = URL.createObjectURL(

@@ -62,8 +62,6 @@ abstract class Component {
 
   protected abstract getDisplayText(): string
 
-  public abstract toString(): string
-
   public abstract toSerializable(): Object
 }
 

@@ -82,18 +82,6 @@ export class Domain extends Shape {
     return this.y + this.height / 2 - this.textStyle.fontSize * 0.6
   }
 
-  public toString(): string {
-    return JSON.stringify({
-      x: this.x,
-      y: this.y,
-      description: this.description,
-      shortName: this.shortName,
-      baseIndex: this.baseIndex,
-      physicalProperty: this.physicalProperty,
-      domainType: this.domainType
-    })
-  }
-
   toSerializable(): Object {
     return {
       x: this.x,

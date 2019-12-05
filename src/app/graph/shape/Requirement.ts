@@ -49,15 +49,6 @@ class Requirement extends Shape {
     return this.y + this.height / 2 - this.textStyle.fontSize * 0.75
   }
 
-  public toString(): string {
-    return JSON.stringify({
-      x: this.x,
-      y: this.y,
-      description: this.description,
-      baseIndex: this.baseIndex
-    })
-  }
-
   toSerializable(): Object {
     return {
       x: this.x,

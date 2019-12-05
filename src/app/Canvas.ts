@@ -52,7 +52,8 @@ class Canvas {
   }
 
   public static load(vue: Vue, r: any): Canvas {
-    let c = new Canvas(vue)
+    console.log(r)
+    let c = (Canvas.instance = new Canvas(vue))
     let m = r.machine
     let machine = new Machine(
       c.app.stage,
@@ -64,66 +65,60 @@ class Canvas {
     )
     c.machine = machine
     c.componentsList.push(machine)
-    let d=r.domainList
-    let j=0
-    for (j=0;j<d.length;j++){
-      let domain=new Domain(
+    for (let item of r.domainList) {
+      let domain = new Domain(
         c.app.stage,
-        d.x,
-        d.y,
-        d.description,
-        d.shortName,
-        d.baseIndex,
-        d.physicalProperty,
-        d.domainType
+        item.x,
+        item.y,
+        item.description,
+        item.shortName,
+        item.baseIndex,
+        item.physicalProperty,
+        item.domainType
       )
       c.domainList.push(domain)
       c.componentsList.push(domain)
     }
-    let req=r.requirementList
-    for (j=0;j<req.length;j++){
-      let requirement=new Requirement(
+    for (let item of r.requirementList) {
+      let requirement = new Requirement(
         c.app.stage,
-        req.x,
-        req.y,
-        req.description,
-        req.baseIndex
+        item.x,
+        item.y,
+        item.description,
+        item.baseIndex
       )
       c.requirementList.push(requirement)
       c.componentsList.push(requirement)
     }
-    let inter=r.interfaceList
-    for (j=0;j<inter.length;j++){
-      let interfaceLine=new InterfaceLine(
+    for (let item of r.interfaceList) {
+      let interfaceLine = new InterfaceLine(
         c.app.stage,
-        inter.description,
-        inter.baseIndex,
-        inter.initiator,
-        inter.receiver
+        item.description,
+        item.baseIndex,
+        item.initiator,
+        item.receiver
       )
       c.interfaceList.push(interfaceLine)
       c.componentsList.push(interfaceLine)
     }
-    let ref=r.referenceList
-    for (j=0;j<ref.length;j++){
-      let reference=new Reference(
+    for (let item of r.referenceList) {
+      let reference = new Reference(
         c.app.stage,
-        ref.description,
-        ref.baseIndex,
-        ref.initiator,
-        ref.receiver
+        item.description,
+        item.baseIndex,
+        item.initiator,
+        item.receiver
       )
       c.referenceList.push(reference)
       c.componentsList.push(reference)
     }
-    let cons=r.constraintList
-    for (j=0;j<cons.length;j++){
-      let constraint=new Constraint(
+    for (let item of r.constraintList) {
+      let constraint = new Constraint(
         c.app.stage,
-        cons.description,
-        cons.baseIndex,
-        cons.initiator,
-        cons.receiver
+        item.description,
+        item.baseIndex,
+        item.initiator,
+        item.receiver
       )
       c.constraintList.push(constraint)
       c.componentsList.push(constraint)

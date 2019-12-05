@@ -46,15 +46,6 @@ class Reference extends Line {
     return this.description
   }
 
-  public toString(): string {
-    return JSON.stringify({
-      description: this.description,
-      baseIndex: this.baseIndex,
-      initiator: this.initiator,
-      receiver: this.receiver
-    })
-  }
-
   toSerializable(): Object {
     return {
       description: this.description,
