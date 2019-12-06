@@ -1,4 +1,3 @@
-import Component from '@/app/graph/Component'
 import * as PIXI from 'pixi.js'
 import Config from '@/app/util/Config'
 import Shape from '@/app/graph/shape/Shape'

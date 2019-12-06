@@ -2,78 +2,62 @@
   <v-dialog v-model="active" persistent max-width="600px">
     <v-card>
       <v-card-title>
-        <span class="headline">Interface Information</span>
+        <span class="headline">Reference Information</span>
       </v-card-title>
       <v-card-text>
         <v-container>
           <v-row>
+            <v-text-field label="description" v-model="description" required />
+          </v-row>
+          <v-row>
             <v-select
-              :items="[
-                {
-                  text: actors[0].description,
-                  value: actors[0]
-                },
-                {
-                  text: actors[1].description,
-                  value: actors[1]
-                }
-              ]"
+              :items="actorName"
               label="Initiator"
+              v-model="initiator"
               required
             />
           </v-row>
           <v-row>
             <v-select
-              :items="[
-                {
-                  text: actors[0].description,
-                  value: actors[0]
-                },
-                {
-                  text: actors[1].description,
-                  value: actors[1]
-                }
-              ]"
+              :items="actorName"
               label="Receiver"
+              v-model="receiver"
               required
             />
           </v-row>
           <v-row>
-            <v-select :items="[]" label="Phenomenon" required />
+            <v-menu absolute offset-y>
+              <template v-slot:activator="{ on }">
+                <v-text-field
+                  v-on="on"
+                  v-model="phenomenonNameEdit"
+                  label="Phenomenon"
+                />
+              </template>
+              <v-list>
+                <v-list-item-group>
+                  <v-list-item
+                    v-for="item in globalPhenomenonListName"
+                    :key="item.text"
+                    @click="selectPhenomenon(item.value)"
+                    >{{ item.text }}</v-list-item
+                  >
+                </v-list-item-group>
+              </v-list>
+            </v-menu>
           </v-row>
           <v-row>
-            <v-select
-              :items="[
-                {
-                  text: 'event',
-                  value: 0
-                },
-                {
-                  text: 'state',
-                  value: 1
-                },
-                {
-                  text: 'value',
-                  value: 2
-                }
-              ]"
-              label="Type"
-              v-model="type"
-              required
-            />
+            <v-select :items="lineType" label="Type" v-model="type" required />
           </v-row>
           <v-row>
-            <v-select :items="globalPhenomenonList" v-model="phenomenonEdit" />
+            <v-checkbox v-model="isConstraint" label="constraint" />
           </v-row>
           <v-row>
-            <v-checkbox v-model="constraint" :label="`constraint:`" />
-          </v-row>
-          <v-row>
-            <v-list disabled>
+            <v-list>
               <v-list-item-group v-model="phenomenonSelect">
                 <v-subheader>PhenomenonList</v-subheader>
-                <v-list-item v-for="item in phenomenonList" :key="item">{{
-                  `${initiator.description}:${item.name} ${item.type}`
+                <v-list-item v-for="item in phenomenonList" :key="item.name">{{
+                  `${reference.initiator.description}:${item.name} ${lineType[type].text}`
                 }}</v-list-item>
               </v-list-item-group>
             </v-list>
@@ -101,21 +85,75 @@ import { Phenomenon } from '@/app/graph/Phenomenon'
 export default class ReferenceEditor extends Vue {
   @Prop(Boolean) active!: boolean
   description: string = ''
+
   type: number = 0
-  initiator: Shape
-  phenomenonList: Array<Phenomenon>
+  lineType = [
+    {
+      text: 'event',
+      value: 0
+    },
+    {
+      text: 'state',
+      value: 1
+    },
+    {
+      text: 'value',
+      value: 2
+    }
+  ]
+
+  isConstraint: boolean = false
+
+  initiator: number = 0
+  receiver: number = 1
+  get actorName() {
+    return this.actors.map((e, index) => {
+      return {
+        text: e.description,
+        value: index
+      }
+    })
+  }
+  actors: Array<Shape> = []
+
   reference: Reference
-  actors: [Shape, Shape]
-  phenomenonEdit: string
-  globalPhenomenonList: Array<Phenomenon> = Phenomenon.PhenomenonList
-  phenomenonSelect: number
+
   constraint: boolean
 
+  phenomenonNameEdit: string = ''
+  phenomenonEdit: Phenomenon = null
+  globalPhenomenonList: Array<Phenomenon> = []
+  get globalPhenomenonListName() {
+    return this.globalPhenomenonList.map((e, index) => {
+      return {
+        text: e.name,
+        value: index
+      }
+    })
+  }
+
+  phenomenonSelect: number = 0
+  phenomenonList: Array<Phenomenon> = []
+
   submit() {
-    this.reference.description = this.description
-    this.reference.initiator = this.initiator
-    this.reference.phenomenonList = this.phenomenonList
-    // this.reference.type = this.type
+    if (this.initiator !== this.receiver) {
+      this.reference.setInformation(
+        this.description,
+        this.actors[this.initiator],
+        this.actors[this.receiver],
+        this.type,
+        this.phenomenonList,
+        this.isConstraint
+      )
+    }
+    this.reference.setInformation(
+      this.description,
+      null,
+      null,
+      this.type,
+      this.phenomenonList,
+      this.isConstraint
+    )
     this.$emit('end-edit-reference')
   }
 
@@ -127,18 +165,38 @@ export default class ReferenceEditor extends Vue {
     this.reference = reference
     this.description = reference.description
     this.phenomenonList = reference.phenomenonList
-    this.constraint = false
-    this.actors = [reference.initiator, reference.receiver]
+    this.type = reference.lineType
+    this.actors = [this.reference.initiator, this.reference.receiver]
+    this.initiator = 0
+    this.receiver = 1
+    this.globalPhenomenonList = Phenomenon.PhenomenonList
+    this.phenomenonNameEdit = ''
+    this.phenomenonSelect = 0
+    this.isConstraint = reference.isConstraint
   }
 
   add(): void {
-    let p = new Phenomenon(this.phenomenonEdit, this.type)
-    this.reference.phenomenonList.push(p)
-    Phenomenon.PhenomenonList.push(p)
+    if (
+      this.phenomenonEdit &&
+      this.phenomenonNameEdit === this.phenomenonEdit.name
+    ) {
+      for (let item of this.reference.phenomenonList) {
+        if (item === this.phenomenonEdit) return
+      }
+      this.reference.phenomenonList.push(this.phenomenonEdit)
+    } else {
+      let p = new Phenomenon(this.phenomenonNameEdit)
+      this.reference.phenomenonList.push(p)
+    }
   }
 
   del(): void {
     this.reference.phenomenonList.splice(this.phenomenonSelect, 1)
+  }
+
+  selectPhenomenon(index): void {
+    this.phenomenonEdit = this.globalPhenomenonList[index]
+    this.phenomenonNameEdit = this.globalPhenomenonList[index].name
   }
 }
 </script>

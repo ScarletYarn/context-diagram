@@ -2,7 +2,7 @@ import Component from '@/app/graph/Component'
 import Config from '@/app/util/Config'
 import * as PIXI from 'pixi.js'
 import Point from '@/app/util/Point'
-import Line from '@/app/graph/line/Line'
+import { Line } from '@/app/graph/line/Line'
 const config = new Config()
 
 abstract class Shape extends Component {

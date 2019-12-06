@@ -1,16 +1,38 @@
-import Line from '@/app/graph/line/Line'
 import * as PIXI from 'pixi.js'
 import Shape from '@/app/graph/shape/Shape'
+import { Line, LineType } from '@/app/graph/line/Line'
+import { Phenomenon } from '@/app/graph/Phenomenon'
 
 class Reference extends Line {
+  public isConstraint: boolean
   constructor(
     stage: PIXI.Container,
     description: string,
     baseIndex: number,
     initiator: Shape,
-    receiver: Shape | null = null
+    receiver: Shape | null = null,
+    isConstraint: boolean = false
   ) {
     super(stage, description, baseIndex, initiator, receiver)
+    this.isConstraint = isConstraint
+  }
+
+  public setInformation(
+    description?: string,
+    initiator?: Shape,
+    receiver?: Shape,
+    lineType?: LineType,
+    phenomenonList?: Array<Phenomenon>,
+    isConstraint?: boolean
+  ): void {
+    if (isConstraint) this.isConstraint = isConstraint
+    super.setInformation(
+      description,
+      initiator,
+      receiver,
+      lineType,
+      phenomenonList
+    )
   }
 
   /**
@@ -43,15 +65,6 @@ class Reference extends Line {
 
   protected getDisplayText(): string {
     return this.description
-  }
-
-  toSerializable(): Object {
-    return {
-      description: this.description,
-      baseIndex: this.baseIndex,
-      initiator: this.initiator.description,
-      receiver: this.receiver.description,
-    }
   }
 }
 

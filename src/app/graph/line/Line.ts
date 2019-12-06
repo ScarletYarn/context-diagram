@@ -5,12 +5,18 @@ import { Phenomenon } from '@/app/graph/Phenomenon'
 import Point from '@/app/util/Point'
 import Config from '@/app/util/Config'
 import Requirement from '@/app/graph/shape/Requirement'
-import { DomainType, PhysicalProperty } from '@/app/graph/shape/Domain'
 const config = new Config()
 
-abstract class Line extends Component {
+export enum LineType {
+  Event,
+  State,
+  Value
+}
+
+export abstract class Line extends Component {
   public initiator: Shape
   public receiver: Shape | null
+  public lineType: LineType
 
   public phenomenonList: Array<Phenomenon>
 
@@ -24,12 +30,14 @@ abstract class Line extends Component {
     description: string,
     baseIndex: number,
     initiator: Shape,
-    receiver: Shape | null = null
+    receiver: Shape | null = null,
+    lineType: LineType | null = LineType.Event
   ) {
     super(stage, description, baseIndex)
     this.initiator = initiator
     this.receiver = receiver
     this.phenomenonList = []
+    this.lineType = lineType
 
     this.start = { x: -1, y: -1 }
     this.end = { x: 0, y: 0 }
@@ -71,13 +79,19 @@ abstract class Line extends Component {
   }
 
   public setInformation(
-    description: string,
-    domainType: DomainType,
-    physicalProperty: PhysicalProperty
+    description?: string,
+    initiator?: Shape,
+    receiver?: Shape,
+    lineType?: LineType,
+    phenomenonList?: Array<Phenomenon>,
+    isConstraint?: boolean
   ): void {
-    this.description = description
-    this.domainType = domainType
-    this.physicalProperty = physicalProperty
+    if (description) this.description = description
+    if (initiator) this.initiator = initiator
+    if (receiver) this.receiver = receiver
+    if (lineType) this.lineType = lineType
+    else this.lineType = LineType.Event
+    if (phenomenonList) this.phenomenonList = [...phenomenonList]
     this.repaint()
     if (this.active) {
       this.spriteGroup[1].visible = false
@@ -105,6 +119,17 @@ abstract class Line extends Component {
     for (let item of this.spriteGroup) {
       this.container.addChild(item)
     }
+  }
+
+  protected repaint(): void {
+    if (this.attached) {
+      this.start = this.getIntersectionPoint(
+        this.initiator,
+        this.receiver.center
+      )
+      this.end = this.getIntersectionPoint(this.receiver, this.initiator.center)
+    }
+    super.repaint()
   }
 
   public selfContain(p: Point): boolean {
@@ -171,7 +196,15 @@ abstract class Line extends Component {
     return { x: tmpX, y: tmpY }
   }
 
+  toSerializable(): Object {
+    return {
+      description: this.description,
+      baseIndex: this.baseIndex,
+      initiator: this.initiator.description,
+      receiver: this.receiver.description,
+      lintType: this.lineType
+    }
+  }
+
   protected abstract drawSkeleton(color: number): PIXI.Graphics
 }
-
-export default Line

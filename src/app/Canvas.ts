@@ -7,10 +7,10 @@ import Config from '@/app/util/Config'
 import { Domain } from '@/app/graph/shape/Domain'
 import Shape from '@/app/graph/shape/Shape'
 import Requirement from '@/app/graph/shape/Requirement'
-import Line from '@/app/graph/line/Line'
 import { InterfaceLine } from '@/app/graph/line/InterfaceLine'
 import Reference from '@/app/graph/line/Reference'
 import Constraint from '@/app/graph/line/Constraint'
+import { Line } from '@/app/graph/line/Line'
 
 const config = new Config()
 
@@ -283,7 +283,7 @@ class Canvas {
           case 4:
             this.drawingLine = new Reference(
               this.app.stage,
-              config.defaultInterfaceName + (this.referenceList.length + 1),
+              config.defaultReferenceName + (this.referenceList.length + 1),
               (this.componentsList.length + 1) * 10,
               comp
             )
@@ -291,7 +291,7 @@ class Canvas {
           case 5:
             this.drawingLine = new Constraint(
               this.app.stage,
-              config.defaultInterfaceName + (this.constraintList.length + 1),
+              config.defaultConstraintName + (this.constraintList.length + 1),
               (this.componentsList.length + 1) * 10,
               comp
             )

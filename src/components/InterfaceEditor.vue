@@ -18,9 +18,21 @@
             />
           </v-row>
           <v-row>
+            <v-select
+              :items="actorName"
+              label="Receiver"
+              v-model="receiver"
+              required
+            />
+          </v-row>
+          <v-row>
             <v-menu absolute offset-y>
               <template v-slot:activator="{ on }">
-                <v-text-field v-model="phenomenonNameEdit" label="Phenomenon" />
+                <v-text-field
+                  v-on="on"
+                  v-model="phenomenonNameEdit"
+                  label="Phenomenon"
+                />
               </template>
               <v-list>
                 <v-list-item-group>
@@ -28,39 +40,21 @@
                     v-for="item in globalPhenomenonListName"
                     :key="item.text"
                     @click="selectPhenomenon(item.value)"
-                    >{{ item.name }}</v-list-item
+                    >{{ item.text }}</v-list-item
                   >
                 </v-list-item-group>
               </v-list>
             </v-menu>
           </v-row>
           <v-row>
-            <v-select
-              :items="[
-                {
-                  text: 'event',
-                  value: 0
-                },
-                {
-                  text: 'state',
-                  value: 1
-                },
-                {
-                  text: 'value',
-                  value: 2
-                }
-              ]"
-              label="Type"
-              v-model="type"
-              required
-            />
+            <v-select :items="lineType" label="Type" v-model="type" required />
           </v-row>
           <v-row>
             <v-list>
               <v-list-item-group v-model="phenomenonSelect">
                 <v-subheader>PhenomenonList</v-subheader>
-                <v-list-item v-for="item in phenomenonList" :key="item">{{
-                  `${interfaceLine.initiator.description}:${item.name} ${item.type}`
+                <v-list-item v-for="item in phenomenonList" :key="item.name">{{
+                  `${interfaceLine.initiator.description}:${item.name} ${lineType[type].text}`
                 }}</v-list-item>
               </v-list-item-group>
             </v-list>
@@ -87,11 +81,28 @@ import { Phenomenon } from '@/app/graph/Phenomenon'
 @Component({})
 export default class InterfaceEditor extends Vue {
   @Prop(Boolean) active!: boolean
+
+  lineType = [
+    {
+      text: 'event',
+      value: 0
+    },
+    {
+      text: 'state',
+      value: 1
+    },
+    {
+      text: 'value',
+      value: 2
+    }
+  ]
+
   interfaceLine: InterfaceLine = null
 
   description: string = ''
 
   initiator: number = 0
+  receiver: number = 1
   get actorName() {
     return this.actors.map((e, index) => {
       return {
@@ -120,10 +131,22 @@ export default class InterfaceEditor extends Vue {
   phenomenonList: Array<Phenomenon> = []
 
   submit() {
-    this.interfaceLine.description = this.description
-    this.interfaceLine.initiator = this.actors[this.initiator]
-    this.interfaceLine.phenomenonList = this.phenomenonList
-    this.interfaceLine.type = this.type
+    if (this.initiator !== this.receiver) {
+      this.interfaceLine.setInformation(
+        this.description,
+        this.actors[this.initiator],
+        this.actors[this.receiver],
+        this.type,
+        this.phenomenonList
+      )
+    }
+    this.interfaceLine.setInformation(
+      this.description,
+      null,
+      null,
+      this.type,
+      this.phenomenonList
+    )
     this.$emit('end-edit-interface')
   }
 
@@ -135,9 +158,10 @@ export default class InterfaceEditor extends Vue {
     this.interfaceLine = interfaceLine
     this.description = interfaceLine.description
     this.phenomenonList = interfaceLine.phenomenonList
-    this.type = interfaceLine.type
+    this.type = interfaceLine.lineType
     this.actors = [this.interfaceLine.initiator, this.interfaceLine.receiver]
     this.initiator = 0
+    this.receiver = 1
     this.globalPhenomenonList = Phenomenon.PhenomenonList
     this.phenomenonNameEdit = ''
     this.phenomenonSelect = 0
@@ -148,11 +172,13 @@ export default class InterfaceEditor extends Vue {
       this.phenomenonEdit &&
       this.phenomenonNameEdit === this.phenomenonEdit.name
     ) {
+      for (let item of this.interfaceLine.phenomenonList) {
+        if (item === this.phenomenonEdit) return
+      }
       this.interfaceLine.phenomenonList.push(this.phenomenonEdit)
     } else {
-      let p = new Phenomenon(this.phenomenonNameEdit, this.type)
+      let p = new Phenomenon(this.phenomenonNameEdit)
       this.interfaceLine.phenomenonList.push(p)
-      Phenomenon.PhenomenonList.push(p)
     }
   }
 
@@ -161,7 +187,8 @@ export default class InterfaceEditor extends Vue {
   }
 
   selectPhenomenon(index): void {
-    this.phenomenonEdit = this.phenomenonList[index]
+    this.phenomenonEdit = this.globalPhenomenonList[index]
+    this.phenomenonNameEdit = this.globalPhenomenonList[index].name
   }
 }
 </script>

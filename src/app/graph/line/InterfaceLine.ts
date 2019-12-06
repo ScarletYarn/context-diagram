@@ -1,15 +1,8 @@
-import Line from '@/app/graph/line/Line'
 import * as PIXI from 'pixi.js'
 import Shape from '@/app/graph/shape/Shape'
-
-export enum InterfaceType {
-  Event,
-  State,
-  Value
-}
+import { Line } from '@/app/graph/line/Line'
 
 export class InterfaceLine extends Line {
-  public type: InterfaceType
   constructor(
     stage: PIXI.Container,
     description: string,
@@ -18,7 +11,6 @@ export class InterfaceLine extends Line {
     receiver: Shape | null = null
   ) {
     super(stage, description, baseIndex, initiator, receiver)
-    this.type = InterfaceType.Event
   }
 
   protected drawSkeleton(color: number): PIXI.Graphics {
@@ -34,15 +26,5 @@ export class InterfaceLine extends Line {
 
   protected getDisplayText(): string {
     return this.description
-  }
-
-  toSerializable(): Object {
-    return {
-      description: this.description,
-      baseIndex: this.baseIndex,
-      initiator: this.initiator.description,
-      receiver: this.receiver.description,
-      type: this.type
-    }
   }
 }

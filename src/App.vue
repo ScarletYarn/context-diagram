@@ -265,7 +265,6 @@ import Procedure from '@/app/Procedure'
     this.$on('editReference', this.editReference)
     this.$on('editConstraint', this.editConstraint)
     this.$on('giveWarn', this.giveWarn)
-    this.$on('flushAllow', this.flushAllow)
   }
 })
 export default class App extends Vue {
@@ -276,32 +275,32 @@ export default class App extends Vue {
     {
       name: 'machine',
       src: require('@/assets/machine.svg'),
-      allow: true
+      allow: false
     },
     {
       name: 'domain',
       src: require('@/assets/problem-domain.svg'),
-      allow: true
+      allow: false
     },
     {
       name: 'requirement',
       src: require('@/assets/requirement.svg'),
-      allow: true
+      allow: false
     },
     {
       name: 'interface',
       src: require('@/assets/interface.svg'),
-      allow: true
+      allow: false
     },
     {
       name: 'reference',
       src: require('@/assets/reference.svg'),
-      allow: true
+      allow: false
     },
     {
       name: 'constraint',
       src: require('@/assets/constraint.svg'),
-      allow: true
+      allow: false
     }
   ]
   tmp: any = 2
@@ -330,22 +329,20 @@ export default class App extends Vue {
   editingConstraint: Constraint | undefined
 
   back(): void {
-    if (this.subStep > 1) {
-      this.subStep--
-    } else if (this.activeStep === 2) {
-      this.activeStep = 1
-      this.subStep = 4
-    }
+    let obj = this.procedure.previous()
+    this.activeStep = obj.step
+    this.subStep = obj.subStep
+    this.flushAllow()
   }
 
   next(): void {
-    if (this.subStep < 3) {
-      this.subStep++
-    } else if (this.activeStep === 1 && this.subStep === 4) {
-      this.activeStep = 2
-      this.subStep = 1
-    } else if (this.activeStep === 1) {
-      this.subStep++
+    let obj = this.procedure.next()
+    if (obj.err) {
+      alert(obj.err)
+    } else {
+      this.activeStep = obj.step
+      this.subStep = obj.subStep
+      this.flushAllow()
     }
   }
 
@@ -449,10 +446,12 @@ export default class App extends Vue {
     alert(message)
   }
 
-  flushAllow(allow: Array<boolean>): void {
-    allow.forEach((item, index) => {
-      this.pens[index].allow = item
-    })
+  flushAllow(): void {
+    this.procedure
+      .getAllow(this.activeStep, this.subStep)
+      .forEach((item, index) => {
+        this.pens[index].allow = item
+      })
   }
 
   upload() {
@@ -509,6 +508,7 @@ export default class App extends Vue {
     Canvas.init(this)
     this.canvas = new Canvas()
     this.newDialog = false
+    this.procedure = new Procedure(this.canvas)
   }
 }
 </script>
