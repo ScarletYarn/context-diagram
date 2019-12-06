@@ -19,7 +19,6 @@ class Constraint extends Line {
    * @param color
    */
   protected drawSkeleton(color: number): PIXI.Graphics {
-    console.log('constraint')
     let g = new PIXI.Graphics()
     g.lineStyle(2, color, 1)
     g.beginFill(color, 1)

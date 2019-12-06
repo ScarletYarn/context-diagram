@@ -33,10 +33,10 @@ abstract class Line extends Component {
     this.start = { x: -1, y: -1 }
     this.end = { x: 0, y: 0 }
 
-    this.attached = false
-    if(receiver){
-      this.attached=true
-    }
+    if (receiver) {
+      this.attach(receiver)
+      this.paint()
+    } else this.attached = false
   }
 
   public lengthen(p: Point): void {

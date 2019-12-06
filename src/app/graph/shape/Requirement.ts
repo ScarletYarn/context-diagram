@@ -1,6 +1,7 @@
 import Shape from '@/app/graph/shape/Shape'
 import * as PIXI from 'pixi.js'
 import Config from '@/app/util/Config'
+import { CanvasRenderer } from '@pixi/canvas-renderer'
 const config = new Config()
 
 class Requirement extends Shape {
@@ -17,6 +18,17 @@ class Requirement extends Shape {
 
   protected drawBorder(color: number, textWidth: number): PIXI.Graphics {
     this.width = textWidth + 4 * this.interval
+    let r = new CanvasRenderer({ resolution: window.devicePixelRatio })
+    r.view.style.width = this.width + 'px'
+    r.view.style.height = this.height + 'px'
+    r.context.setLineDash([10, 10])
+    r.context.drawEllipse(
+      this.width / 2,
+      this.height / 2,
+      this.width / 2,
+      this.height / 2
+    )
+    console.log(r)
     let g = new PIXI.Graphics()
     g.lineStyle(2, color, 1)
     g.beginFill(config.requirementColor, 1)

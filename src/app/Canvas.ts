@@ -90,16 +90,14 @@ class Canvas {
       c.componentsList.push(requirement)
     }
     for (let item of r.interfaceList) {
-      for (let it of c.componentsList){
-        if (it.description===item.initiator){
-          item.initiator=it
+      for (let it of c.componentsList) {
+        if (it.description === item.initiator) {
+          item.initiator = it
         }
       }
-      console.log("!!!!!!!!!!!!!!!")
-      console.log(item.initiator)
-      for (let it of c.componentsList){
-        if (it.description===item.receiver){
-          item.receiver=it
+      for (let it of c.componentsList) {
+        if (it.description === item.receiver) {
+          item.receiver = it
         }
       }
       let interfaceLine = new InterfaceLine(
@@ -113,14 +111,14 @@ class Canvas {
       c.componentsList.push(interfaceLine)
     }
     for (let item of r.referenceList) {
-      for (let it of c.componentsList){
-        if (it.description===item.initiator){
-          item.initiator=it
+      for (let it of c.componentsList) {
+        if (it.description === item.initiator) {
+          item.initiator = it
         }
       }
-      for (let it of c.componentsList){
-        if (it.description===item.receiver){
-          item.receiver=it
+      for (let it of c.componentsList) {
+        if (it.description === item.receiver) {
+          item.receiver = it
         }
       }
       let reference = new Reference(
@@ -134,14 +132,14 @@ class Canvas {
       c.componentsList.push(reference)
     }
     for (let item of r.constraintList) {
-      for (let it of c.componentsList){
-        if (it.description===item.initiator){
-          item.initiator=it
+      for (let it of c.componentsList) {
+        if (it.description === item.initiator) {
+          item.initiator = it
         }
       }
-      for (let it of c.componentsList){
-        if (it.description===item.receiver){
-          item.receiver=it
+      for (let it of c.componentsList) {
+        if (it.description === item.receiver) {
+          item.receiver = it
         }
       }
       let constraint = new Constraint(
