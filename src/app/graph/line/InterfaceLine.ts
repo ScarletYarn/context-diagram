@@ -41,7 +41,8 @@ export class InterfaceLine extends Line {
       description: this.description,
       baseIndex: this.baseIndex,
       initiator: this.initiator.description,
-      receiver: this.receiver.description
+      receiver: this.receiver.description,
+      type: this.type
     }
   }
 }

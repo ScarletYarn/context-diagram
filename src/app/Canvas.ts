@@ -93,11 +93,13 @@ class Canvas {
       for (let it of c.componentsList) {
         if (it.description === item.initiator) {
           item.initiator = it
+          item.initiator.attachedLines.push(item)
         }
       }
       for (let it of c.componentsList) {
         if (it.description === item.receiver) {
           item.receiver = it
+          item.receiver.attachedLines.push(item)
         }
       }
       let interfaceLine = new InterfaceLine(
@@ -114,11 +116,13 @@ class Canvas {
       for (let it of c.componentsList) {
         if (it.description === item.initiator) {
           item.initiator = it
+          item.initiator.attachedLines.push(item)
         }
       }
       for (let it of c.componentsList) {
         if (it.description === item.receiver) {
           item.receiver = it
+          item.receiver.attachedLines.push(item)
         }
       }
       let reference = new Reference(
@@ -135,11 +139,13 @@ class Canvas {
       for (let it of c.componentsList) {
         if (it.description === item.initiator) {
           item.initiator = it
+          item.initiator.attachedLines.push(item)
         }
       }
       for (let it of c.componentsList) {
         if (it.description === item.receiver) {
           item.receiver = it
+          item.receiver.attachedLines.push(item)
         }
       }
       let constraint = new Constraint(
