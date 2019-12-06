@@ -74,7 +74,10 @@ abstract class Shape extends Component {
     }
   }
 
-  protected abstract drawBorder(color: number, textWidth: number): PIXI.Graphics
+  protected abstract drawBorder(
+    color: number,
+    textWidth: number
+  ): PIXI.Graphics | PIXI.Sprite
 
   protected abstract getTextIndent(): number
 

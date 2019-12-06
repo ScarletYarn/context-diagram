@@ -5,6 +5,7 @@ import { Phenomenon } from '@/app/graph/Phenomenon'
 import Point from '@/app/util/Point'
 import Config from '@/app/util/Config'
 import Requirement from '@/app/graph/shape/Requirement'
+import { DomainType, PhysicalProperty } from '@/app/graph/shape/Domain'
 const config = new Config()
 
 abstract class Line extends Component {
@@ -69,18 +70,38 @@ abstract class Line extends Component {
     this.repaint()
   }
 
+  public setInformation(
+    description: string,
+    domainType: DomainType,
+    physicalProperty: PhysicalProperty
+  ): void {
+    this.description = description
+    this.domainType = domainType
+    this.physicalProperty = physicalProperty
+    this.repaint()
+    if (this.active) {
+      this.spriteGroup[1].visible = false
+      this.spriteGroup[2].visible = true
+    }
+  }
+
   protected paint(): void {
     let text = new PIXI.Text(this.getDisplayText(), this.textStyle)
-    text.x = (this.start.x + this.end.x) / 2
-    text.y = (this.start.y + this.end.y) / 2
-    text.zIndex = this.baseIndex + 1
+    text.x = (this.start.x + this.end.x) / 2 - text.width / 2
+    text.y = (this.start.y + this.end.y) / 2 - text.height / 2
+    text.zIndex = this.baseIndex + 2
+    let textBG = new PIXI.Graphics()
+    textBG.beginFill(0xffffff, 1)
+    textBG.drawRect(text.x, text.y, text.width, text.height)
+    textBG.endFill()
+    textBG.zIndex = this.baseIndex + 1
 
     let gd = this.drawSkeleton(config.strokeColor)
     let ga = this.drawSkeleton(config.activeStrokeColor)
     ga.visible = false
     gd.zIndex = ga.zIndex = this.baseIndex
 
-    this.spriteGroup = [text, gd, ga]
+    this.spriteGroup = [text, gd, ga, textBG]
     for (let item of this.spriteGroup) {
       this.container.addChild(item)
     }

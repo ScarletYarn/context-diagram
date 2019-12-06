@@ -40,6 +40,13 @@ class Config {
     if (Config.instance) return Config.instance
     Config.instance = this
   }
+
+  public hexToRGB(color: number): string {
+    let red = Math.floor(color / 0x010000)
+    let green = Math.floor((color % 0x010000) / 0x0100)
+    let blue = color % 0x000100
+    return `rgb(${red}, ${green}, ${blue})`
+  }
 }
 
 export default Config

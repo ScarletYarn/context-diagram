@@ -1,7 +1,6 @@
 import Shape from '@/app/graph/shape/Shape'
 import * as PIXI from 'pixi.js'
 import Config from '@/app/util/Config'
-import { CanvasRenderer } from '@pixi/canvas-renderer'
 const config = new Config()
 
 class Requirement extends Shape {
@@ -16,28 +15,53 @@ class Requirement extends Shape {
     this.paint()
   }
 
-  protected drawBorder(color: number, textWidth: number): PIXI.Graphics {
+  protected drawBorder(color: number, textWidth: number): PIXI.Sprite {
     this.width = textWidth + 4 * this.interval
-    let r = new CanvasRenderer({ resolution: window.devicePixelRatio })
-    r.view.style.width = this.width + 'px'
-    r.view.style.height = this.height + 'px'
-    r.context.setLineDash([10, 10])
-    r.context.drawEllipse(
+    let margin = 2
+    let lineWidth = 2
+    let canvas = document.createElement('canvas')
+    canvas.width = window.devicePixelRatio * (this.width + margin)
+    canvas.height = window.devicePixelRatio * (this.height + margin)
+    canvas.style.width = this.width + margin + 'px'
+    canvas.style.height = this.height + margin + 'px'
+    let ctx = canvas.getContext('2d')
+    ctx.scale(window.devicePixelRatio, window.devicePixelRatio)
+    ctx.lineWidth = lineWidth
+    ctx.strokeStyle = config.hexToRGB(color)
+    ctx.setLineDash([5, 5])
+    ctx.beginPath()
+    ctx.ellipse(
+      this.width / 2 + margin / 2,
+      this.height / 2 + margin / 2,
       this.width / 2,
       this.height / 2,
-      this.width / 2,
-      this.height / 2
+      0,
+      0,
+      360
     )
-    console.log(r)
-    let g = new PIXI.Graphics()
-    g.lineStyle(2, color, 1)
-    g.beginFill(config.requirementColor, 1)
-    g.drawEllipse(0, 0, this.width / 2, this.height / 2)
-    g.endFill()
-    g.x = this.x + this.width / 2
-    g.y = this.y + this.height / 2
+    ctx.stroke()
+    ctx.closePath()
+    ctx.beginPath()
+    ctx.fillStyle = config.hexToRGB(config.requirementColor)
+    ctx.ellipse(
+      this.width / 2 + margin / 2,
+      this.height / 2 + margin / 2,
+      this.width / 2 - lineWidth / 2,
+      this.height / 2 - lineWidth / 2,
+      0,
+      0,
+      360
+    )
+    ctx.fill()
+    ctx.closePath()
+    let url = canvas.toDataURL()
+    let s = PIXI.Sprite.from(url)
+    s.x = this.x
+    s.y = this.y
+    s.width = this.width
+    s.height = this.height
 
-    return g
+    return s
   }
 
   public setInformation(description: string): void {
