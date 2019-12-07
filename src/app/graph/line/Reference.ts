@@ -66,6 +66,17 @@ class Reference extends Line {
   protected getDisplayText(): string {
     return this.description
   }
+
+  toSerializable(): Object {
+    return {
+      description: this.description,
+      baseIndex: this.baseIndex,
+      initiator: this.initiator.description,
+      receiver: this.receiver.description,
+      isConstraint: this.isConstraint,
+      phenomenonList: this.phenomenonList
+    }
+  }
 }
 
 export default Reference

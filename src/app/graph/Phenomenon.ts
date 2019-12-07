@@ -12,4 +12,5 @@ export class Phenomenon {
     this.name = name
     Phenomenon.PhenomenonList.push(this)
   }
+
 }

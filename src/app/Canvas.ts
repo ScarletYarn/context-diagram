@@ -109,6 +109,10 @@ class Canvas {
         item.initiator,
         item.receiver
       )
+      for (let itt of item.phenomenonList){
+        interfaceLine.phenomenonList.push(itt)
+        console.log(itt)
+      }
       c.interfaceList.push(interfaceLine)
       c.componentsList.push(interfaceLine)
     }
@@ -130,8 +134,13 @@ class Canvas {
         item.description,
         item.baseIndex,
         item.initiator,
-        item.receiver
+        item.receiver,
+        item.isConstraint
       )
+      for (let itt of item.phenomenonList){
+        reference.phenomenonList.push(itt)
+        console.log(itt)
+      }
       c.referenceList.push(reference)
       c.componentsList.push(reference)
     }
@@ -153,8 +162,13 @@ class Canvas {
         item.description,
         item.baseIndex,
         item.initiator,
-        item.receiver
+        item.receiver,
+        item.isConstraint
       )
+      for (let itt of item.phenomenonList){
+        constraint.phenomenonList.push(itt)
+        console.log(itt)
+      }
       c.constraintList.push(constraint)
       c.componentsList.push(constraint)
     }
