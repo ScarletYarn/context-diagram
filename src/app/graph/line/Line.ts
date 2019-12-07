@@ -44,7 +44,7 @@ export abstract class Line extends Component {
 
     if (receiver) {
       this.attach(receiver)
-      this.paint()
+      this.repaint()
     } else this.attached = false
   }
 

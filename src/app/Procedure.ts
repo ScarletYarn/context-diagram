@@ -5,9 +5,11 @@ class Procedure {
   private subStep: number
   private canvas: Canvas
 
-  constructor(canvas: Canvas) {
-    this.step = 1
-    this.subStep = 1
+  constructor(canvas: Canvas, step?: number, subStep?: number) {
+    if (step) this.step = step
+    else this.step = 1
+    if (subStep) this.subStep = subStep
+    else this.subStep = 1
     this.canvas = canvas
   }
 

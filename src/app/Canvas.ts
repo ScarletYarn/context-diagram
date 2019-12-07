@@ -11,6 +11,7 @@ import { InterfaceLine } from '@/app/graph/line/InterfaceLine'
 import Reference from '@/app/graph/line/Reference'
 import Constraint from '@/app/graph/line/Constraint'
 import { Line } from '@/app/graph/line/Line'
+import { Phenomenon } from '@/app/graph/Phenomenon'
 
 const config = new Config()
 
@@ -28,7 +29,7 @@ class Canvas {
   private lastDeltaY = 0
 
   // It should never be set in this class, for it's to be set in Vue instance
-  public activePen: number = 0
+  public activePen: number = -1
   public _Vue: Vue = null
 
   private readonly componentsList: Array<Component> = []
@@ -90,89 +91,68 @@ class Canvas {
       c.componentsList.push(requirement)
     }
     for (let item of r.interfaceList) {
-      for (let it of c.componentsList) {
-        if (it.description === item.initiator) {
-          item.initiator = it
-          item.initiator.attachedLines.push(item)
-        }
-      }
-      for (let it of c.componentsList) {
-        if (it.description === item.receiver) {
-          item.receiver = it
-          item.receiver.attachedLines.push(item)
-        }
-      }
+      let initiator = c.findShape(item.initiator)
+      let receiver = c.findShape(item.receiver)
       let interfaceLine = new InterfaceLine(
         c.app.stage,
         item.description,
         item.baseIndex,
-        item.initiator,
-        item.receiver
+        initiator,
+        receiver
       )
-      for (let itt of item.phenomenonList){
-        interfaceLine.phenomenonList.push(itt)
-        console.log(itt)
+      initiator.attachedLines.push(interfaceLine)
+      receiver.attachedLines.push(interfaceLine)
+      for (let itt of item.phenomenonList) {
+        interfaceLine.phenomenonList.push(Phenomenon.getPhenomenon(itt.name))
       }
       c.interfaceList.push(interfaceLine)
       c.componentsList.push(interfaceLine)
     }
     for (let item of r.referenceList) {
-      for (let it of c.componentsList) {
-        if (it.description === item.initiator) {
-          item.initiator = it
-          item.initiator.attachedLines.push(item)
-        }
-      }
-      for (let it of c.componentsList) {
-        if (it.description === item.receiver) {
-          item.receiver = it
-          item.receiver.attachedLines.push(item)
-        }
-      }
+      let initiator = c.findShape(item.initiator)
+      let receiver = c.findShape(item.receiver)
       let reference = new Reference(
         c.app.stage,
         item.description,
         item.baseIndex,
-        item.initiator,
-        item.receiver,
+        initiator,
+        receiver,
         item.isConstraint
       )
-      for (let itt of item.phenomenonList){
-        reference.phenomenonList.push(itt)
-        console.log(itt)
+      initiator.attachedLines.push(reference)
+      receiver.attachedLines.push(reference)
+      for (let itt of item.phenomenonList) {
+        reference.phenomenonList.push(Phenomenon.getPhenomenon(itt.name))
       }
       c.referenceList.push(reference)
       c.componentsList.push(reference)
     }
     for (let item of r.constraintList) {
-      for (let it of c.componentsList) {
-        if (it.description === item.initiator) {
-          item.initiator = it
-          item.initiator.attachedLines.push(item)
-        }
-      }
-      for (let it of c.componentsList) {
-        if (it.description === item.receiver) {
-          item.receiver = it
-          item.receiver.attachedLines.push(item)
-        }
-      }
+      let initiator = c.findShape(item.initiator)
+      let receiver = c.findShape(item.receiver)
       let constraint = new Constraint(
         c.app.stage,
         item.description,
         item.baseIndex,
-        item.initiator,
-        item.receiver,
+        initiator,
+        receiver,
         item.isConstraint
       )
-      for (let itt of item.phenomenonList){
-        constraint.phenomenonList.push(itt)
-        console.log(itt)
+      initiator.attachedLines.push(constraint)
+      receiver.attachedLines.push(constraint)
+      for (let itt of item.phenomenonList) {
+        constraint.phenomenonList.push(Phenomenon.getPhenomenon(itt.name))
       }
       c.constraintList.push(constraint)
       c.componentsList.push(constraint)
     }
     return c
+  }
+
+  public findShape(description: string): Shape {
+    for (let item of this.componentsList) {
+      if (item.description === description && item instanceof Shape) return item
+    }
   }
 
   public exportImage(): void {

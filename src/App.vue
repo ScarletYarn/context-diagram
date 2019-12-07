@@ -271,6 +271,10 @@ import { Phenomenon } from '@/app/graph/Phenomenon'
 export default class App extends Vue {
   newDialog: boolean = false
   projectDescription: string = ''
+  get projectName(): string {
+    if (this.projectDescription.length > 0) return this.projectDescription
+    else return 'Default'
+  }
   drawerRight: boolean = true
   pens = [
     {
@@ -307,7 +311,7 @@ export default class App extends Vue {
   tmp: any = 2
   activeStep: number = 1
   subStep: number = 1
-  activePen: number = 0
+  activePen: number = -1
   canvas: Canvas | null = null
   procedure: Procedure | null = null
 
@@ -347,7 +351,6 @@ export default class App extends Vue {
       if (obj.success.length > 0) alert(obj.success)
       this.flushAllow()
     }
-
   }
 
   editMachine(machine: Machine): void {
@@ -461,9 +464,6 @@ export default class App extends Vue {
     inputObj.setAttribute('id', 'file')
     inputObj.setAttribute('type', 'file')
     inputObj.setAttribute('name', 'file')
-    inputObj.setAttribute('style', 'visibility:hidden')
-    document.body.appendChild(inputObj)
-    // inputObj.value
     inputObj.click()
     inputObj.onchange = e => {
       // @ts-ignore
@@ -474,12 +474,14 @@ export default class App extends Vue {
         // @ts-ignore
         let r = JSON.parse(e.target.result)
         this.projectDescription = r.projectName
-        this.canvas = Canvas.load(this, r)
-        console.log("global!!!!!!!!!!!!!!")
-        for (let item of r.phenomenonList){
-          Phenomenon.PhenomenonList.push(item)
-          console.log(item)
+        this.procedure = new Procedure(this.canvas, r.step, r.subStep)
+        this.activeStep = r.step
+        this.subStep = r.subStep
+        this.flushAllow()
+        for (let item of r.phenomenonList) {
+          new Phenomenon(item.name)
         }
+        this.canvas = Canvas.load(this, r)
       }
       fr.readAsText(files[0])
     }
@@ -487,14 +489,16 @@ export default class App extends Vue {
 
   download() {
     let final = {
-      projectName: this.projectDescription,
+      projectName: this.projectName,
+      step: this.activeStep,
+      subStep: this.subStep,
       machine: this.canvas.machine.toSerializable(),
       domainList: this.canvas.domainList.map(e => e.toSerializable()),
       requirementList: this.canvas.requirementList.map(e => e.toSerializable()),
       interfaceList: this.canvas.interfaceList.map(e => e.toSerializable()),
       referenceList: this.canvas.referenceList.map(e => e.toSerializable()),
       constraintList: this.canvas.constraintList.map(e => e.toSerializable()),
-      phenomenonList: Phenomenon.PhenomenonList
+      phenomenonList: Phenomenon.PhenomenonList.map(e => e.toSerializable())
     }
     let buffer = JSON.stringify(final)
     let downloadBlobURL = URL.createObjectURL(
@@ -504,7 +508,7 @@ export default class App extends Vue {
     )
     let tmpNode = document.createElement('a')
     tmpNode.setAttribute('href', downloadBlobURL)
-    tmpNode.setAttribute('download', 'map.json')
+    tmpNode.setAttribute('download', this.projectName + '.json')
     tmpNode.click()
   }
 
@@ -517,6 +521,7 @@ export default class App extends Vue {
     this.canvas = new Canvas()
     this.newDialog = false
     this.procedure = new Procedure(this.canvas)
+    this.flushAllow()
   }
 }
 </script>
