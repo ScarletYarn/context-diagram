@@ -342,6 +342,7 @@ export default class App extends Vue {
     } else {
       this.activeStep = obj.step
       this.subStep = obj.subStep
+      if (obj.success.length > 0) alert(obj.success)
       this.flushAllow()
     }
   }
@@ -447,11 +448,9 @@ export default class App extends Vue {
   }
 
   flushAllow(): void {
-    this.procedure
-      .getAllow(this.activeStep, this.subStep)
-      .forEach((item, index) => {
-        this.pens[index].allow = item
-      })
+    this.procedure.getAllow().forEach((item, index) => {
+      this.pens[index].allow = item
+    })
   }
 
   upload() {
