@@ -349,11 +349,11 @@ class Canvas {
       } else if (comp instanceof Requirement) {
         this._Vue.$emit('editRequirement', <Requirement>comp)
       } else if (comp instanceof InterfaceLine) {
-        this._Vue.$emit('editInterface', <InterfaceLine>comp)
+        this._Vue.$emit('edit-line', <InterfaceLine>comp)
       } else if (comp instanceof Reference) {
-        this._Vue.$emit('editReference', <Reference>comp)
+        this._Vue.$emit('edit-line', <Reference>comp)
       } else if (comp instanceof Constraint) {
-        this._Vue.$emit('editConstraint', <Constraint>comp)
+        this._Vue.$emit('edit-line', <Constraint>comp)
       }
     }
   }

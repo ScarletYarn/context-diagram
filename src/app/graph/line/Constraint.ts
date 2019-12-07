@@ -22,17 +22,10 @@ class Constraint extends Line {
     initiator?: Shape,
     receiver?: Shape,
     lineType?: LineType,
-    phenomenonList?: Array<Phenomenon>,
     isConstraint?: boolean
   ): void {
     if (isConstraint) this.isConstraint = isConstraint
-    super.setInformation(
-      description,
-      initiator,
-      receiver,
-      lineType,
-      phenomenonList
-    )
+    super.setInformation(description, initiator, receiver, lineType)
   }
 
   /**

@@ -83,7 +83,6 @@ export abstract class Line extends Component {
     initiator?: Shape,
     receiver?: Shape,
     lineType?: LineType,
-    phenomenonList?: Array<Phenomenon>,
     isConstraint?: boolean
   ): void {
     if (description) this.description = description
@@ -91,12 +90,29 @@ export abstract class Line extends Component {
     if (receiver) this.receiver = receiver
     if (lineType) this.lineType = lineType
     else this.lineType = LineType.Event
-    if (phenomenonList) this.phenomenonList = [...phenomenonList]
     this.repaint()
     if (this.active) {
       this.spriteGroup[1].visible = false
       this.spriteGroup[2].visible = true
     }
+  }
+
+  public addPhenomenon(phenomenon: Phenomenon): void {
+    let flag = false
+    for (let item of this.phenomenonList) {
+      if (item === phenomenon) {
+        flag = true
+        break
+      }
+    }
+    if (flag) return
+    this.phenomenonList.push(phenomenon)
+  }
+
+  public deletePhenomenon(phenomenon: Phenomenon): void {
+    this.phenomenonList.forEach((item, index) => {
+      if (item === phenomenon) this.phenomenonList.splice(index, 1)
+    })
   }
 
   protected paint(): void {

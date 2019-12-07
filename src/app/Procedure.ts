@@ -20,7 +20,6 @@ class Procedure {
     subStep?: number
   } {
     let success = ''
-    debugger
     if (
       (this.step === 1 && this.subStep < 3) ||
       (this.step === 2 && this.subStep < 2)

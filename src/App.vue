@@ -197,22 +197,10 @@
       :active="onEditRequirement"
     />
 
-    <interface-editor
-      @end-edit-interface="endEditInterface"
-      ref="interface-editor"
-      :active="onEditInterface"
-    />
-
-    <reference-editor
-      @end-edit-reference="endEditReference"
-      ref="reference-editor"
-      :active="onEditReference"
-    />
-
-    <constraint-editor
-      @end-edit-constraint="endEditConstraint"
-      ref="constraint-editor"
-      :active="onEditConstraint"
+    <line-editor
+      @end-edit-line="endEditLine"
+      ref="line-editor"
+      :active="onEditLine"
     />
 
     <v-content class="grey lighten-1">
@@ -231,26 +219,20 @@ import Canvas from '@/app/Canvas'
 import MachineEditor from '@/components/MachineEditor.vue'
 import Machine from '@/app/graph/shape/Machine'
 import { Domain } from '@/app/graph/shape/Domain'
-import Reference from '@/app/graph/line/Reference'
-import Constraint from '@/app/graph/line/Constraint'
 import DomainEditor from '@/components/DomainEditor.vue'
 import RequirementEditor from '@/components/RequirementEditor.vue'
-import InterfaceEditor from '@/components/InterfaceEditor.vue'
-import ReferenceEditor from '@/components/ReferenceEditor.vue'
-import ConstraintEditor from '@/components/ConstraintEditor.vue'
 import Requirement from '@/app/graph/shape/Requirement'
-import { InterfaceLine } from '@/app/graph/line/InterfaceLine'
 import Procedure from '@/app/Procedure'
 import { Phenomenon } from '@/app/graph/Phenomenon'
+import LineEditor from '@/components/LineEditor.vue'
+import { Line } from '@/app/graph/line/Line'
 
 @Component({
   components: {
+    LineEditor,
     MachineEditor,
     DomainEditor,
     RequirementEditor,
-    InterfaceEditor,
-    ReferenceEditor,
-    ConstraintEditor
   },
   watch: {
     activePen(val) {
@@ -262,9 +244,7 @@ import { Phenomenon } from '@/app/graph/Phenomenon'
     this.$on('editMachine', this.editMachine)
     this.$on('editDomain', this.editDomain)
     this.$on('editRequirement', this.editRequirement)
-    this.$on('editInterface', this.editInterface)
-    this.$on('editReference', this.editReference)
-    this.$on('editConstraint', this.editConstraint)
+    this.$on('edit-line', this.editLine)
     this.$on('giveWarn', this.giveWarn)
   }
 })
@@ -324,14 +304,17 @@ export default class App extends Vue {
   onEditRequirement: boolean = false
   editingRequirement: Requirement | undefined
 
-  onEditInterface: boolean = false
-  editingInterface: InterfaceLine | undefined
+  // onEditInterface: boolean = false
+  // editingInterface: InterfaceLine | undefined
+  //
+  // onEditReference: boolean = false
+  // editingReference: Reference | undefined
+  //
+  // onEditConstraint: boolean = false
+  // editingConstraint: Constraint | undefined
 
-  onEditReference: boolean = false
-  editingReference: Reference | undefined
-
-  onEditConstraint: boolean = false
-  editingConstraint: Constraint | undefined
+  onEditLine: boolean = false
+  editingLine: Line | undefined
 
   back(): void {
     let obj = this.procedure.previous()
@@ -379,25 +362,11 @@ export default class App extends Vue {
     this.$refs['requirement-editor'].preSet(requirement.description)
   }
 
-  editInterface(interfaceLine: InterfaceLine): void {
-    this.onEditInterface = true
-    this.editingInterface = interfaceLine
+  editLine(line: Line): void {
+    this.onEditLine = true
+    this.editingLine = line
     // @ts-ignore
-    this.$refs['interface-editor'].preSet(interfaceLine)
-  }
-
-  editReference(reference: Reference): void {
-    this.onEditReference = true
-    this.editingReference = reference
-    // @ts-ignore
-    this.$refs['reference-editor'].preSet(reference)
-  }
-
-  editConstraint(constraint: Constraint): void {
-    this.onEditConstraint = true
-    this.editingConstraint = constraint
-    // @ts-ignore
-    this.$refs['constraint-editor'].preSet(constraint)
+    this.$refs['line-editor'].preSet(line)
   }
 
   endEditMachine(info: { description: string; shortName: string }): void {
@@ -431,22 +400,10 @@ export default class App extends Vue {
     this.editingRequirement = undefined
   }
 
-  endEditInterface(): void {
-    this.onEditInterface = false
-    if (!this.editingInterface) return
-    this.editingInterface = undefined
-  }
-
-  endEditReference(): void {
-    this.onEditReference = false
-    if (!this.editingReference) return
-    this.editingReference = undefined
-  }
-
-  endEditConstraint(): void {
-    this.onEditConstraint = false
-    if (!this.editingConstraint) return
-    this.editingConstraint = undefined
+  endEditLine(): void {
+    this.onEditLine = false
+    if (!this.editingLine) return
+    this.editingLine = undefined
   }
 
   giveWarn(message: string) {

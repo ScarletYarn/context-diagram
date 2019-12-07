@@ -2,7 +2,7 @@
   <v-dialog v-model="active" persistent max-width="600px">
     <v-card>
       <v-card-title>
-        <span class="headline">Interface Information</span>
+        <span class="headline">{{ editorType }} Information</span>
       </v-card-title>
       <v-card-text>
         <v-container>
@@ -50,11 +50,14 @@
             <v-select :items="lineType" label="Type" v-model="type" required />
           </v-row>
           <v-row>
+            <v-checkbox v-if="hasConstraint" v-model="isConstraint" label="constraint" />
+          </v-row>
+          <v-row>
             <v-list>
               <v-list-item-group v-model="phenomenonSelect">
                 <v-subheader>PhenomenonList</v-subheader>
                 <v-list-item v-for="item in phenomenonList" :key="item.name">{{
-                  `${interfaceLine.initiator.description}:${item.name} ${lineType[type].text}`
+                  `${line.initiator.description}:${item.name} ${lineType[type].text}`
                 }}</v-list-item>
               </v-list-item-group>
             </v-list>
@@ -77,10 +80,30 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 import Shape from '@/app/graph/shape/Shape'
 import { InterfaceLine } from '@/app/graph/line/InterfaceLine'
 import { Phenomenon } from '@/app/graph/Phenomenon'
+import { Line } from '../app/graph/line/Line'
+import Reference from '../app/graph/line/Reference'
+import Constraint from '../app/graph/line/Constraint'
 
 @Component({})
-export default class InterfaceEditor extends Vue {
+export default class LineEditor extends Vue {
   @Prop(Boolean) active!: boolean
+  editorType: string = ''
+  hasConstraint: boolean = false
+  line: Line = null
+
+  description: string = ''
+
+  initiator: number = 0
+  receiver: number = 1
+  actors: Array<Shape> = []
+  get actorName() {
+    return this.actors.map((e, index) => {
+      return {
+        text: e.description,
+        value: index
+      }
+    })
+  }
 
   lineType = [
     {
@@ -96,24 +119,9 @@ export default class InterfaceEditor extends Vue {
       value: 2
     }
   ]
-
-  interfaceLine: InterfaceLine = null
-
-  description: string = ''
-
-  initiator: number = 0
-  receiver: number = 1
-  get actorName() {
-    return this.actors.map((e, index) => {
-      return {
-        text: e.description,
-        value: index
-      }
-    })
-  }
-  actors: Array<Shape> = []
-
   type: number = 0
+
+  isConstraint: boolean = false
 
   phenomenonNameEdit: string = ''
   phenomenonEdit: Phenomenon = null
@@ -132,34 +140,37 @@ export default class InterfaceEditor extends Vue {
 
   submit() {
     if (this.initiator !== this.receiver) {
-      this.interfaceLine.setInformation(
+      this.line.setInformation(
         this.description,
         this.actors[this.initiator],
         this.actors[this.receiver],
-        this.type,
-        this.phenomenonList
+        this.type
       )
     }
-    this.interfaceLine.setInformation(
-      this.description,
-      null,
-      null,
-      this.type,
-      this.phenomenonList
-    )
-    this.$emit('end-edit-interface')
+    this.line.setInformation(this.description, null, null, this.type)
+    this.$emit('end-edit-line')
   }
 
   cancel() {
-    this.$emit('end-edit-interface')
+    this.$emit('end-edit-line')
   }
 
-  preSet(interfaceLine: InterfaceLine) {
-    this.interfaceLine = interfaceLine
-    this.description = interfaceLine.description
-    this.phenomenonList = interfaceLine.phenomenonList
-    this.type = interfaceLine.lineType
-    this.actors = [this.interfaceLine.initiator, this.interfaceLine.receiver]
+  preSet(line: Line) {
+    if (line instanceof InterfaceLine) {
+      this.editorType = 'Interface'
+      this.hasConstraint = false
+    } else if (line instanceof Reference) {
+      this.editorType = 'Reference'
+      this.isConstraint = line.isConstraint
+    } else if (line instanceof Constraint) {
+      this.editorType = 'Constraint'
+      this.isConstraint = line.isConstraint
+    }
+    this.line = line
+    this.description = line.description
+    this.phenomenonList = line.phenomenonList
+    this.type = line.lineType
+    this.actors = [this.line.initiator, this.line.receiver]
     this.initiator = 0
     this.receiver = 1
     this.globalPhenomenonList = Phenomenon.PhenomenonList
@@ -172,18 +183,15 @@ export default class InterfaceEditor extends Vue {
       this.phenomenonEdit &&
       this.phenomenonNameEdit === this.phenomenonEdit.name
     ) {
-      for (let item of this.interfaceLine.phenomenonList) {
-        if (item === this.phenomenonEdit) return
-      }
-      this.interfaceLine.phenomenonList.push(this.phenomenonEdit)
+      this.line.addPhenomenon(this.phenomenonEdit)
     } else {
       let p = new Phenomenon(this.phenomenonNameEdit)
-      this.interfaceLine.phenomenonList.push(p)
+      this.line.addPhenomenon(p)
     }
   }
 
   del(): void {
-    this.interfaceLine.phenomenonList.splice(this.phenomenonSelect, 1)
+    this.line.deletePhenomenon(this.phenomenonList[this.phenomenonSelect])
   }
 
   selectPhenomenon(index): void {
