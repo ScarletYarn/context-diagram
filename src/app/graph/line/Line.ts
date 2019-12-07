@@ -195,16 +195,18 @@ export abstract class Line extends Component {
     }
     return { x: tmpX, y: tmpY }
   }
-
+  /*
   toSerializable(): Object {
     return {
       description: this.description,
       baseIndex: this.baseIndex,
       initiator: this.initiator.description,
       receiver: this.receiver.description,
-      lintType: this.lineType
+      lineType: this.lineType
     }
   }
+
+   */
 
   protected abstract drawSkeleton(color: number): PIXI.Graphics
 }

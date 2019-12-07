@@ -241,6 +241,7 @@ import ConstraintEditor from '@/components/ConstraintEditor.vue'
 import Requirement from '@/app/graph/shape/Requirement'
 import { InterfaceLine } from '@/app/graph/line/InterfaceLine'
 import Procedure from '@/app/Procedure'
+import { Phenomenon } from '@/app/graph/Phenomenon'
 
 @Component({
   components: {
@@ -337,6 +338,7 @@ export default class App extends Vue {
 
   next(): void {
     let obj = this.procedure.next()
+
     if (obj.err) {
       alert(obj.err)
     } else {
@@ -345,6 +347,7 @@ export default class App extends Vue {
       if (obj.success.length > 0) alert(obj.success)
       this.flushAllow()
     }
+
   }
 
   editMachine(machine: Machine): void {
@@ -472,6 +475,11 @@ export default class App extends Vue {
         let r = JSON.parse(e.target.result)
         this.projectDescription = r.projectName
         this.canvas = Canvas.load(this, r)
+        console.log("global!!!!!!!!!!!!!!")
+        for (let item of r.phenomenonList){
+          Phenomenon.PhenomenonList.push(item)
+          console.log(item)
+        }
       }
       fr.readAsText(files[0])
     }
@@ -485,7 +493,8 @@ export default class App extends Vue {
       requirementList: this.canvas.requirementList.map(e => e.toSerializable()),
       interfaceList: this.canvas.interfaceList.map(e => e.toSerializable()),
       referenceList: this.canvas.referenceList.map(e => e.toSerializable()),
-      constraintList: this.canvas.constraintList.map(e => e.toSerializable())
+      constraintList: this.canvas.constraintList.map(e => e.toSerializable()),
+      phenomenonList: Phenomenon.PhenomenonList
     }
     let buffer = JSON.stringify(final)
     let downloadBlobURL = URL.createObjectURL(
