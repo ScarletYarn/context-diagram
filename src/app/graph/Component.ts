@@ -14,6 +14,10 @@ abstract class Component {
   protected container: PIXI.Container
   protected active: boolean
 
+  get isActive(): boolean {
+    return this.active
+  }
+
   /* The z-index for the component. Used for overlapping. */
   protected baseIndex: number
 
@@ -51,7 +55,7 @@ abstract class Component {
     this.paint()
   }
 
-  public destroy(): void {
+  public destroy(): any {
     for (let item of this.spriteGroup) {
       item.destroy()
     }

@@ -50,7 +50,6 @@ class Procedure {
       this.subStep = 1
       success = 'Step one all right'
     } else if (this.step === 2 && this.subStep === 2) {
-      let countRequirementList = this.canvas.requirementList.length
       let countReferenceList = this.canvas.referenceList.length
       let countConstraintList = this.canvas.constraintList.length
       this.step = 2
@@ -69,11 +68,7 @@ class Procedure {
           }
         }
       }
-      if (
-        countConstraintList === 0 ||
-        countReferenceList === 0 ||
-        countRequirementList === 0
-      ) {
+      if (countConstraintList === 0 || countReferenceList === 0) {
         return {
           err: 'Illegal'
         }

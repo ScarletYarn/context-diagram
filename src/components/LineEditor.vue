@@ -50,7 +50,11 @@
             <v-select :items="lineType" label="Type" v-model="type" required />
           </v-row>
           <v-row>
-            <v-checkbox v-if="hasConstraint" v-model="isConstraint" label="constraint" />
+            <v-checkbox
+              v-if="hasConstraint"
+              v-model="isConstraint"
+              label="constraint"
+            />
           </v-row>
           <v-row>
             <v-list>
@@ -80,7 +84,7 @@ import { Vue, Component, Prop } from 'vue-property-decorator'
 import Shape from '@/app/graph/shape/Shape'
 import { InterfaceLine } from '@/app/graph/line/InterfaceLine'
 import { Phenomenon } from '@/app/graph/Phenomenon'
-import { Line } from '../app/graph/line/Line'
+import { Line } from '@/app/graph/line/Line'
 import Reference from '../app/graph/line/Reference'
 import Constraint from '../app/graph/line/Constraint'
 

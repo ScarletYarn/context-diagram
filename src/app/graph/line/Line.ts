@@ -115,6 +115,13 @@ export abstract class Line extends Component {
     })
   }
 
+  destroy(): void {
+    console.log(this.description)
+    super.destroy()
+    if (this.initiator) this.initiator.deleteLine(this)
+    if (this.receiver) this.receiver.deleteLine(this)
+  }
+
   protected paint(): void {
     let text = new PIXI.Text(this.getDisplayText(), this.textStyle)
     text.x = (this.start.x + this.end.x) / 2 - text.width / 2

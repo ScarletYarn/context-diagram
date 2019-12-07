@@ -33,14 +33,19 @@ class Canvas {
   public _Vue: Vue = null
 
   private readonly componentsList: Array<Component> = []
+  public componentsCount: number = 0
 
   public machine: Machine = null
   public domainList: Array<Domain> = []
-  public requirementList: Array<Requirement> = []
+  public domainCount: number = 0
+  public requirement: Requirement = null
 
   public interfaceList: Array<InterfaceLine> = []
+  public interfaceCount: number = 0
   public referenceList: Array<Reference> = []
+  public referenceCount: number = 0
   public constraintList: Array<Constraint> = []
+  public constraintCount: number = 0
 
   private static instance: Canvas
 
@@ -54,6 +59,11 @@ class Canvas {
 
   public static load(vue: Vue, r: any): Canvas {
     let c = (Canvas.instance = new Canvas(vue))
+    c.componentsCount = r.componentsCount
+    c.domainCount = r.domainCount
+    c.interfaceCount = r.interfaceCount
+    c.referenceCount = r.referenceCount
+    c.constraintCount = r.constraintCount
     let m = r.machine
     let machine = new Machine(
       c.app.stage,
@@ -79,17 +89,15 @@ class Canvas {
       c.domainList.push(domain)
       c.componentsList.push(domain)
     }
-    for (let item of r.requirementList) {
-      let requirement = new Requirement(
-        c.app.stage,
-        item.x,
-        item.y,
-        item.description,
-        item.baseIndex
-      )
-      c.requirementList.push(requirement)
-      c.componentsList.push(requirement)
-    }
+    let requirement = new Requirement(
+      c.app.stage,
+      m.x,
+      m.y,
+      m.description,
+      m.baseIndex
+    )
+    c.requirement = requirement
+    c.componentsList.push(requirement)
     for (let item of r.interfaceList) {
       let initiator = c.findShape(item.initiator)
       let receiver = c.findShape(item.receiver)
@@ -196,6 +204,45 @@ class Canvas {
     }
   }
 
+  public deleteElement(c?: Component): void {
+    let d: Component = null
+    if (c) {
+      d = c
+    } else {
+      for (let item of this.componentsList) {
+        if (item.isActive) d = item
+      }
+    }
+    if (d) {
+      let lines = d.destroy()
+      if (lines) {
+        for (let item of lines) this.deleteElement(item)
+      }
+      this.removeComponent(d, this.componentsList)
+      if (d instanceof Machine) {
+        this.machine = null
+      } else if (d instanceof Domain) {
+        this.removeComponent(d, this.domainList)
+      } else if (d instanceof Requirement) {
+        this.requirement = null
+      } else if (d instanceof InterfaceLine) {
+        this.removeComponent(d, this.interfaceList)
+      } else if (d instanceof Reference) {
+        this.removeComponent(d, this.referenceList)
+      } else if (d instanceof Constraint) {
+        this.removeComponent(d, this.constraintList)
+      }
+    }
+  }
+
+  private removeComponent(c: Component, list: Array<Component>): void {
+    let i = -1
+    list.forEach((item, index) => {
+      if (item === c) i = index
+    })
+    if (i !== -1) list.splice(i, 1)
+  }
+
   private tapHandler(e: HammerInput): void {
     // For now, we simply add a rectangle to the canvas.
     if ('layerX' in e.srcEvent && 'layerY' in e.srcEvent) {
@@ -211,33 +258,44 @@ class Canvas {
             e.srcEvent.layerY,
             config.defaultMachineName,
             config.defaultMachineShortName,
-            this.componentsList.length * config.layerGap
+            this.componentsCount * config.layerGap
           )
           this.machine = machine
           this.componentsList.push(machine)
+          this.componentsCount++
           break
         case 1:
           let domain = new Domain(
             this.app.stage,
             e.srcEvent.layerX,
             e.srcEvent.layerY,
-            config.defaultDomainName + (this.domainList.length + 1),
-            config.defaultDomainShortName + (this.domainList.length + 1),
-            this.componentsList.length * config.layerGap
+            config.defaultDomainName + (this.domainCount + 1),
+            config.defaultDomainShortName + (this.domainCount + 1),
+            this.componentsCount * config.layerGap
           )
           this.domainList.push(domain)
+          this.domainCount++
           this.componentsList.push(domain)
+          this.componentsCount++
           break
         case 2:
+          if (this.requirement) {
+            this._Vue.$emit(
+              'giveWarn',
+              'There can exist only one requirement. '
+            )
+            return
+          }
           let requirement = new Requirement(
             this.app.stage,
             e.srcEvent.layerX,
             e.srcEvent.layerY,
-            config.defaultRequirementName + (this.requirementList.length + 1),
-            this.componentsList.length * config.layerGap
+            config.defaultRequirementName,
+            this.componentsCount * config.layerGap
           )
-          this.requirementList.push(requirement)
+          this.requirement = requirement
           this.componentsList.push(requirement)
+          this.componentsCount++
           break
         case undefined:
           // eslint-disable-next-line no-case-declarations
@@ -269,24 +327,24 @@ class Canvas {
           case 3:
             this.drawingLine = new InterfaceLine(
               this.app.stage,
-              config.defaultInterfaceName + (this.interfaceList.length + 1),
-              (this.componentsList.length + 1) * 10,
+              config.defaultInterfaceName + (this.interfaceCount + 1),
+              (this.componentsCount + 1) * 10,
               comp
             )
             break
           case 4:
             this.drawingLine = new Reference(
               this.app.stage,
-              config.defaultReferenceName + (this.referenceList.length + 1),
-              (this.componentsList.length + 1) * 10,
+              config.defaultReferenceName + (this.referenceCount + 1),
+              (this.componentsCount + 1) * 10,
               comp
             )
             break
           case 5:
             this.drawingLine = new Constraint(
               this.app.stage,
-              config.defaultConstraintName + (this.constraintList.length + 1),
-              (this.componentsList.length + 1) * 10,
+              config.defaultConstraintName + (this.constraintCount + 1),
+              (this.componentsCount + 1) * 10,
               comp
             )
             break
@@ -321,12 +379,17 @@ class Canvas {
           if (this.drawingLine.attached) {
             this.drawingLine.mount()
             this.componentsList.push(this.drawingLine)
-            if (this.drawingLine instanceof InterfaceLine)
+            this.componentsCount++
+            if (this.drawingLine instanceof InterfaceLine) {
               this.interfaceList.push(this.drawingLine)
-            else if (this.drawingLine instanceof Reference)
+              this.interfaceCount++
+            } else if (this.drawingLine instanceof Reference) {
               this.referenceList.push(this.drawingLine)
-            else if (this.drawingLine instanceof Constraint)
+              this.referenceCount++
+            } else if (this.drawingLine instanceof Constraint) {
               this.constraintList.push(this.drawingLine)
+              this.constraintCount++
+            }
           } else {
             this.drawingLine.destroy()
           }

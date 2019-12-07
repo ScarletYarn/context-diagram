@@ -232,7 +232,7 @@ import { Line } from '@/app/graph/line/Line'
     LineEditor,
     MachineEditor,
     DomainEditor,
-    RequirementEditor,
+    RequirementEditor
   },
   watch: {
     activePen(val) {
@@ -241,6 +241,9 @@ import { Line } from '@/app/graph/line/Line'
   },
   mounted() {},
   created() {
+    document.addEventListener('keyup', ev => {
+      if (ev.code === 'Backspace' || ev.code === 'Delete') this.deleteElement()
+    })
     this.$on('editMachine', this.editMachine)
     this.$on('editDomain', this.editDomain)
     this.$on('editRequirement', this.editRequirement)
@@ -304,15 +307,6 @@ export default class App extends Vue {
   onEditRequirement: boolean = false
   editingRequirement: Requirement | undefined
 
-  // onEditInterface: boolean = false
-  // editingInterface: InterfaceLine | undefined
-  //
-  // onEditReference: boolean = false
-  // editingReference: Reference | undefined
-  //
-  // onEditConstraint: boolean = false
-  // editingConstraint: Constraint | undefined
-
   onEditLine: boolean = false
   editingLine: Line | undefined
 
@@ -334,6 +328,12 @@ export default class App extends Vue {
       if (obj.success.length > 0) alert(obj.success)
       this.flushAllow()
     }
+  }
+
+  deleteElement(): void {
+    console.log('delete')
+    if (!this.canvas) return
+    this.canvas.deleteElement()
   }
 
   editMachine(machine: Machine): void {
@@ -449,12 +449,17 @@ export default class App extends Vue {
       projectName: this.projectName,
       step: this.activeStep,
       subStep: this.subStep,
+      componentsCount: this.canvas.componentsCount,
       machine: this.canvas.machine.toSerializable(),
       domainList: this.canvas.domainList.map(e => e.toSerializable()),
-      requirementList: this.canvas.requirementList.map(e => e.toSerializable()),
+      domainCount: this.canvas.domainCount,
+      requirement: this.canvas.requirement.toSerializable(),
       interfaceList: this.canvas.interfaceList.map(e => e.toSerializable()),
+      interfaceCount: this.canvas.interfaceCount,
       referenceList: this.canvas.referenceList.map(e => e.toSerializable()),
+      referenceCount: this.canvas.referenceCount,
       constraintList: this.canvas.constraintList.map(e => e.toSerializable()),
+      constraintCount: this.canvas.constraintCount,
       phenomenonList: Phenomenon.PhenomenonList.map(e => e.toSerializable())
     }
     let buffer = JSON.stringify(final)

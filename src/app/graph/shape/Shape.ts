@@ -67,11 +67,25 @@ abstract class Shape extends Component {
       line.updateLine()
     }
   }
+
   get center(): { x: number; y: number } {
     return {
       x: this.x + this.width / 2,
       y: this.y + this.height / 2
     }
+  }
+
+  public destroy(): Array<Line> {
+    super.destroy()
+    return [...this.attachedLines]
+  }
+
+  public deleteLine(line: Line): void {
+    let i = -1
+    this.attachedLines.forEach((item, index) => {
+      if (item === line) i = index
+    })
+    if (i !== -1) this.attachedLines.splice(i, 1)
   }
 
   protected abstract drawBorder(
