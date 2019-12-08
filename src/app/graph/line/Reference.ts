@@ -4,27 +4,22 @@ import { Line, LineType } from '@/app/graph/line/Line'
 import { Phenomenon } from '@/app/graph/Phenomenon'
 
 class Reference extends Line {
-  public isConstraint: boolean
   constructor(
     stage: PIXI.Container,
     description: string,
     baseIndex: number,
     initiator: Shape,
-    receiver: Shape | null = null,
-    isConstraint: boolean = false
+    receiver: Shape | null = null
   ) {
     super(stage, description, baseIndex, initiator, receiver)
-    this.isConstraint = isConstraint
   }
 
   public setInformation(
     description?: string,
     initiator?: Shape,
     receiver?: Shape,
-    lineType?: LineType,
-    isConstraint?: boolean
+    lineType?: LineType
   ): void {
-    if (isConstraint) this.isConstraint = isConstraint
     super.setInformation(description, initiator, receiver, lineType)
   }
 
@@ -66,7 +61,6 @@ class Reference extends Line {
       baseIndex: this.baseIndex,
       initiator: this.initiator.description,
       receiver: this.receiver.description,
-      isConstraint: this.isConstraint,
       phenomenonList: this.phenomenonList
     }
   }

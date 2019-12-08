@@ -6,6 +6,7 @@ export enum PhenomenonType {
 
 export class Phenomenon {
   public name: string
+  public constraint: boolean
   public static PhenomenonList: Array<Phenomenon> = []
 
   public static getPhenomenon(name: string): Phenomenon {
@@ -14,14 +15,16 @@ export class Phenomenon {
     }
   }
 
-  constructor(name: string = '') {
+  constructor(name: string = '', constraint: boolean = false) {
     this.name = name
+    this.constraint = false
     Phenomenon.PhenomenonList.push(this)
   }
 
-  public toSerializable(): { name: string } {
+  public toSerializable(): { name: string; constraint: boolean } {
     return {
-      name: this.name
+      name: this.name,
+      constraint: this.constraint
     }
   }
 }

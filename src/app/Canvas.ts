@@ -124,8 +124,7 @@ class Canvas {
         item.description,
         item.baseIndex,
         initiator,
-        receiver,
-        item.isConstraint
+        receiver
       )
       initiator.attachedLines.push(reference)
       receiver.attachedLines.push(reference)
@@ -143,8 +142,7 @@ class Canvas {
         item.description,
         item.baseIndex,
         initiator,
-        receiver,
-        item.isConstraint
+        receiver
       )
       initiator.attachedLines.push(constraint)
       receiver.attachedLines.push(constraint)

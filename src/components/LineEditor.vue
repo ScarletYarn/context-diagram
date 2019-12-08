@@ -189,7 +189,7 @@ export default class LineEditor extends Vue {
     ) {
       this.line.addPhenomenon(this.phenomenonEdit)
     } else {
-      let p = new Phenomenon(this.phenomenonNameEdit)
+      let p = new Phenomenon(this.phenomenonNameEdit, this.isConstraint)
       this.line.addPhenomenon(p)
     }
   }
@@ -201,6 +201,7 @@ export default class LineEditor extends Vue {
   selectPhenomenon(index): void {
     this.phenomenonEdit = this.globalPhenomenonList[index]
     this.phenomenonNameEdit = this.globalPhenomenonList[index].name
+    this.isConstraint = this.phenomenonEdit.constraint
   }
 }
 </script>
