@@ -139,7 +139,7 @@ export default class LineEditor extends Vue {
     })
   }
 
-  phenomenonSelect: number = 0
+  phenomenonSelect: number = -1
   phenomenonList: Array<Phenomenon> = []
 
   submit() {
@@ -147,11 +147,10 @@ export default class LineEditor extends Vue {
       this.line.setInformation(
         this.description,
         this.actors[this.initiator],
-        this.actors[this.receiver],
-        this.type
+        this.actors[this.receiver]
       )
     }
-    this.line.setInformation(this.description, null, null, this.type)
+    this.line.setInformation(this.description, null, null)
     this.$emit('end-edit-line')
   }
 
@@ -165,15 +164,12 @@ export default class LineEditor extends Vue {
       this.hasConstraint = false
     } else if (line instanceof Reference) {
       this.editorType = 'Reference'
-      this.isConstraint = line.isConstraint
     } else if (line instanceof Constraint) {
       this.editorType = 'Constraint'
-      this.isConstraint = line.isConstraint
     }
     this.line = line
     this.description = line.description
     this.phenomenonList = line.phenomenonList
-    this.type = line.lineType
     this.actors = [this.line.initiator, this.line.receiver]
     this.initiator = 0
     this.receiver = 1
@@ -189,7 +185,11 @@ export default class LineEditor extends Vue {
     ) {
       this.line.addPhenomenon(this.phenomenonEdit)
     } else {
-      let p = new Phenomenon(this.phenomenonNameEdit, this.isConstraint)
+      let p = new Phenomenon(
+        this.phenomenonNameEdit,
+        this.type,
+        this.isConstraint
+      )
       this.line.addPhenomenon(p)
     }
   }
@@ -202,6 +202,7 @@ export default class LineEditor extends Vue {
     this.phenomenonEdit = this.globalPhenomenonList[index]
     this.phenomenonNameEdit = this.globalPhenomenonList[index].name
     this.isConstraint = this.phenomenonEdit.constraint
+    this.type = this.phenomenonEdit.type
   }
 }
 </script>

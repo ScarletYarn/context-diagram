@@ -7,16 +7,9 @@ import Config from '@/app/util/Config'
 import Requirement from '@/app/graph/shape/Requirement'
 const config = new Config()
 
-export enum LineType {
-  Event,
-  State,
-  Value
-}
-
 export abstract class Line extends Component {
   public initiator: Shape
   public receiver: Shape | null
-  public lineType: LineType
 
   public phenomenonList: Array<Phenomenon>
 
@@ -30,14 +23,12 @@ export abstract class Line extends Component {
     description: string,
     baseIndex: number,
     initiator: Shape,
-    receiver: Shape | null = null,
-    lineType: LineType | null = LineType.Event
+    receiver: Shape | null = null
   ) {
     super(stage, description, baseIndex)
     this.initiator = initiator
     this.receiver = receiver
     this.phenomenonList = []
-    this.lineType = lineType
 
     this.start = { x: -1, y: -1 }
     this.end = { x: 0, y: 0 }
@@ -81,15 +72,11 @@ export abstract class Line extends Component {
   public setInformation(
     description?: string,
     initiator?: Shape,
-    receiver?: Shape,
-    lineType?: LineType,
-    isConstraint?: boolean
+    receiver?: Shape
   ): void {
     if (description) this.description = description
     if (initiator) this.initiator = initiator
     if (receiver) this.receiver = receiver
-    if (lineType) this.lineType = lineType
-    else this.lineType = LineType.Event
     this.repaint()
     if (this.active) {
       this.spriteGroup[1].visible = false

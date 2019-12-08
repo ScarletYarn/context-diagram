@@ -1,7 +1,6 @@
 import * as PIXI from 'pixi.js'
 import Shape from '@/app/graph/shape/Shape'
-import { Line, LineType } from '@/app/graph/line/Line'
-import { Phenomenon } from '@/app/graph/Phenomenon'
+import { Line } from '@/app/graph/line/Line'
 
 class Reference extends Line {
   constructor(
@@ -17,10 +16,9 @@ class Reference extends Line {
   public setInformation(
     description?: string,
     initiator?: Shape,
-    receiver?: Shape,
-    lineType?: LineType
+    receiver?: Shape
   ): void {
-    super.setInformation(description, initiator, receiver, lineType)
+    super.setInformation(description, initiator, receiver)
   }
 
   /**

@@ -435,7 +435,7 @@ export default class App extends Vue {
         this.subStep = r.subStep
         this.flushAllow()
         for (let item of r.phenomenonList) {
-          new Phenomenon(item.name, item.constraint)
+          new Phenomenon(item.name, item.type, item.constraint)
         }
         this.canvas = Canvas.load(this, r)
       }
