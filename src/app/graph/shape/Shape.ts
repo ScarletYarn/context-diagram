@@ -75,6 +75,10 @@ abstract class Shape extends Component {
     }
   }
 
+  get isIsolated(): boolean {
+    return this.attachedLines.length === 0
+  }
+
   public destroy(): Array<Line> {
     super.destroy()
     return [...this.attachedLines]

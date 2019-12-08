@@ -20,6 +20,7 @@ class Procedure {
     subStep?: number
   } {
     let success = ''
+    let err = ''
     if (
       (this.step === 1 && this.subStep < 3) ||
       (this.step === 2 && this.subStep < 2)
@@ -27,61 +28,65 @@ class Procedure {
       this.subStep++
     } else if (this.step === 1 && this.subStep === 3) {
       let countDomainList = this.canvas.domainList.length
-      let countInterfaceList = this.canvas.interfaceList.length
       this.step = 1
       this.subStep = 1
       for (let interfaceLine of this.canvas.interfaceList) {
         if (interfaceLine.phenomenonList.length === 0) {
-          return {
-            err: 'Interface without phenomenon'
-          }
+          err += 'Exist undefined interface.\n'
+          break
         }
       }
-      if (
-        countDomainList === 0 ||
-        countInterfaceList === 0 ||
-        this.canvas.machine === null
-      ) {
-        return {
-          err: 'Missing machine or domain'
+      if (countDomainList === 0) {
+        err += 'No ProblemDomain detected.\n'
+      }
+      if (this.canvas.machine === null) {
+        err = 'No Machine detected.'
+      } else if (this.canvas.machine.isIsolated) {
+        err += 'Exist Unconnected Machine.\n'
+      }
+      for (let domain of this.canvas.domainList) {
+        if (domain.isIsolated) {
+          err += 'Exist Unconnected ProblemDomain.\n'
+          break
         }
       }
-      this.step = 2
-      this.subStep = 1
-      success = 'Step one all right'
+      if (err === '') {
+        this.step = 2
+        this.subStep = 1
+        success = 'Step one all right'
+      }
     } else if (this.step === 2 && this.subStep === 2) {
-      let countReferenceList = this.canvas.referenceList.length
-      let countConstraintList = this.canvas.constraintList.length
       this.step = 2
       this.subStep = 1
       for (let reference of this.canvas.referenceList) {
         if (reference.phenomenonList.length === 0) {
-          return {
-            err: 'Reference with phenomenon'
-          }
+          err += 'Exist undefined interface.\n'
+          break
         }
       }
       for (let constraint of this.canvas.constraintList) {
         if (constraint.phenomenonList.length === 0) {
-          return {
-            err: 'Constraint without phenomenon'
-          }
+          err += 'Exist undefined constraint.\n'
         }
       }
-      if (countConstraintList === 0 || countReferenceList === 0) {
-        return {
-          err: 'Illegal'
-        }
+      if (this.canvas.requirement === null) {
+        err += 'No Requirement detected.\n'
+      } else if (this.canvas.requirement.isIsolated) {
+        err += 'Exist Unconnected Requirement.\n'
       }
-      success = 'Diagram all right'
-      this.step = 2
-      this.subStep = 1
+      if (err === '') {
+        this.step = 2
+        this.subStep = 4
+        success = 'Diagram all right'
+      }
     }
-    return {
-      success: success,
-      step: this.step,
-      subStep: this.subStep
-    }
+    if (err.length !== 0) return { err: err }
+    else
+      return {
+        success: success,
+        step: this.step,
+        subStep: this.subStep
+      }
   }
 
   public previous(): { step: number; subStep: number } {
