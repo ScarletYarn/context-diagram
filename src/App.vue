@@ -331,7 +331,6 @@ export default class App extends Vue {
   }
 
   deleteElement(): void {
-    console.log('delete')
     if (!this.canvas) return
     this.canvas.deleteElement()
   }

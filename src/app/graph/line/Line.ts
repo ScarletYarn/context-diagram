@@ -116,7 +116,6 @@ export abstract class Line extends Component {
   }
 
   destroy(): void {
-    console.log(this.description)
     super.destroy()
     if (this.initiator) this.initiator.deleteLine(this)
     if (this.receiver) this.receiver.deleteLine(this)
