@@ -96,6 +96,14 @@ export abstract class Line extends Component {
     this.phenomenonList.push(phenomenon)
   }
 
+  public hasPhenomenon(description: string): boolean {
+    let res = false
+    this.phenomenonList.forEach(item => {
+      if (item.description === description) res = true
+    })
+    return res
+  }
+
   public deletePhenomenon(phenomenon: Phenomenon): void {
     let index = this.phenomenonList.indexOf(phenomenon)
     if (index !== -1) this.phenomenonList.splice(index, 1)
@@ -134,7 +142,13 @@ export abstract class Line extends Component {
 
     gd = this.drawSkeleton(gd, config.strokeColor)
     ga = this.drawSkeleton(ga, config.activeStrokeColor)
-    ga.visible = false
+    if (this.active) {
+      ga.visible = true
+      gd.visible = false
+    } else {
+      ga.visible = false
+      gd.visible = true
+    }
     gd.zIndex = ga.zIndex = this.baseIndex
 
     this.spriteGroup = [text, gd, ga, textBG]

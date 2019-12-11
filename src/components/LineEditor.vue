@@ -70,7 +70,7 @@
                   v-for="item in phenomenonList"
                   :key="item.name"
                   >{{
-                    `${line.initiator.description}:${item.description} ${phenomenonType[type].text}`
+                    `${line.initiator.description}:${item.description} ${phenomenonType[item.type].text}`
                   }}</v-list-item
                 >
               </v-list-item-group>
@@ -98,8 +98,22 @@ import { Line } from '@/app/graph/line/Line'
 import Reference from '../app/graph/line/Reference'
 import Constraint from '../app/graph/line/Constraint'
 import { Domain } from '@/app/graph/shape/Domain'
+import Machine from '@/app/graph/shape/Machine'
 
-@Component({})
+@Component({
+  watch: {
+    isConstraint(val) {
+      if (this.phenomenonSelect !== -1 && this.phenomenonSelect !== undefined) {
+        this.phenomenonList[this.phenomenonSelect].constraint = val
+      }
+    },
+    type(val) {
+      if (this.phenomenonSelect !== -1 && this.phenomenonSelect !== undefined) {
+        this.phenomenonList[this.phenomenonSelect].type = val
+      }
+    }
+  }
+})
 export default class LineEditor extends Vue {
   @Prop(Boolean) active!: boolean
   editorType: string = ''
@@ -107,6 +121,8 @@ export default class LineEditor extends Vue {
   line: Line = null
   // Whatever the line is, a domain is associated with it.
   domain: Domain = null
+  // Machine the nuisance
+  machine: Machine = null
 
   description: string = ''
 
@@ -164,7 +180,6 @@ export default class LineEditor extends Vue {
   phenomenonList: Array<Phenomenon> = []
 
   submit() {
-    debugger
     if (this.initiator !== this.receiver && this.initiator !== 1) {
       this.line.setInformation(
         this.description,
@@ -179,7 +194,7 @@ export default class LineEditor extends Vue {
     this.$emit('end-edit-line')
   }
 
-  preSet(line: Line) {
+  preSet(line: Line, machine: Machine) {
     if (line instanceof InterfaceLine) {
       this.editorType = 'Interface'
       this.hasConstraint = false
@@ -191,6 +206,7 @@ export default class LineEditor extends Vue {
       this.hasConstraint = true
     }
     this.line = line
+    this.machine = machine
     this.description = line.description
     this.phenomenonList = line.phenomenonList
     this.phenomenonSelect = -1
@@ -228,11 +244,16 @@ export default class LineEditor extends Vue {
       if (p) {
         this.line.addPhenomenon(p)
       } else {
+        if (this.line.hasPhenomenon(this.phenomenonNameEdit)) return
+        let initiator = this.line.initiator,
+          receiver = this.line.receiver
+        if (initiator instanceof Domain) initiator = this.machine
+        if (receiver instanceof Domain) receiver = this.machine
         p = new Phenomenon(
           this.phenomenonNameEdit,
           PhenomenonPosition.Right,
-          this.line.initiator,
-          this.line.receiver,
+          initiator,
+          receiver,
           this.type,
           this.isConstraint
         )
@@ -243,7 +264,6 @@ export default class LineEditor extends Vue {
   }
 
   del(): void {
-    debugger
     this.domain.removePhenomenon(this.phenomenonList[this.phenomenonSelect])
     this.line.deletePhenomenon(this.phenomenonList[this.phenomenonSelect])
     Phenomenon.deletePhenomenon(this.phenomenonName)

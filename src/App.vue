@@ -151,11 +151,11 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(item, index) in references" :key="item.name">
-                    <td>req{{ index + 1 }}</td>
-                    <td>{{ item.name }}</td>
+                  <tr v-for="item in references" :key="item.name">
+                    <td>req{{ item.name }}</td>
                     <td>{{ item.initiator }}</td>
                     <td>{{ item.receiver }}</td>
+                    <td>{{ item.description }}</td>
                     <td>{{ item.constraint }}</td>
                   </tr>
                 </tbody>
@@ -396,16 +396,6 @@ export default class App extends Vue {
   onEditLine: boolean = false
   editingLine: Line | undefined
 
-  desserts = [
-    {
-      name: 'Frozen Yogurt',
-      calories: 159
-    },
-    {
-      name: 'Ice cream sandwich',
-      calories: 237
-    }
-  ]
   phenomenons: Array<Phenomenon> = Phenomenon.PhenomenonList
   // height: number = 120
 
@@ -415,19 +405,21 @@ export default class App extends Vue {
 
   get references(): Array<{
     name: string
+    description: string
     initiator: string
     receiver: string
     constraint: boolean
   }> {
     let res = []
-    for (let item of Phenomenon.PhenomenonList) {
-      if(item.position===1){
-          res.push({
-              name: item.description,
-              initiator: item.initiator.description,
-              receiver: item.receiver.description,
-              constraint: item.constraint
-          })
+    for (let item of this.phenomenons) {
+      if (item.position === 1) {
+        res.push({
+          name: item.name,
+          description: item.description,
+          initiator: item.initiator.description,
+          receiver: item.receiver.description,
+          constraint: item.constraint
+        })
       }
     }
     return res
@@ -488,7 +480,7 @@ export default class App extends Vue {
     this.onEditLine = true
     this.editingLine = line
     // @ts-ignore
-    this.$refs['line-editor'].preSet(line)
+    this.$refs['line-editor'].preSet(line, this.canvas.machine)
   }
 
   endEditMachine(info: { description: string; shortName: string }): void {
