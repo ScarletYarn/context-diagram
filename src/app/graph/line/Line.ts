@@ -211,7 +211,7 @@ export abstract class Line extends Component {
       baseIndex: this.baseIndex,
       initiator: this.initiator.description,
       receiver: this.receiver.description,
-      lineType: this.lineType
+      phenomenonType: this.phenomenonType
     }
   }
 

@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js'
 import Config from '@/app/util/Config'
 import Shape from '@/app/graph/shape/Shape'
+import { Phenomenon } from '@/app/graph/Phenomenon'
 const config = new Config()
 
 export enum PhysicalProperty {
@@ -18,6 +19,7 @@ export class Domain extends Shape {
   public shortName: string
   public physicalProperty: PhysicalProperty
   public domainType: DomainType
+  public phenomenonList: Array<Phenomenon>
 
   constructor(
     stage: PIXI.Container,
@@ -36,6 +38,7 @@ export class Domain extends Shape {
     else this.physicalProperty = PhysicalProperty.GivenDomain
     if (domainType) this.domainType = domainType
     else this.domainType = DomainType.Casual
+    this.phenomenonList = []
     this.paint()
   }
 

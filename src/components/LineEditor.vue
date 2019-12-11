@@ -1,3 +1,5 @@
+import { PhenomenonPosition } from '@/app/graph/Phenomenon' import {
+PhenomenonPosition } from '@/app/graph/Phenomenon'
 <template>
   <v-dialog v-model="active" persistent max-width="600px">
     <v-card>
@@ -37,7 +39,7 @@
               <v-list>
                 <v-list-item-group>
                   <v-list-item
-                    v-for="item in globalPhenomenonListName"
+                    v-for="item in choices"
                     :key="item.text"
                     @click="selectPhenomenon(item.value)"
                     >{{ item.text }}</v-list-item
@@ -47,7 +49,12 @@
             </v-menu>
           </v-row>
           <v-row>
-            <v-select :items="lineType" label="Type" v-model="type" required />
+            <v-select
+              :items="phenomenonType"
+              label="Type"
+              v-model="type"
+              required
+            />
           </v-row>
           <v-row>
             <v-checkbox
@@ -61,7 +68,7 @@
               <v-list-item-group v-model="phenomenonSelect">
                 <v-subheader>PhenomenonList</v-subheader>
                 <v-list-item v-for="item in phenomenonList" :key="item.name">{{
-                  `${line.initiator.description}:${item.name} ${lineType[type].text}`
+                  `${line.initiator.description}:${item.name} ${phenomenonType[type].text}`
                 }}</v-list-item>
               </v-list-item-group>
             </v-list>
@@ -80,13 +87,14 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import { Component, Prop, Vue } from 'vue-property-decorator'
 import Shape from '@/app/graph/shape/Shape'
 import { InterfaceLine } from '@/app/graph/line/InterfaceLine'
-import { Phenomenon } from '@/app/graph/Phenomenon'
+import { Phenomenon, PhenomenonPosition } from '@/app/graph/Phenomenon'
 import { Line } from '@/app/graph/line/Line'
 import Reference from '../app/graph/line/Reference'
 import Constraint from '../app/graph/line/Constraint'
+import { Domain } from '@/app/graph/shape/Domain'
 
 @Component({})
 export default class LineEditor extends Vue {
@@ -94,11 +102,16 @@ export default class LineEditor extends Vue {
   editorType: string = ''
   hasConstraint: boolean = false
   line: Line = null
+  // Whatever the line is, a domain is associated with it.
+  domain: Domain = null
 
   description: string = ''
 
+  // The selected actor index for initiator
   initiator: number = 0
+  // The selected actor index for receiver
   receiver: number = 1
+  // The initiator and receiver of the line, used for an exchange or adding interaction.
   actors: Array<Shape> = []
   get actorName() {
     return this.actors.map((e, index) => {
@@ -109,7 +122,7 @@ export default class LineEditor extends Vue {
     })
   }
 
-  lineType = [
+  phenomenonType = [
     {
       text: 'event',
       value: 0
@@ -123,23 +136,26 @@ export default class LineEditor extends Vue {
       value: 2
     }
   ]
-  type: number = 0
 
-  isConstraint: boolean = false
-
+  // The phenomenon name in edit, used for adding new phenomenon or set correspondingly when existing one is chosen
   phenomenonNameEdit: string = ''
-  phenomenonEdit: Phenomenon = null
-  globalPhenomenonList: Array<Phenomenon> = []
-  get globalPhenomenonListName() {
-    return this.globalPhenomenonList.map((e, index) => {
+  type: number = 0
+  isConstraint: boolean = false
+  // The unique name for phenomenon
+  phenomenonName: string = ''
+  phenomenonChoices: Array<Phenomenon> = []
+  get choices() {
+    return this.phenomenonChoices.map((e, index) => {
       return {
-        text: e.name,
+        text: e.description,
         value: index
       }
     })
   }
 
+  // The phenomenon selected in the phenomenonList, used for query and delete.
   phenomenonSelect: number = -1
+  // The phenomenons of the line which already exist.
   phenomenonList: Array<Phenomenon> = []
 
   submit() {
@@ -170,39 +186,61 @@ export default class LineEditor extends Vue {
     this.line = line
     this.description = line.description
     this.phenomenonList = line.phenomenonList
+    this.phenomenonSelect = -1
+    this.phenomenonNameEdit = ''
+    this.type = 0
+    this.isConstraint = false
     this.actors = [this.line.initiator, this.line.receiver]
     this.initiator = 0
     this.receiver = 1
-    this.globalPhenomenonList = Phenomenon.PhenomenonList
-    this.phenomenonNameEdit = ''
-    this.phenomenonSelect = 0
+    let domain: Domain
+    if (this.line.initiator instanceof Domain) domain = this.line.initiator
+    else if (this.line.receiver instanceof Domain) domain = this.line.receiver
+    if (!domain) throw 'Line not properly connected.'
+    this.domain = domain
+    this.phenomenonChoices = domain.phenomenonList
   }
 
   add(): void {
-    if (
-      this.phenomenonEdit &&
-      this.phenomenonNameEdit === this.phenomenonEdit.name
-    ) {
-      this.line.addPhenomenon(this.phenomenonEdit)
-    } else {
+    if (this.line instanceof InterfaceLine) {
+      /* The phenomenon added is in the left part of the diagram
+         No duplicate phenomenon is allowed.
+       */
+      if (Phenomenon.getPhenomenon(this.phenomenonNameEdit)) return
       let p = new Phenomenon(
         this.phenomenonNameEdit,
-        this.type,
-        this.isConstraint
+        PhenomenonPosition.Left,
+        this.line.initiator,
+        this.line.receiver,
+        this.type
       )
+      this.line.addPhenomenon(p)
+    } else {
+      let p = Phenomenon.getPhenomenon(this.phenomenonNameEdit, true)
+      if (p) this.line.addPhenomenon(p)
+      else
+        p = new Phenomenon(
+          this.phenomenonNameEdit,
+          PhenomenonPosition.Right,
+          this.line.initiator,
+          this.line.receiver,
+          this.type,
+          this.isConstraint
+        )
       this.line.addPhenomenon(p)
     }
   }
 
   del(): void {
     this.line.deletePhenomenon(this.phenomenonList[this.phenomenonSelect])
+    Phenomenon.deletePhenomenon(this.phenomenonName)
   }
 
   selectPhenomenon(index): void {
-    this.phenomenonEdit = this.globalPhenomenonList[index]
-    this.phenomenonNameEdit = this.globalPhenomenonList[index].name
-    this.isConstraint = this.phenomenonEdit.constraint
-    this.type = this.phenomenonEdit.type
+    this.phenomenonNameEdit = this.phenomenonChoices[index].description
+    this.isConstraint = this.phenomenonChoices[index].constraint
+    this.type = this.phenomenonChoices[index].type
+    this.phenomenonName = this.phenomenonChoices[index].name
   }
 }
 </script>
