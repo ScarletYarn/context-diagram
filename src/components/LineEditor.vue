@@ -61,7 +61,7 @@
               <v-list-item-group v-model="phenomenonSelect">
                 <v-subheader>PhenomenonList</v-subheader>
                 <v-list-item v-for="item in phenomenonList" :key="item.name">{{
-                  `${line.initiator.description}:${item.name} ${lineType[type].text}`
+                  `${line.initiator.description}! ${item.name}  ${lineType[type].text}`
                 }}</v-list-item>
               </v-list-item-group>
             </v-list>
