@@ -66,7 +66,7 @@
               <v-list-item-group v-model="phenomenonSelect">
                 <v-subheader>PhenomenonList</v-subheader>
                 <v-list-item v-for="item in phenomenonList" :key="item.name">{{
-                  `${line.initiator.description}:${item.name} ${phenomenonType[type].text}`
+                  `${line.initiator.description}:${item.description} ${phenomenonType[type].text}`
                 }}</v-list-item>
               </v-list-item-group>
             </v-list>
@@ -143,12 +143,14 @@ export default class LineEditor extends Vue {
   phenomenonName: string = ''
   phenomenonChoices: Array<Phenomenon> = []
   get choices() {
-    return this.phenomenonChoices.map((e, index) => {
-      return {
-        text: e.description,
-        value: index
-      }
-    })
+    if (!this.domain) return []
+    else
+      return this.domain.phenomenonList.map((e, index) => {
+        return {
+          text: e.description,
+          value: index
+        }
+      })
   }
 
   // The phenomenon selected in the phenomenonList, used for query and delete.
@@ -157,14 +159,15 @@ export default class LineEditor extends Vue {
   phenomenonList: Array<Phenomenon> = []
 
   submit() {
-    if (this.initiator !== this.receiver) {
+    debugger
+    if (this.initiator !== this.receiver && this.initiator !== 1) {
       this.line.setInformation(
         this.description,
         this.actors[this.initiator],
         this.actors[this.receiver]
       )
     }
-    this.line.setInformation(this.description, null, null)
+    else this.line.setInformation(this.description, null, null)
     this.$emit('end-edit-line')
   }
 
@@ -178,8 +181,10 @@ export default class LineEditor extends Vue {
       this.hasConstraint = false
     } else if (line instanceof Reference) {
       this.editorType = 'Reference'
+      this.hasConstraint = true
     } else if (line instanceof Constraint) {
       this.editorType = 'Constraint'
+      this.hasConstraint = true
     }
     this.line = line
     this.description = line.description
@@ -213,10 +218,11 @@ export default class LineEditor extends Vue {
         this.type
       )
       this.line.addPhenomenon(p)
+      this.domain.addPhenomenon(p)
     } else {
       let p = Phenomenon.getPhenomenon(this.phenomenonNameEdit, true)
       if (p) this.line.addPhenomenon(p)
-      else
+      else {
         p = new Phenomenon(
           this.phenomenonNameEdit,
           PhenomenonPosition.Right,
@@ -225,13 +231,17 @@ export default class LineEditor extends Vue {
           this.type,
           this.isConstraint
         )
-      this.line.addPhenomenon(p)
+        this.line.addPhenomenon(p)
+        this.domain.addPhenomenon(p)
+      }
     }
   }
 
   del(): void {
     this.line.deletePhenomenon(this.phenomenonList[this.phenomenonSelect])
+    this.domain.removePhenomenon(this.phenomenonList[this.phenomenonSelect])
     Phenomenon.deletePhenomenon(this.phenomenonName)
+    this.phenomenonList.splice(this.phenomenonSelect, 1)
   }
 
   selectPhenomenon(index): void {

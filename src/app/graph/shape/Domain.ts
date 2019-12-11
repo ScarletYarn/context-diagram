@@ -42,6 +42,15 @@ export class Domain extends Shape {
     this.paint()
   }
 
+  public addPhenomenon(p: Phenomenon): void {
+    this.phenomenonList.push(p)
+  }
+
+  public removePhenomenon(p: Phenomenon): void {
+    let index = this.phenomenonList.indexOf(p)
+    if (index !== -1) this.phenomenonList.splice(index, 1)
+  }
+
   public setInformation(
     description: string,
     shortName: string,

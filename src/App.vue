@@ -87,7 +87,7 @@
             <v-list-item>Phenomenon</v-list-item>
           </template>
           <v-list-item>
-            <v-simple-table :height="height" style="width: 100%">
+            <v-simple-table style="width: 100%">
               <template v-slot:default>
                 <thead>
                   <tr>
@@ -97,9 +97,9 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(item, index) in phenomenons" :key="item.name">
-                    <td>phe{{ index + 1 }}</td>
-                    <td>{{ item.name }}</td>
+                  <tr v-for="item in phenomenons" :key="item.name">
+                    <td>phe{{ item.name }}</td>
+                    <td>{{ item.description }}</td>
                     <td>{{ phenomenonName[item.type] }}</td>
                   </tr>
                 </tbody>
@@ -112,7 +112,7 @@
             <v-list-item>Interaction</v-list-item>
           </template>
           <v-list-item>
-            <v-simple-table :height="height" style="width: 100%">
+            <v-simple-table style="width: 100%">
               <template v-slot:default>
                 <thead>
                   <tr>
@@ -127,7 +127,7 @@
                     <td>inter{{ index + 1 }}</td>
                     <td>{{ item.initiator.description }}</td>
                     <td>{{ item.receiver.description }}</td>
-                    <td>{{ item.name }}</td>
+                    <td>{{ item.description }}</td>
                   </tr>
                 </tbody>
               </template>
@@ -139,7 +139,7 @@
             <v-list-item>Reference</v-list-item>
           </template>
           <v-list-item style="width: 100%">
-            <v-simple-table :height="height" style="width: 100%">
+            <v-simple-table style="width: 100%">
               <template v-slot:default>
                 <thead>
                   <tr>
@@ -400,7 +400,7 @@ export default class App extends Vue {
     }
   ]
   phenomenons: Array<Phenomenon> = Phenomenon.PhenomenonList
-  height: number = 120
+  // height: number = 120
 
   get phenomenonName(): Array<string> {
     return ['event', 'state', 'value']
