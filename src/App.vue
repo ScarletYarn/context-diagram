@@ -49,7 +49,7 @@
               >
             </v-list-item>
             <v-list-item :input-value="activeStep === 2 && subStep === 2">
-              <v-list-item-action>2.1: Identify references.</v-list-item-action>
+              <v-list-item-action>2.2: Identify references.</v-list-item-action>
             </v-list-item>
             <v-list-item :input-value="activeStep === 2 && subStep === 3">
               <v-list-item-action
@@ -419,23 +419,16 @@ export default class App extends Vue {
     receiver: string
     constraint: boolean
   }> {
-    if (!this.canvas) return []
     let res = []
-    for (let item of this.canvas.referenceList) {
-      res.push({
-        name: item.description,
-        initiator: item.initiator.description,
-        receiver: item.receiver.description,
-        constraint: false
-      })
-    }
-    for (let item of this.canvas.constraintList) {
-      res.push({
-        name: item.description,
-        initiator: item.initiator.description,
-        receiver: item.receiver.description,
-        constraint: true
-      })
+    for (let item of Phenomenon.PhenomenonList) {
+      if(item.position===1){
+          res.push({
+              name: item.description,
+              initiator: item.initiator.description,
+              receiver: item.receiver.description,
+              constraint: item.constraint
+          })
+      }
     }
     return res
   }
