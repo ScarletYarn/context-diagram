@@ -1,5 +1,3 @@
-import { PhenomenonPosition } from '@/app/graph/Phenomenon' import {
-PhenomenonPosition } from '@/app/graph/Phenomenon'
 <template>
   <v-dialog v-model="active" persistent max-width="600px">
     <v-card>
