@@ -64,25 +64,104 @@
             <v-btn color="deep-purple darken-1" dark @click="next">NEXT</v-btn>
           </v-row>
         </v-container>
-        <v-list-group value="true">
+        <v-list-group value="true" no-action>
           <template v-slot:activator>
             <v-list-item>Diagram</v-list-item>
           </template>
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-title>{{
+                this.projectDescription
+              }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            context Diagram
+          </v-list-item>
+          <v-list-item>
+            problem Diagram
+          </v-list-item>
         </v-list-group>
         <v-list-group value="true">
           <template v-slot:activator>
             <v-list-item>Phenomenon</v-list-item>
           </template>
+          <v-list-item>
+            <v-simple-table :height="height" style="width: 100%">
+              <template v-slot:default>
+                <thead>
+                  <tr>
+                    <th class="text-left">Name</th>
+                    <th class="text-left">Description</th>
+                    <th class="text-left">PheType</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(item, index) in phenomenons" :key="item.name">
+                    <td>phe{{ index + 1 }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ phenomenonName[item.type] }}</td>
+                  </tr>
+                </tbody>
+              </template>
+            </v-simple-table>
+          </v-list-item>
         </v-list-group>
         <v-list-group value="true">
           <template v-slot:activator>
             <v-list-item>Interaction</v-list-item>
           </template>
+          <v-list-item>
+            <v-simple-table :height="height" style="width: 100%">
+              <template v-slot:default>
+                <thead>
+                  <tr>
+                    <th class="text-left">Name</th>
+                    <th class="text-left">Initiator</th>
+                    <th class="text-left">Receiver</th>
+                    <th class="text-left">Content</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(item, index) in desserts" :key="item.name">
+                    <td>inter{{ index + 1 }}</td>
+                    <td>{{ item.calories }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.calories }}</td>
+                  </tr>
+                </tbody>
+              </template>
+            </v-simple-table>
+          </v-list-item>
         </v-list-group>
-        <v-list-group value="true">
+        <v-list-group value="true" style="width: 100%">
           <template v-slot:activator>
             <v-list-item>Reference</v-list-item>
           </template>
+          <v-list-item style="width: 100%">
+            <v-simple-table :height="height" style="width: 100%">
+              <template v-slot:default>
+                <thead>
+                  <tr>
+                    <th class="text-left">Name</th>
+                    <th class="text-left">Initiator</th>
+                    <th class="text-left">Receiver</th>
+                    <th class="text-left">Content</th>
+                    <th class="text-left">Constraint</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(item, index) in references" :key="item.name">
+                    <td>req{{ index + 1 }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.initiator }}</td>
+                    <td>{{ item.receiver }}</td>
+                    <td>{{ item.constraint }}</td>
+                  </tr>
+                </tbody>
+              </template>
+            </v-simple-table>
+          </v-list-item>
         </v-list-group>
         <v-list-group value="true">
           <template v-slot:activator>
@@ -309,6 +388,50 @@ export default class App extends Vue {
 
   onEditLine: boolean = false
   editingLine: Line | undefined
+
+  desserts = [
+    {
+      name: 'Frozen Yogurt',
+      calories: 159
+    },
+    {
+      name: 'Ice cream sandwich',
+      calories: 237
+    }
+  ]
+  phenomenons: Array<Phenomenon> = Phenomenon.PhenomenonList
+  height: number = 120
+
+  get phenomenonName(): Array<string> {
+    return ['event', 'state', 'value']
+  }
+
+  get references(): Array<{
+    name: string
+    initiator: string
+    receiver: string
+    constraint: boolean
+  }> {
+    if (!this.canvas) return []
+    let res = []
+    for (let item of this.canvas.referenceList) {
+      res.push({
+        name: item.description,
+        initiator: item.initiator.description,
+        receiver: item.receiver.description,
+        constraint: false
+      })
+    }
+    for (let item of this.canvas.constraintList) {
+      res.push({
+        name: item.description,
+        initiator: item.initiator.description,
+        receiver: item.receiver.description,
+        constraint: true
+      })
+    }
+    return res
+  }
 
   back(): void {
     let obj = this.procedure.previous()
