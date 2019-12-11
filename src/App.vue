@@ -123,11 +123,11 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(item, index) in desserts" :key="item.name">
+                  <tr v-for="(item, index) in phenomenons" :key="item.name">
                     <td>inter{{ index + 1 }}</td>
-                    <td>{{ item.calories }}</td>
+                    <td>{{ item.initiator.description }}</td>
+                    <td>{{ item.receiver.description }}</td>
                     <td>{{ item.name }}</td>
-                    <td>{{ item.calories }}</td>
                   </tr>
                 </tbody>
               </template>
