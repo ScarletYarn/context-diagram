@@ -34,7 +34,7 @@ export class InterfaceLine extends Line {
       baseIndex: this.baseIndex,
       initiator: this.initiator.description,
       receiver: this.receiver.description,
-      phenomenonList: this.phenomenonList
+      phenomenonList: this.phenomenonList.map(e => e.toSerializable())
     }
   }
 }

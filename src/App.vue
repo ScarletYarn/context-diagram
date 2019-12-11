@@ -549,6 +549,7 @@ export default class App extends Vue {
         this.activeStep = r.step
         this.subStep = r.subStep
         this.flushAllow()
+        /*
         for (let item of r.phenomenonList) {
           new Phenomenon(
             item.description,
@@ -557,6 +558,8 @@ export default class App extends Vue {
             item.constraint
           )
         }
+
+        */
         this.canvas = Canvas.load(this, r)
       }
       fr.readAsText(files[0])
@@ -581,6 +584,7 @@ export default class App extends Vue {
       constraintCount: this.canvas.constraintCount,
       phenomenonList: Phenomenon.PhenomenonList.map(e => e.toSerializable())
     }
+    console.log(final)
     let buffer = JSON.stringify(final)
     let downloadBlobURL = URL.createObjectURL(
       new Blob([buffer], {

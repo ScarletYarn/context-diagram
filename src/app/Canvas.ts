@@ -75,6 +75,19 @@ class Canvas {
     )
     c.machine = machine
     c.componentsList.push(machine)
+
+    for (let item of r.phenomenonList){
+      let phe=new Phenomenon(
+          item.description,
+          item.position,
+          null,
+          null,
+          item.type,
+          item.constraint,
+          item.name
+      )
+    }
+
     for (let item of r.domainList) {
       let domain = new Domain(
         c.app.stage,
@@ -86,18 +99,24 @@ class Canvas {
         item.physicalProperty,
         item.domainType
       )
+      for (let itt of item.phenomenonList) {
+        console.log(itt)
+        domain.phenomenonList.push(itt)
+      }
       c.domainList.push(domain)
       c.componentsList.push(domain)
     }
+    let req=r.requirement
     let requirement = new Requirement(
       c.app.stage,
-      m.x,
-      m.y,
-      m.description,
-      m.baseIndex
+      req.x,
+      req.y,
+      req.description,
+      req.baseIndex
     )
     c.requirement = requirement
     c.componentsList.push(requirement)
+
     for (let item of r.interfaceList) {
       let initiator = c.findShape(item.initiator)
       let receiver = c.findShape(item.receiver)
@@ -111,7 +130,7 @@ class Canvas {
       initiator.attachedLines.push(interfaceLine)
       receiver.attachedLines.push(interfaceLine)
       for (let itt of item.phenomenonList) {
-        interfaceLine.phenomenonList.push(Phenomenon.getPhenomenon(itt.name))
+        interfaceLine.phenomenonList.push(itt)
       }
       c.interfaceList.push(interfaceLine)
       c.componentsList.push(interfaceLine)
@@ -129,7 +148,7 @@ class Canvas {
       initiator.attachedLines.push(reference)
       receiver.attachedLines.push(reference)
       for (let itt of item.phenomenonList) {
-        reference.phenomenonList.push(Phenomenon.getPhenomenon(itt.name))
+        reference.phenomenonList.push(itt)
       }
       c.referenceList.push(reference)
       c.componentsList.push(reference)
@@ -147,11 +166,20 @@ class Canvas {
       initiator.attachedLines.push(constraint)
       receiver.attachedLines.push(constraint)
       for (let itt of item.phenomenonList) {
-        constraint.phenomenonList.push(Phenomenon.getPhenomenon(itt.name))
+        constraint.phenomenonList.push(itt)
       }
       c.constraintList.push(constraint)
       c.componentsList.push(constraint)
     }
+    for (let item of Phenomenon.PhenomenonList){
+      for (let itt of r.phenomenonList){
+        if (item.name===itt.name){
+          item.initiator=c.findShape(itt.initiator)
+          item.receiver=c.findShape(itt.receiver)
+        }
+      }
+    }
+    console.log(c)
     return c
   }
 

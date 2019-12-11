@@ -56,9 +56,11 @@ export class Phenomenon {
     initiator: Shape,
     receiver: Shape,
     type: PhenomenonType = PhenomenonType.Event,
-    constraint: boolean = false
+    constraint: boolean = false,
+    name?: string
   ) {
-    this.name = Phenomenon.PhenomenonList.length.toString()
+    if (name) this.name=name
+    else this.name = Phenomenon.PhenomenonList.length.toString()
     this.description = description
     this.type = type
     this.constraint = constraint
@@ -70,6 +72,7 @@ export class Phenomenon {
 
   public toSerializable(): {
     name: string
+    description: string
     type: PhenomenonType
     constraint: boolean
     initiator: string
@@ -78,6 +81,7 @@ export class Phenomenon {
   } {
     return {
       name: this.name,
+      description: this.description,
       type: this.type,
       constraint: this.constraint,
       initiator: this.initiator.description,

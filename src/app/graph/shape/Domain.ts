@@ -101,7 +101,8 @@ export class Domain extends Shape {
       shortName: this.shortName,
       baseIndex: this.baseIndex,
       physicalProperty: this.physicalProperty,
-      domainType: this.domainType
+      domainType: this.domainType,
+      phenomenonList: this.phenomenonList.map(e => e.toSerializable())
     }
   }
 }
