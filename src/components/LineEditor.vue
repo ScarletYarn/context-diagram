@@ -166,8 +166,7 @@ export default class LineEditor extends Vue {
         this.actors[this.initiator],
         this.actors[this.receiver]
       )
-    }
-    else this.line.setInformation(this.description, null, null)
+    } else this.line.setInformation(this.description, null, null)
     this.$emit('end-edit-line')
   }
 

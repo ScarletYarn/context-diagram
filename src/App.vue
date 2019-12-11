@@ -321,6 +321,13 @@ import { Line } from '@/app/graph/line/Line'
   mounted() {},
   created() {
     document.addEventListener('keyup', ev => {
+      if (
+        this.onEditMachine ||
+        this.onEditDomain ||
+        this.onEditRequirement ||
+        this.onEditLine
+      )
+        return
       if (ev.code === 'Backspace' || ev.code === 'Delete') this.deleteElement()
     })
     this.$on('editMachine', this.editMachine)
@@ -558,7 +565,12 @@ export default class App extends Vue {
         this.subStep = r.subStep
         this.flushAllow()
         for (let item of r.phenomenonList) {
-          new Phenomenon(item.name, item.type, item.constraint)
+          new Phenomenon(
+            item.description,
+            item.position,
+            item.type,
+            item.constraint
+          )
         }
         this.canvas = Canvas.load(this, r)
       }
