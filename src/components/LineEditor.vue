@@ -65,9 +65,14 @@
             <v-list>
               <v-list-item-group v-model="phenomenonSelect">
                 <v-subheader>PhenomenonList</v-subheader>
-                <v-list-item v-for="item in phenomenonList" :key="item.name">{{
-                  `${line.initiator.description}:${item.description} ${phenomenonType[type].text}`
-                }}</v-list-item>
+                <v-list-item
+                  @click="phenomenonName = item.name"
+                  v-for="item in phenomenonList"
+                  :key="item.name"
+                  >{{
+                    `${line.initiator.description}:${item.description} ${phenomenonType[type].text}`
+                  }}</v-list-item
+                >
               </v-list-item-group>
             </v-list>
           </v-row>
@@ -220,8 +225,9 @@ export default class LineEditor extends Vue {
       this.domain.addPhenomenon(p)
     } else {
       let p = Phenomenon.getPhenomenon(this.phenomenonNameEdit, true)
-      if (p) this.line.addPhenomenon(p)
-      else {
+      if (p) {
+        this.line.addPhenomenon(p)
+      } else {
         p = new Phenomenon(
           this.phenomenonNameEdit,
           PhenomenonPosition.Right,
@@ -237,8 +243,9 @@ export default class LineEditor extends Vue {
   }
 
   del(): void {
-    this.line.deletePhenomenon(this.phenomenonList[this.phenomenonSelect])
+    debugger
     this.domain.removePhenomenon(this.phenomenonList[this.phenomenonSelect])
+    this.line.deletePhenomenon(this.phenomenonList[this.phenomenonSelect])
     Phenomenon.deletePhenomenon(this.phenomenonName)
     this.phenomenonList.splice(this.phenomenonSelect, 1)
   }
@@ -247,7 +254,6 @@ export default class LineEditor extends Vue {
     this.phenomenonNameEdit = this.phenomenonChoices[index].description
     this.isConstraint = this.phenomenonChoices[index].constraint
     this.type = this.phenomenonChoices[index].type
-    this.phenomenonName = this.phenomenonChoices[index].name
   }
 }
 </script>

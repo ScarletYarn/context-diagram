@@ -28,8 +28,8 @@ class Procedure {
       this.subStep++
     } else if (this.step === 1 && this.subStep === 3) {
       let countDomainList = this.canvas.domainList.length
-      this.step = 1
-      this.subStep = 1
+      // this.step = 1
+      // this.subStep = 1
       for (let interfaceLine of this.canvas.interfaceList) {
         if (interfaceLine.phenomenonList.length === 0) {
           err += 'Exist undefined interface.\n'
@@ -56,8 +56,8 @@ class Procedure {
         success = 'Step one all right'
       }
     } else if (this.step === 2 && this.subStep === 2) {
-      this.step = 2
-      this.subStep = 1
+      // this.step = 2
+      // this.subStep = 1
       for (let reference of this.canvas.referenceList) {
         if (reference.phenomenonList.length === 0) {
           err += 'Exist undefined interface.\n'

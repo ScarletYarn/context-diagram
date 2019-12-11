@@ -248,7 +248,7 @@ class Canvas {
         case 0:
           if (this.machine) {
             this._Vue.$emit('giveWarn', 'There can exist only one machine. ')
-            return
+            break
           }
           let machine = new Machine(
             this.app.stage,
@@ -282,7 +282,7 @@ class Canvas {
               'giveWarn',
               'There can exist only one requirement. '
             )
-            return
+            break
           }
           let requirement = new Requirement(
             this.app.stage,
@@ -339,6 +339,7 @@ class Canvas {
             )
             break
           case 5:
+            if (!(comp instanceof Requirement)) break
             this.drawingLine = new Constraint(
               this.app.stage,
               config.defaultConstraintName + (this.constraintCount + 1),

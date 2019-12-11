@@ -24,28 +24,12 @@ class Reference extends Line {
   /**
    * Draw a dashed line from start to end.
    * Use g.lineTo and g.moveTo
+   * @param g
    * @param color
    */
-  protected drawSkeleton(color: number): PIXI.Graphics {
-    let g = new PIXI.Graphics()
-    g.lineStyle(2, color, 1)
-    g.beginFill(color, 1)
-    g.moveTo(this.start.x, this.start.y)
-    let total =
-      (this.start.x - this.end.x) ** 2 + (this.start.y - this.end.y) ** 2
-    let k = Math.floor(Math.sqrt(total) / 10)
-    let rate = 0.6
-    let distanceX = (this.end.x - this.start.x) / k
-    let distanceY = (this.end.y - this.start.y) / k
-    for (let i = 0; i < k; i++) {
-      g.moveTo(this.start.x + i * distanceX, this.start.y + i * distanceY)
-      g.lineTo(
-        this.start.x + i * distanceX + rate * distanceX,
-        this.start.y + i * distanceY + rate * distanceY
-      )
-    }
+  protected drawSkeleton(g: PIXI.Graphics, color: number): PIXI.Graphics {
+    g = this.getDashedLine(g, color, this.start, this.end)
     g.endFill()
-
     return g
   }
 

@@ -87,7 +87,7 @@ export abstract class Line extends Component {
   public addPhenomenon(phenomenon: Phenomenon): void {
     let flag = false
     for (let item of this.phenomenonList) {
-      if (item === phenomenon) {
+      if (item.description === phenomenon.description) {
         flag = true
         break
       }
@@ -97,9 +97,8 @@ export abstract class Line extends Component {
   }
 
   public deletePhenomenon(phenomenon: Phenomenon): void {
-    this.phenomenonList.forEach((item, index) => {
-      if (item === phenomenon) this.phenomenonList.splice(index, 1)
-    })
+    let index = this.phenomenonList.indexOf(phenomenon)
+    if (index !== -1) this.phenomenonList.splice(index, 1)
   }
 
   destroy(): void {
@@ -109,24 +108,38 @@ export abstract class Line extends Component {
   }
 
   protected paint(): void {
-    let text = new PIXI.Text(this.getDisplayText(), this.textStyle)
+    let flag = this.spriteGroup.length === 0
+    let text
+    if (this.spriteGroup[0]) text = this.spriteGroup[0]
+    else text = new PIXI.Text(this.getDisplayText(), this.textStyle)
+    text.text = this.getDisplayText()
+    text.textStyle = this.textStyle
     text.x = (this.start.x + this.end.x) / 2 - text.width / 2
     text.y = (this.start.y + this.end.y) / 2 - text.height / 2
     text.zIndex = this.baseIndex + 2
-    let textBG = new PIXI.Graphics()
+    let textBG
+    if (this.spriteGroup[3]) textBG = this.spriteGroup[3]
+    else textBG = new PIXI.Graphics()
+    textBG.clear()
     textBG.beginFill(0xffffff, 1)
     textBG.drawRect(text.x, text.y, text.width, text.height)
     textBG.endFill()
     textBG.zIndex = this.baseIndex + 1
 
-    let gd = this.drawSkeleton(config.strokeColor)
-    let ga = this.drawSkeleton(config.activeStrokeColor)
+    let gd, ga
+    if (this.spriteGroup[1]) gd = this.spriteGroup[1]
+    else gd = new PIXI.Graphics()
+    if (this.spriteGroup[2]) ga = this.spriteGroup[2]
+    else ga = new PIXI.Graphics()
+
+    gd = this.drawSkeleton(gd, config.strokeColor)
+    ga = this.drawSkeleton(ga, config.activeStrokeColor)
     ga.visible = false
     gd.zIndex = ga.zIndex = this.baseIndex
 
     this.spriteGroup = [text, gd, ga, textBG]
-    for (let item of this.spriteGroup) {
-      this.container.addChild(item)
+    if (flag) {
+      this.spriteGroup.forEach(item => this.container.addChild(item))
     }
   }
 
@@ -138,7 +151,33 @@ export abstract class Line extends Component {
       )
       this.end = this.getIntersectionPoint(this.receiver, this.initiator.center)
     }
-    super.repaint()
+    this.paint()
+  }
+
+  protected getDashedLine(
+    g: PIXI.Graphics,
+    color: number,
+    start: Point,
+    end: Point
+  ): PIXI.Graphics {
+    g.clear()
+    g.lineStyle(2, color, 1)
+    g.beginFill(color, 1)
+    g.moveTo(start.x, start.y)
+    let total = (start.x - end.x) ** 2 + (start.y - end.y) ** 2
+    let k = Math.floor(Math.sqrt(total) / 10)
+    let rate = 0.6
+    let distanceX = (end.x - start.x) / k
+    let distanceY = (end.y - start.y) / k
+    for (let i = 0; i < k; i++) {
+      g.moveTo(start.x + i * distanceX, start.y + i * distanceY)
+      g.lineTo(
+        start.x + i * distanceX + rate * distanceX,
+        start.y + i * distanceY + rate * distanceY
+      )
+    }
+
+    return g
   }
 
   public selfContain(p: Point): boolean {
@@ -204,18 +243,9 @@ export abstract class Line extends Component {
     }
     return { x: tmpX, y: tmpY }
   }
-  /*
-  toSerializable(): Object {
-    return {
-      description: this.description,
-      baseIndex: this.baseIndex,
-      initiator: this.initiator.description,
-      receiver: this.receiver.description,
-      phenomenonType: this.phenomenonType
-    }
-  }
 
-   */
-
-  protected abstract drawSkeleton(color: number): PIXI.Graphics
+  protected abstract drawSkeleton(
+    g: PIXI.Graphics,
+    color: number
+  ): PIXI.Graphics
 }

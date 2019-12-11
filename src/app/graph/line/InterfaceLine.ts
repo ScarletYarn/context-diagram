@@ -13,8 +13,8 @@ export class InterfaceLine extends Line {
     super(stage, description, baseIndex, initiator, receiver)
   }
 
-  protected drawSkeleton(color: number): PIXI.Graphics {
-    let g = new PIXI.Graphics()
+  protected drawSkeleton(g: PIXI.Graphics, color: number): PIXI.Graphics {
+    g.clear()
     g.lineStyle(2, color, 1)
     g.beginFill(color, 1)
     g.moveTo(this.start.x, this.start.y)
