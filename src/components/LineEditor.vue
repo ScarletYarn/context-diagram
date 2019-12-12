@@ -271,7 +271,6 @@ export default class LineEditor extends Vue {
   }
 
   del(): void {
-    debugger
     this.domain.removePhenomenon(this.phenomenonList[this.phenomenonSelect])
     this.line.deletePhenomenon(this.phenomenonList[this.phenomenonSelect])
     Phenomenon.deletePhenomenon(this.phenomenonName)
