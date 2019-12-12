@@ -15,11 +15,11 @@ class Config {
     align: 'center'
   }
   public strokeColor = 0x000000
-  public activeStrokeColor = 0xff9800
+  public activeStrokeColor = 0x1976d2
 
-  public machineColor = 0xff0000
-  public domainColor = 0x00ff00
-  public requirementColor = 0x0000ff
+  public machineColor = 0xb39ddb
+  public domainColor = 0xb39ddb
+  public requirementColor = 0xb39ddb
 
   public defaultMachineName = 'machine'
   public defaultMachineShortName = 'M'

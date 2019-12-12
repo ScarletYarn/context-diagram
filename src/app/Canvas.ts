@@ -18,8 +18,8 @@ const config = new Config()
 class Canvas {
   private app: PIXI.Application = null
 
-  private width: number = 700
-  private height: number = 450
+  private width: number = window.innerWidth - 600
+  private height: number = window.innerHeight - 100
 
   private draggingComponent: Shape = null
   private editingComponent: Component = null

@@ -101,6 +101,7 @@ import Reference from '../app/graph/line/Reference'
 import Constraint from '../app/graph/line/Constraint'
 import { Domain } from '@/app/graph/shape/Domain'
 import Machine from '@/app/graph/shape/Machine'
+import Requirement from '@/app/graph/shape/Requirement'
 
 @Component({
   watch: {
@@ -249,8 +250,8 @@ export default class LineEditor extends Vue {
         if (this.line.hasPhenomenon(this.phenomenonNameEdit)) return
         let initiator = this.line.initiator,
           receiver = this.line.receiver
-        if (initiator instanceof Domain) initiator = this.machine
-        if (receiver instanceof Domain) receiver = this.machine
+        if (initiator instanceof Requirement) initiator = this.machine
+        if (receiver instanceof Requirement) receiver = this.machine
         p = new Phenomenon(
           this.phenomenonNameEdit,
           PhenomenonPosition.Right,
