@@ -46,6 +46,13 @@ abstract class Shape extends Component {
     }
   }
 
+  protected repaint(): void {
+    super.repaint()
+    for (let line of this.attachedLines) {
+      line.updateLine()
+    }
+  }
+
   /* Tell whether the given point is contained in the component */
   public contain(p: Point): boolean {
     return (

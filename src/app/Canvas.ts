@@ -107,17 +107,18 @@ class Canvas {
       c.domainList.push(domain)
       c.componentsList.push(domain)
     }
-    let req = r.requirement
-    let requirement = new Requirement(
-      c.app.stage,
-      req.x,
-      req.y,
-      req.description,
-      req.baseIndex
-    )
-    c.requirement = requirement
-    c.componentsList.push(requirement)
-
+    if (r.requirement) {
+      let req = r.requirement
+      let requirement = new Requirement(
+        c.app.stage,
+        req.x,
+        req.y,
+        req.description,
+        req.baseIndex
+      )
+      c.requirement = requirement
+      c.componentsList.push(requirement)
+    }
     for (let item of r.interfaceList) {
       c.stuffLine(item, c, 'interface')
     }

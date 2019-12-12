@@ -228,6 +228,10 @@ export default class LineEditor extends Vue {
   }
 
   add(): void {
+    if (this.phenomenonNameEdit === '') {
+      alert('Phenomenon name cannot be empty.')
+      return
+    }
     if (this.line instanceof InterfaceLine) {
       /* The phenomenon added is in the left part of the diagram
          No duplicate phenomenon is allowed.
@@ -267,10 +271,10 @@ export default class LineEditor extends Vue {
   }
 
   del(): void {
+    debugger
     this.domain.removePhenomenon(this.phenomenonList[this.phenomenonSelect])
     this.line.deletePhenomenon(this.phenomenonList[this.phenomenonSelect])
     Phenomenon.deletePhenomenon(this.phenomenonName)
-    this.phenomenonList.splice(this.phenomenonSelect, 1)
   }
 
   selectPhenomenon(index): void {
