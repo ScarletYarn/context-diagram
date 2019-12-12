@@ -76,15 +76,15 @@ class Canvas {
     c.machine = machine
     c.componentsList.push(machine)
 
-    for (let item of r.phenomenonList){
-      let phe=new Phenomenon(
-          item.description,
-          item.position,
-          null,
-          null,
-          item.type,
-          item.constraint,
-          item.name
+    for (let item of r.phenomenonList) {
+      new Phenomenon(
+        item.description,
+        item.position,
+        null,
+        null,
+        item.type,
+        item.constraint,
+        item.name
       )
     }
 
@@ -100,13 +100,14 @@ class Canvas {
         item.domainType
       )
       for (let itt of item.phenomenonList) {
-        console.log(itt)
-        domain.phenomenonList.push(itt)
+        domain.phenomenonList.push(
+          Phenomenon.getPhenomenon(itt.name, false, true)
+        )
       }
       c.domainList.push(domain)
       c.componentsList.push(domain)
     }
-    let req=r.requirement
+    let req = r.requirement
     let requirement = new Requirement(
       c.app.stage,
       req.x,
@@ -118,74 +119,72 @@ class Canvas {
     c.componentsList.push(requirement)
 
     for (let item of r.interfaceList) {
-      let initiator = c.findShape(item.initiator)
-      let receiver = c.findShape(item.receiver)
-      let interfaceLine = new InterfaceLine(
-        c.app.stage,
-        item.description,
-        item.baseIndex,
-        initiator,
-        receiver
-      )
-      initiator.attachedLines.push(interfaceLine)
-      receiver.attachedLines.push(interfaceLine)
-      for (let itt of item.phenomenonList) {
-        interfaceLine.phenomenonList.push(itt)
-      }
-      c.interfaceList.push(interfaceLine)
-      c.componentsList.push(interfaceLine)
+      c.stuffLine(item, c, 'interface')
     }
     for (let item of r.referenceList) {
-      let initiator = c.findShape(item.initiator)
-      let receiver = c.findShape(item.receiver)
-      let reference = new Reference(
-        c.app.stage,
-        item.description,
-        item.baseIndex,
-        initiator,
-        receiver
-      )
-      initiator.attachedLines.push(reference)
-      receiver.attachedLines.push(reference)
-      for (let itt of item.phenomenonList) {
-        reference.phenomenonList.push(itt)
-      }
-      c.referenceList.push(reference)
-      c.componentsList.push(reference)
+      c.stuffLine(item, c, 'reference')
     }
     for (let item of r.constraintList) {
-      let initiator = c.findShape(item.initiator)
-      let receiver = c.findShape(item.receiver)
-      let constraint = new Constraint(
-        c.app.stage,
-        item.description,
-        item.baseIndex,
-        initiator,
-        receiver
-      )
-      initiator.attachedLines.push(constraint)
-      receiver.attachedLines.push(constraint)
-      for (let itt of item.phenomenonList) {
-        constraint.phenomenonList.push(itt)
-      }
-      c.constraintList.push(constraint)
-      c.componentsList.push(constraint)
+      c.stuffLine(item, c, 'constraint')
     }
-    for (let item of Phenomenon.PhenomenonList){
-      for (let itt of r.phenomenonList){
-        if (item.name===itt.name){
-          item.initiator=c.findShape(itt.initiator)
-          item.receiver=c.findShape(itt.receiver)
+    for (let item of Phenomenon.PhenomenonList) {
+      for (let itt of r.phenomenonList) {
+        if (item.name === itt.name) {
+          item.initiator = c.findShape(itt.initiator)
+          item.receiver = c.findShape(itt.receiver)
         }
       }
     }
-    console.log(c)
     return c
   }
 
   public findShape(description: string): Shape {
     for (let item of this.componentsList) {
       if (item.description === description && item instanceof Shape) return item
+    }
+  }
+
+  public stuffLine(item: any, c: Canvas, type: string): void {
+    let initiator = c.findShape(item.initiator)
+    let receiver = c.findShape(item.receiver)
+    let line: Line
+    switch (type) {
+      case 'interface':
+        line = new InterfaceLine(
+          c.app.stage,
+          item.description,
+          item.baseIndex,
+          initiator,
+          receiver
+        )
+        c.interfaceList.push(<InterfaceLine>line)
+        break
+      case 'reference':
+        line = new Reference(
+          c.app.stage,
+          item.description,
+          item.baseIndex,
+          initiator,
+          receiver
+        )
+        c.referenceList.push(<Reference>line)
+        break
+      case 'constraint':
+        line = new Constraint(
+          c.app.stage,
+          item.description,
+          item.baseIndex,
+          initiator,
+          receiver
+        )
+        c.constraintList.push(<Constraint>line)
+        break
+    }
+    c.componentsList.push(line)
+    initiator.attachedLines.push(line)
+    receiver.attachedLines.push(line)
+    for (let itt of item.phenomenonList) {
+      line.phenomenonList.push(Phenomenon.getPhenomenon(itt.name, false, true))
     }
   }
 

@@ -31,11 +31,13 @@ export class Phenomenon {
 
   public static getPhenomenon(
     description: string,
-    isLeft: boolean = false
+    isLeft: boolean = false,
+    byName: boolean = false
   ): Phenomenon {
     for (let item of Phenomenon.PhenomenonList) {
       if (
-        item.description === description &&
+        ((!byName && item.description === description) ||
+          (byName && item.name === description)) &&
         (!isLeft || (isLeft && item.position === PhenomenonPosition.Left))
       )
         return item
@@ -59,7 +61,7 @@ export class Phenomenon {
     constraint: boolean = false,
     name?: string
   ) {
-    if (name) this.name=name
+    if (name) this.name = name
     else this.name = Phenomenon.PhenomenonList.length.toString()
     this.description = description
     this.type = type

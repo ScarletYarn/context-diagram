@@ -545,10 +545,8 @@ export default class App extends Vue {
         // @ts-ignore
         let r = JSON.parse(e.target.result)
         this.projectDescription = r.projectName
-        this.procedure = new Procedure(this.canvas, r.step, r.subStep)
         this.activeStep = r.step
         this.subStep = r.subStep
-        this.flushAllow()
         /*
         for (let item of r.phenomenonList) {
           new Phenomenon(
@@ -561,6 +559,8 @@ export default class App extends Vue {
 
         */
         this.canvas = Canvas.load(this, r)
+        this.procedure = new Procedure(this.canvas, r.step, r.subStep)
+        this.flushAllow()
       }
       fr.readAsText(files[0])
     }
@@ -584,7 +584,6 @@ export default class App extends Vue {
       constraintCount: this.canvas.constraintCount,
       phenomenonList: Phenomenon.PhenomenonList.map(e => e.toSerializable())
     }
-    console.log(final)
     let buffer = JSON.stringify(final)
     let downloadBlobURL = URL.createObjectURL(
       new Blob([buffer], {

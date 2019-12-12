@@ -70,7 +70,9 @@
                   v-for="item in phenomenonList"
                   :key="item.name"
                   >{{
-                    `${line.initiator.description}:${item.description} ${phenomenonType[item.type].text}`
+                    `${line.initiator.description}:${item.description} ${
+                      phenomenonType[item.type].text
+                    }`
                   }}</v-list-item
                 >
               </v-list-item-group>
