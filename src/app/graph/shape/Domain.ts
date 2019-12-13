@@ -69,16 +69,44 @@ export class Domain extends Shape {
   }
 
   protected drawBorder(color: number, textWidth: number): PIXI.Graphics {
-    this.width = textWidth + 2 * this.interval
+    /* ** New: Render the shape according to the physical property. */
+    this.width =
+      this.physicalProperty === PhysicalProperty.DesignDomain
+        ? textWidth + 3 * this.interval
+        : textWidth + 2 * this.interval
     let g = new PIXI.Graphics()
     g.lineStyle(2, color, 1)
     g.beginFill(config.domainColor, 1)
     g.drawRoundedRect(0, 0, this.width, this.height, this.radius)
     g.endFill()
+
+    if (this.physicalProperty === PhysicalProperty.DesignDomain) {
+      g.lineStyle(2, color, 1)
+      g.beginFill(0, 0)
+      g.moveTo(this.interval, 0)
+      g.lineTo(this.interval, this.height)
+      g.endFill()
+    }
+
     g.x = this.x
     g.y = this.y
 
     return g
+  }
+
+  /**
+   * ** New
+   * Extend the paint method to draw the extra letter.
+   */
+  protected paint(): void {
+    super.paint()
+    let sign = 'CBX'[this.domainType]
+    let text = new PIXI.Text(sign, this.textStyle)
+    text.x = this.x + this.width - text.width - 2
+    text.y = this.y + this.height - text.height
+    text.zIndex = this.baseIndex + 1
+    this.spriteGroup.push(text)
+    this.container.addChild(text)
   }
 
   protected getDisplayText(): string {
@@ -86,7 +114,9 @@ export class Domain extends Shape {
   }
 
   protected getTextIndent(): number {
-    return this.interval
+    return this.physicalProperty === PhysicalProperty.DesignDomain
+      ? 2 * this.interval
+      : this.interval
   }
 
   protected getTextY(): number {
