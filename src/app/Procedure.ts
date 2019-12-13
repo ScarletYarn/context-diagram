@@ -65,10 +65,16 @@ class Procedure {
           err += 'Exist undefined constraint.\n'
         }
       }
-      if (this.canvas.requirement === null) {
+      /* ** New: Change the detecting rules to check a list of requirements. */
+      if (this.canvas.requirementList.length === 0) {
         err += 'No Requirement detected.\n'
-      } else if (this.canvas.requirement.isIsolated) {
-        err += 'Exist Unconnected Requirement.\n'
+      } else {
+        for (let item of this.canvas.requirementList) {
+          if (item.isIsolated) {
+            err += 'Exist Unconnected Requirement.\n'
+            break
+          }
+        }
       }
       if (err === '') {
         this.step = 2

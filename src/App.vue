@@ -575,9 +575,9 @@ export default class App extends Vue {
       machine: this.canvas.machine.toSerializable(),
       domainList: this.canvas.domainList.map(e => e.toSerializable()),
       domainCount: this.canvas.domainCount,
-      requirement: this.canvas.requirement
-        ? this.canvas.requirement.toSerializable()
-        : null,
+      /* ** New: Export a list of requirements. */
+      requirementList: this.canvas.requirementList.map(e => e.toSerializable()),
+      requirementCount: this.canvas.requirementCount,
       interfaceList: this.canvas.interfaceList.map(e => e.toSerializable()),
       interfaceCount: this.canvas.interfaceCount,
       referenceList: this.canvas.referenceList.map(e => e.toSerializable()),

@@ -38,7 +38,8 @@ class Canvas {
   public machine: Machine = null
   public domainList: Array<Domain> = []
   public domainCount: number = 0
-  public requirement: Requirement = null
+  public requirementList: Array<Requirement> = []
+  public requirementCount: number = 0
 
   public interfaceList: Array<InterfaceLine> = []
   public interfaceCount: number = 0
@@ -107,16 +108,15 @@ class Canvas {
       c.domainList.push(domain)
       c.componentsList.push(domain)
     }
-    if (r.requirement) {
-      let req = r.requirement
+    for (let item of r.requirementList) {
       let requirement = new Requirement(
         c.app.stage,
-        req.x,
-        req.y,
-        req.description,
-        req.baseIndex
+        item.x,
+        item.y,
+        item.description,
+        item.baseIndex
       )
-      c.requirement = requirement
+      c.requirementList.push(requirement)
       c.componentsList.push(requirement)
     }
     for (let item of r.interfaceList) {
@@ -250,7 +250,7 @@ class Canvas {
       } else if (d instanceof Domain) {
         this.removeComponent(d, this.domainList)
       } else if (d instanceof Requirement) {
-        this.requirement = null
+        this.removeComponent(d, this.requirementList)
       } else if (d instanceof InterfaceLine) {
         this.removeComponent(d, this.interfaceList)
       } else if (d instanceof Reference) {
@@ -305,21 +305,16 @@ class Canvas {
           this.componentsCount++
           break
         case 2:
-          if (this.requirement) {
-            this._Vue.$emit(
-              'giveWarn',
-              'There can exist only one requirement. '
-            )
-            break
-          }
+          /* ** New: Remove the single requirement judgement. */
           let requirement = new Requirement(
             this.app.stage,
             e.srcEvent.layerX,
             e.srcEvent.layerY,
-            config.defaultRequirementName,
+            config.defaultRequirementName + (this.requirementCount + 1),
             this.componentsCount * config.layerGap
           )
-          this.requirement = requirement
+          this.requirementList.push(requirement)
+          this.requirementCount++
           this.componentsList.push(requirement)
           this.componentsCount++
           break
