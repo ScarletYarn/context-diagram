@@ -547,17 +547,6 @@ export default class App extends Vue {
         this.projectDescription = r.projectName
         this.activeStep = r.step
         this.subStep = r.subStep
-        /*
-        for (let item of r.phenomenonList) {
-          new Phenomenon(
-            item.description,
-            item.position,
-            item.type,
-            item.constraint
-          )
-        }
-
-        */
         this.canvas = Canvas.load(this, r)
         this.procedure = new Procedure(this.canvas, r.step, r.subStep)
         this.flushAllow()

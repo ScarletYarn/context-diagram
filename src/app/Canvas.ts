@@ -324,7 +324,10 @@ class Canvas {
           if (comp) {
             for (let item of this.componentsList) {
               if (item === comp) comp.activate()
-              else item.deactivate()
+              else if (!e.srcEvent.ctrlKey) {
+                /* ** New: When Ctrl is pressed, multiple selected is possible. */
+                item.deactivate()
+              }
             }
           } else {
             for (let item of this.componentsList) {
