@@ -261,12 +261,29 @@ class Canvas {
     }
   }
 
+  /**
+   * ** New: The method for merging multiple domains.
+   * 1. Get the selected domains.
+   * 2. Get the lines associated with the domains.
+   * 4. Get the relationship between lines and related machine and requirements.
+   * 5. Remember the phenomenons in these lines.
+   * 6. Delete the domains.
+   * 7. Create a new domain.
+   * 8. Create new lines.
+   * 9. Create phenomenons.
+   */
   public merge(): void {
     let activeDomain: Array<Domain> = []
     this.componentsList.forEach(e => {
       if (e instanceof Domain && e.isActive) activeDomain.push(e)
     })
-    console.log(activeDomain)
+    if (activeDomain.length === 0) return
+    let lines: Array<Line> = []
+    for (let item of activeDomain) {
+      lines.push(...item.attachedLines)
+    }
+    let m: Machine = this.machine,
+      requirements: Array<Requirement> = []
   }
 
   private removeComponent(c: Component, list: Array<Component>): void {
@@ -360,7 +377,7 @@ class Canvas {
             this.drawingLine = new InterfaceLine(
               this.app.stage,
               config.defaultInterfaceName + (this.interfaceCount + 1),
-              (this.componentsCount + 1) * 10,
+              this.componentsCount * config.layerGap,
               comp
             )
             break
@@ -368,7 +385,7 @@ class Canvas {
             this.drawingLine = new Reference(
               this.app.stage,
               config.defaultReferenceName + (this.referenceCount + 1),
-              (this.componentsCount + 1) * 10,
+              this.componentsCount * config.layerGap,
               comp
             )
             break
@@ -377,7 +394,7 @@ class Canvas {
             this.drawingLine = new Constraint(
               this.app.stage,
               config.defaultConstraintName + (this.constraintCount + 1),
-              (this.componentsCount + 1) * 10,
+              this.componentsCount * config.layerGap,
               comp
             )
             break

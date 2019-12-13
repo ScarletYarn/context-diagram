@@ -20,6 +20,13 @@ export abstract class Line extends Component {
 
   public attached: boolean
 
+  /**
+   * ** New: Tell whether the line is between two domains.
+   */
+  get isIntermediate(): boolean {
+    return this.initiator instanceof Domain && this.receiver instanceof Domain
+  }
+
   protected constructor(
     stage: PIXI.Container,
     description: string,

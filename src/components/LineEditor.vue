@@ -1,3 +1,4 @@
+import { PhenomenonPosition } from '@/app/graph/Phenomenon'
 <template>
   <v-dialog v-model="active" persistent max-width="600px">
     <v-card>
@@ -122,8 +123,8 @@ export default class LineEditor extends Vue {
   editorType: string = ''
   hasConstraint: boolean = false
   line: Line = null
-  // Whatever the line is, a domain is associated with it.
-  domain: Domain = null
+  // ** New: The line may be intermediate.
+  domains: Array<Domain> = []
   // Machine the nuisance
   machine: Machine = null
 
@@ -166,15 +167,18 @@ export default class LineEditor extends Vue {
   // The unique name for phenomenon
   phenomenonName: string = ''
   phenomenonChoices: Array<Phenomenon> = []
+  /**
+   * ** New
+   * Since lines can appear between domains, choices are not the same.
+   */
   get choices() {
-    if (!this.domain) return []
-    else
-      return this.domain.phenomenonList.map((e, index) => {
-        return {
-          text: e.description,
-          value: index
-        }
-      })
+    if (this.line instanceof InterfaceLine) return []
+    return this.phenomenonChoices.map((e, index) => {
+      return {
+        text: e.description,
+        value: index
+      }
+    })
   }
 
   // The phenomenon selected in the phenomenonList, used for query and delete.
@@ -219,12 +223,14 @@ export default class LineEditor extends Vue {
     this.actors = [this.line.initiator, this.line.receiver]
     this.initiator = 0
     this.receiver = 1
-    let domain: Domain
-    if (this.line.initiator instanceof Domain) domain = this.line.initiator
-    else if (this.line.receiver instanceof Domain) domain = this.line.receiver
-    if (!domain) throw 'Line not properly connected.'
-    this.domain = domain
-    this.phenomenonChoices = domain.phenomenonList
+    this.domains = []
+    if (this.line.initiator instanceof Domain)
+      this.domains.push(this.line.initiator)
+    if (this.line.receiver instanceof Domain)
+      this.domains.push(this.line.receiver)
+    if (!this.line.isIntermediate)
+      this.phenomenonChoices = this.domains[0].phenomenonList
+    else this.phenomenonChoices = []
   }
 
   add(): void {
@@ -245,7 +251,7 @@ export default class LineEditor extends Vue {
         this.type
       )
       this.line.addPhenomenon(p)
-      this.domain.addPhenomenon(p)
+      this.domains.forEach(e => e.addPhenomenon(p))
     } else {
       let p = Phenomenon.getPhenomenon(this.phenomenonNameEdit, true)
       if (p) {
@@ -265,13 +271,21 @@ export default class LineEditor extends Vue {
           this.isConstraint
         )
         this.line.addPhenomenon(p)
-        this.domain.addPhenomenon(p)
+        this.domains.forEach(e => e.addPhenomenon(p))
       }
     }
   }
 
   del(): void {
-    this.domain.removePhenomenon(this.phenomenonList[this.phenomenonSelect])
+    if (
+      this.line instanceof InterfaceLine ||
+      this.phenomenonList[this.phenomenonSelect].position ===
+        PhenomenonPosition.Right
+    ) {
+      this.domains.forEach(e =>
+        e.removePhenomenon(this.phenomenonList[this.phenomenonSelect])
+      )
+    }
     this.line.deletePhenomenon(this.phenomenonList[this.phenomenonSelect])
     Phenomenon.deletePhenomenon(this.phenomenonName)
   }
