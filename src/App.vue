@@ -227,13 +227,13 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
-      <v-btn text>Merge</v-btn>
+      <v-btn @click="merge" text>Merge</v-btn>
       <v-menu open-on-hover bottom offset-y>
         <template v-slot:activator="{ on }">
           <v-btn text v-on="on">Import</v-btn>
         </template>
         <v-list>
-          <v-list-item v-for="n in 1" :key="n" @click="() => {}">
+          <v-list-item>
             <v-list-item-title @click="upload()"
               >Import Project</v-list-item-title
             >
@@ -448,6 +448,16 @@ export default class App extends Vue {
   deleteElement(): void {
     if (!this.canvas) return
     this.canvas.deleteElement()
+  }
+
+  /**
+   * ** New
+   * Merge multiple Domain.
+   */
+  merge(): void {
+    if (this.canvas) {
+      this.canvas.merge()
+    }
   }
 
   editMachine(machine: Machine): void {

@@ -261,6 +261,14 @@ class Canvas {
     }
   }
 
+  public merge(): void {
+    let activeDomain: Array<Domain> = []
+    this.componentsList.forEach(e => {
+      if (e instanceof Domain && e.isActive) activeDomain.push(e)
+    })
+    console.log(activeDomain)
+  }
+
   private removeComponent(c: Component, list: Array<Component>): void {
     let i = -1
     list.forEach((item, index) => {

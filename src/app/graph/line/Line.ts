@@ -1,10 +1,12 @@
 import Component from '@/app/graph/Component'
 import * as PIXI from 'pixi.js'
 import Shape from '@/app/graph/shape/Shape'
-import { Phenomenon } from '@/app/graph/Phenomenon'
+import { Phenomenon, PhenomenonPosition } from '@/app/graph/Phenomenon'
 import Point from '@/app/util/Point'
 import Config from '@/app/util/Config'
 import Requirement from '@/app/graph/shape/Requirement'
+import { Domain } from '@/app/graph/shape/Domain'
+
 const config = new Config()
 
 export abstract class Line extends Component {
@@ -113,6 +115,16 @@ export abstract class Line extends Component {
     super.destroy()
     if (this.initiator) this.initiator.deleteLine(this)
     if (this.receiver) this.receiver.deleteLine(this)
+    for (let item of this.phenomenonList) {
+      if (item.position === PhenomenonPosition.Left) continue
+      Phenomenon.deletePhenomenon(item.name)
+      let domain: Domain
+      if (this.initiator instanceof Domain) domain = this.initiator
+      if (this.receiver instanceof Domain) domain = this.receiver
+      if (domain) {
+        domain.removePhenomenon(item)
+      }
+    }
   }
 
   protected paint(): void {

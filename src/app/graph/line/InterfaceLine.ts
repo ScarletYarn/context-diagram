@@ -1,6 +1,8 @@
 import * as PIXI from 'pixi.js'
 import Shape from '@/app/graph/shape/Shape'
 import { Line } from '@/app/graph/line/Line'
+import { Phenomenon, PhenomenonPosition } from '@/app/graph/Phenomenon'
+import { Domain } from '@/app/graph/shape/Domain'
 
 export class InterfaceLine extends Line {
   constructor(
@@ -22,6 +24,20 @@ export class InterfaceLine extends Line {
     g.endFill()
 
     return g
+  }
+
+  destroy(): void {
+    super.destroy()
+    for (let item of this.phenomenonList) {
+      if (item.position === PhenomenonPosition.Right) continue
+      Phenomenon.deletePhenomenon(item.name)
+      let domain: Domain
+      if (this.initiator instanceof Domain) domain = this.initiator
+      if (this.receiver instanceof Domain) domain = this.receiver
+      if (domain) {
+        domain.removePhenomenon(item)
+      }
+    }
   }
 
   protected getDisplayText(): string {
