@@ -233,10 +233,8 @@
           <v-btn text v-on="on">Import</v-btn>
         </template>
         <v-list>
-          <v-list-item>
-            <v-list-item-title @click="upload()"
-              >Import Project</v-list-item-title
-            >
+          <v-list-item @click="upload">
+            <v-list-item-title>Import Project</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>

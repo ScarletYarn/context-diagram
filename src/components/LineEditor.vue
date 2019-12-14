@@ -67,8 +67,8 @@
                 <v-subheader>PhenomenonList</v-subheader>
                 <v-list-item
                   @click="phenomenonName = item.name"
-                  v-for="item in phenomenonList"
-                  :key="item.name"
+                  v-for="(item, index) in phenomenonList"
+                  :key="index"
                   >{{
                     `${line.initiator.description}:${item.description} ${
                       phenomenonType[item.type].text
@@ -290,18 +290,31 @@ export default class LineEditor extends Vue {
     }
   }
 
+  /**
+   * ** New:
+   * Fixed bug if deleting phenomenons.
+   */
   del(): void {
     if (
-      this.line instanceof InterfaceLine ||
-      this.phenomenonList[this.phenomenonSelect].position ===
-        PhenomenonPosition.Right
+      (!(this.line instanceof InterfaceLine) &&
+        this.phenomenonList[this.phenomenonSelect].position ===
+          PhenomenonPosition.Right) ||
+      (this.line instanceof InterfaceLine &&
+        this.phenomenonList[this.phenomenonSelect].position ===
+          PhenomenonPosition.Left)
     ) {
       this.domains.forEach(e =>
         e.removePhenomenon(this.phenomenonList[this.phenomenonSelect])
       )
+      this.line.deletePhenomenon(this.phenomenonList[this.phenomenonSelect])
+      Phenomenon.deletePhenomenon(this.phenomenonName)
+    } else if (
+      !(this.line instanceof InterfaceLine) &&
+      this.phenomenonList[this.phenomenonSelect].position ===
+        PhenomenonPosition.Left
+    ) {
+      this.line.deletePhenomenon(this.phenomenonList[this.phenomenonSelect])
     }
-    this.line.deletePhenomenon(this.phenomenonList[this.phenomenonSelect])
-    Phenomenon.deletePhenomenon(this.phenomenonName)
   }
 
   selectPhenomenon(index): void {

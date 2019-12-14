@@ -182,8 +182,6 @@ class Canvas {
         break
     }
     c.componentsList.push(line)
-    initiator.attachedLines.push(line)
-    receiver.attachedLines.push(line)
     for (let itt of item.phenomenonList) {
       line.phenomenonList.push(Phenomenon.getPhenomenon(itt.name, false, true))
     }
@@ -264,26 +262,92 @@ class Canvas {
   /**
    * ** New: The method for merging multiple domains.
    * 1. Get the selected domains.
-   * 2. Get the lines associated with the domains.
-   * 4. Get the relationship between lines and related machine and requirements.
-   * 5. Remember the phenomenons in these lines.
-   * 6. Delete the domains.
-   * 7. Create a new domain.
-   * 8. Create new lines.
-   * 9. Create phenomenons.
+   * 2. Get the lines associated with the domains and non-domains.
+   * 3. Store the lines and their associated non-domain shapes.
+   * 4. Delete the domains.
+   * 5. Create a new domain.
+   * 6. Create new lines.
+   * 7. Create phenomenons.
    */
   public merge(): void {
     let activeDomain: Array<Domain> = []
     this.componentsList.forEach(e => {
       if (e instanceof Domain && e.isActive) activeDomain.push(e)
     })
-    if (activeDomain.length === 0) return
-    let lines: Array<Line> = []
-    for (let item of activeDomain) {
-      lines.push(...item.attachedLines)
+    if (activeDomain.length < 2) return
+    let x = activeDomain[0].x,
+      y = activeDomain[0].y,
+      description = activeDomain[0].description,
+      shortName = activeDomain[0].shortName
+    let lines: Map<Shape, Line[]> = new Map<Shape, Line[]>()
+    activeDomain.forEach(domain => {
+      domain.attachedLines.forEach(e => {
+        if (e.initiator instanceof Domain && e.receiver instanceof Domain)
+          return
+        else if (e.initiator instanceof Domain) {
+          if (!lines.has(e.receiver)) lines.set(e.receiver, [])
+          lines.get(e.receiver).push(e)
+        } else if (e.receiver instanceof Domain) {
+          if (!lines.has(e.initiator)) lines.set(e.initiator, [])
+          lines.get(e.initiator).push(e)
+        }
+      })
+      this.deleteElement(domain)
+    })
+    let newDomain = new Domain(
+      this.app.stage,
+      x,
+      y,
+      description,
+      shortName,
+      this.componentsCount * config.layerGap
+    )
+    this.domainCount++
+    this.domainList.push(newDomain)
+    this.componentsList.push(newDomain)
+    this.componentsCount++
+    for (let item of lines.keys()) {
+      let newLine: Line
+      if (item instanceof Machine) {
+        newLine = new InterfaceLine(
+          this.app.stage,
+          config.defaultInterfaceName + (this.interfaceCount + 1),
+          this.componentsCount * config.layerGap,
+          newDomain,
+          item
+        )
+        this.interfaceList.push(<InterfaceLine>newLine)
+        this.componentsList.push(newLine)
+        this.interfaceCount++
+        this.componentsCount++
+      } else if (item instanceof Requirement) {
+        newLine = new Reference(
+          this.app.stage,
+          config.defaultInterfaceName + (this.interfaceCount + 1),
+          this.componentsCount * config.layerGap,
+          newDomain,
+          item
+        )
+        this.referenceList.push(<Reference>newLine)
+        this.componentsList.push(newLine)
+        this.referenceCount++
+        this.componentsCount++
+      }
+      for (let line of lines.get(item)) {
+        line.phenomenonList.forEach(e => {
+          let p = new Phenomenon(
+            e.description,
+            e.position,
+            e.initiator instanceof Domain ? newDomain : e.initiator,
+            e.receiver instanceof Domain ? newDomain : e.receiver,
+            e.type,
+            e.constraint
+          )
+          newLine.addPhenomenon(p)
+          newDomain.addPhenomenon(p)
+        })
+      }
     }
-    let m: Machine = this.machine,
-      requirements: Array<Requirement> = []
   }
 
   private removeComponent(c: Component, list: Array<Component>): void {
@@ -343,7 +407,7 @@ class Canvas {
           this.componentsList.push(requirement)
           this.componentsCount++
           break
-        case undefined:
+        default:
           // eslint-disable-next-line no-case-declarations
           let comp = this.hit(e.srcEvent.layerX, e.srcEvent.layerY)
           if (comp) {
