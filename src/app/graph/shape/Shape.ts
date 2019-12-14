@@ -86,6 +86,17 @@ abstract class Shape extends Component {
     return this.attachedLines.length === 0
   }
 
+  /**
+   * ** New
+   * Get the neighbours of a shape.
+   * Used for adding phenomenon, since the references can have weird initiator and receiver.
+   */
+  get neighbours(): Array<Shape> {
+    let res = []
+    this.attachedLines.forEach(e => res.push(e.initiator, e.receiver))
+    return res
+  }
+
   public destroy(): Array<Line> {
     super.destroy()
     return [...this.attachedLines]

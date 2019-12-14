@@ -490,7 +490,7 @@ export default class App extends Vue {
     this.onEditLine = true
     this.editingLine = line
     // @ts-ignore
-    this.$refs['line-editor'].preSet(line, this.canvas.machine)
+    this.$refs['line-editor'].preSet(line)
   }
 
   endEditMachine(info: { description: string; shortName: string }): void {

@@ -1,4 +1,3 @@
-import { PhenomenonPosition } from '@/app/graph/Phenomenon'
 <template>
   <v-dialog v-model="active" persistent max-width="600px">
     <v-card>
@@ -201,7 +200,7 @@ export default class LineEditor extends Vue {
     this.$emit('end-edit-line')
   }
 
-  preSet(line: Line, machine: Machine) {
+  preSet(line: Line) {
     if (line instanceof InterfaceLine) {
       this.editorType = 'Interface'
       this.hasConstraint = false
@@ -213,7 +212,7 @@ export default class LineEditor extends Vue {
       this.hasConstraint = true
     }
     this.line = line
-    this.machine = machine
+    // this.machine = machine
     this.description = line.description
     this.phenomenonList = line.phenomenonList
     this.phenomenonSelect = -1
@@ -260,8 +259,23 @@ export default class LineEditor extends Vue {
         if (this.line.hasPhenomenon(this.phenomenonNameEdit)) return
         let initiator = this.line.initiator,
           receiver = this.line.receiver
-        if (initiator instanceof Requirement) initiator = this.machine
-        if (receiver instanceof Requirement) receiver = this.machine
+        /* ** New: The participators can not be a requirement. */
+        if (initiator instanceof Requirement) {
+          for (let item of receiver.neighbours) {
+            if (item !== initiator) {
+              initiator = item
+              break
+            }
+          }
+        }
+        if (receiver instanceof Requirement) {
+          for (let item of initiator.neighbours) {
+            if (item !== receiver) {
+              receiver = item
+              break
+            }
+          }
+        }
         p = new Phenomenon(
           this.phenomenonNameEdit,
           PhenomenonPosition.Right,
