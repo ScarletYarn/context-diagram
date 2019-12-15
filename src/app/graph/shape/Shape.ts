@@ -8,6 +8,7 @@ const config = new Config()
 abstract class Shape extends Component {
   public width: number = config.spriteWidth
   public height: number = config.spriteHeight
+  public inCustomSize: boolean
   protected radius: number = config.squareRadius
   protected interval: number = config.lineInterval
 
@@ -21,12 +22,14 @@ abstract class Shape extends Component {
     description: string,
     baseIndex: number,
     x: number,
-    y: number
+    y: number,
+    inCustomSize: boolean = false
   ) {
     super(stage, description, baseIndex)
     this.x = x
     this.y = y
     this.attachedLines = []
+    this.inCustomSize = inCustomSize
   }
 
   protected paint(): void {

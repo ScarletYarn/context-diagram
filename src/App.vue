@@ -457,8 +457,10 @@ export default class App extends Vue {
   }
 
   editShape(shape: Shape): void {
-    this.onEditShape = true
     this.editingShape = shape
+    this.$nextTick(() => {
+      this.onEditShape = true
+    })
   }
 
   editLine(line: Line): void {

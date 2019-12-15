@@ -72,7 +72,8 @@ class Canvas {
       m.y,
       m.description,
       m.shortName,
-      m.baseIndex
+      m.baseIndex,
+      m.inCustomSize
     )
     c.machine = machine
     c.componentsList.push(machine)
@@ -98,7 +99,8 @@ class Canvas {
         item.shortName,
         item.baseIndex,
         item.physicalProperty,
-        item.domainType
+        item.domainType,
+        item.inCustomSize
       )
       for (let itt of item.phenomenonList) {
         domain.phenomenonList.push(
@@ -114,7 +116,8 @@ class Canvas {
         item.x,
         item.y,
         item.description,
-        item.baseIndex
+        item.baseIndex,
+        item.inCustomSize
       )
       c.requirementList.push(requirement)
       c.componentsList.push(requirement)
@@ -525,19 +528,6 @@ class Canvas {
       } else if (comp instanceof Line) {
         this._Vue.$emit('edit-line', <Line>comp)
       }
-      // if (comp instanceof Machine) {
-      //   this._Vue.$emit('edit-shape', <Machine>comp)
-      // } else if (comp instanceof Domain) {
-      //   this._Vue.$emit('edit-shape', <Domain>comp)
-      // } else if (comp instanceof Requirement) {
-      //   this._Vue.$emit('edit-shape', <Requirement>comp)
-      // } else if (comp instanceof InterfaceLine) {
-      //   this._Vue.$emit('edit-line', <InterfaceLine>comp)
-      // } else if (comp instanceof Reference) {
-      //   this._Vue.$emit('edit-line', <Reference>comp)
-      // } else if (comp instanceof Constraint) {
-      //   this._Vue.$emit('edit-line', <Constraint>comp)
-      // }
     }
   }
 

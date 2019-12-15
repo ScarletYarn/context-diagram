@@ -7,17 +7,35 @@
       <v-card-text>
         <v-container>
           <v-row>
-            <v-text-field label="description" v-model="shape.description" />
+            <v-text-field
+              label="description"
+              @change="displayChange"
+              v-model="shape.description"
+            />
           </v-row>
           <v-row v-if="haveShortName">
-            <v-text-field label="short name" v-model="shape.shortName" />
+            <v-text-field
+              @change="displayChange"
+              label="short name"
+              v-model="shape.shortName"
+            />
           </v-row>
           <v-row justify="space-between">
             <v-col>
-              <v-text-field label="width" v-model="shape.width" />
+              <v-text-field
+                @change="sizeChange"
+                label="width"
+                type="number"
+                v-model="width"
+              />
             </v-col>
             <v-col>
-              <v-text-field label="height" v-model="shape.height" />
+              <v-text-field
+                @change="sizeChange"
+                label="height"
+                type="number"
+                v-model="height"
+              />
             </v-col>
           </v-row>
           <v-row v-if="isDomain">
@@ -78,8 +96,9 @@ import Machine from '@/app/graph/shape/Machine'
 
 @Component({
   watch: {
-    shape(val) {
-      this.description = val.description
+    active() {
+      this.width = this.shape.width
+      this.height = this.shape.height
     }
   }
 })
@@ -87,12 +106,26 @@ export default class ShapeEditor extends Vue {
   @Prop() active!: boolean
   @Prop() shape!: Shape
 
+  width: string = ''
+  height: string = ''
+
   get haveShortName(): boolean {
     return this.shape instanceof Domain || this.shape instanceof Machine
   }
 
   get isDomain(): boolean {
     return this.shape instanceof Domain
+  }
+
+  sizeChange(): void {
+    this.shape.inCustomSize = true
+    this.shape.width = parseInt(this.width)
+    this.shape.height = parseInt(this.height)
+  }
+
+  displayChange(): void {
+    this.shape.inCustomSize = false
+    this.shape.flush()
   }
 }
 </script>

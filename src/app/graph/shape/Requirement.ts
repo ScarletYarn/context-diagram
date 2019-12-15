@@ -9,14 +9,18 @@ class Requirement extends Shape {
     x: number,
     y: number,
     description: string,
-    baseIndex: number
+    baseIndex: number,
+    inCustomSize?: boolean
   ) {
-    super(stage, description, baseIndex, x, y)
+    super(stage, description, baseIndex, x, y, inCustomSize)
     this.paint()
   }
 
   protected drawBorder(color: number, textWidth: number): PIXI.Sprite {
-    this.width = textWidth + 4 * this.interval
+    if (!this.inCustomSize) {
+      this.width = textWidth + 4 * this.interval
+      this.height = config.spriteHeight
+    }
     let margin = 2
     let lineWidth = 2
     let canvas = document.createElement('canvas')
@@ -90,7 +94,8 @@ class Requirement extends Shape {
       x: this.x,
       y: this.y,
       description: this.description,
-      baseIndex: this.baseIndex
+      baseIndex: this.baseIndex,
+      inCustomSize: this.inCustomSize
     }
   }
 }

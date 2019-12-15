@@ -13,9 +13,10 @@ class Machine extends Shape {
     y: number,
     description: string,
     shortName: string,
-    baseIndex: number
+    baseIndex: number,
+    inCustomSize?: boolean
   ) {
-    super(stage, description, baseIndex, x, y)
+    super(stage, description, baseIndex, x, y, inCustomSize)
     this.shortName = shortName
     this.paint()
   }
@@ -31,7 +32,10 @@ class Machine extends Shape {
   }
 
   protected drawBorder(color: number, textWidth: number): PIXI.Graphics {
-    this.width = textWidth + 4 * this.interval
+    if (!this.inCustomSize) {
+      this.width = textWidth + 4 * this.interval
+      this.height = config.spriteHeight
+    }
     let g = new PIXI.Graphics()
     g.lineStyle(2, color, 1)
     g.beginFill(config.machineColor, 1)
@@ -65,7 +69,8 @@ class Machine extends Shape {
       y: this.y,
       description: this.description,
       shortName: this.shortName,
-      baseIndex: this.baseIndex
+      baseIndex: this.baseIndex,
+      inCustomSize: this.inCustomSize
     }
   }
 }

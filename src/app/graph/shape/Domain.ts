@@ -29,9 +29,10 @@ export class Domain extends Shape {
     shortName: string,
     baseIndex: number,
     physicalProperty?: PhysicalProperty,
-    domainType?: DomainType
+    domainType?: DomainType,
+    inCustomSize?: boolean
   ) {
-    super(stage, description, baseIndex, x, y)
+    super(stage, description, baseIndex, x, y, inCustomSize)
     this.description = description
     this.shortName = shortName
     if (physicalProperty) this.physicalProperty = physicalProperty
@@ -70,10 +71,13 @@ export class Domain extends Shape {
 
   protected drawBorder(color: number, textWidth: number): PIXI.Graphics {
     /* ** New: Render the shape according to the physical property. */
-    this.width =
-      this.physicalProperty === PhysicalProperty.DesignDomain
-        ? textWidth + 3 * this.interval
-        : textWidth + 2 * this.interval
+    if (!this.inCustomSize) {
+      this.width =
+        this.physicalProperty === PhysicalProperty.DesignDomain
+          ? textWidth + 3 * this.interval
+          : textWidth + 2 * this.interval
+      this.height = config.spriteHeight
+    }
     let g = new PIXI.Graphics()
     g.lineStyle(2, color, 1)
     g.beginFill(config.domainColor, 1)
@@ -132,7 +136,8 @@ export class Domain extends Shape {
       baseIndex: this.baseIndex,
       physicalProperty: this.physicalProperty,
       domainType: this.domainType,
-      phenomenonList: this.phenomenonList.map(e => e.toSerializable())
+      phenomenonList: this.phenomenonList.map(e => e.toSerializable()),
+      inCustomSize: this.inCustomSize
     }
   }
 }
