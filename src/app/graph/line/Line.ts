@@ -221,10 +221,6 @@ export abstract class Line extends Component {
     return this.initiator.contain(p)
   }
 
-  public flush(): void {
-    this.repaint()
-  }
-
   /**
    * ** New
    * The display text of the line.

@@ -61,6 +61,10 @@ abstract class Component {
     }
   }
 
+  public flush(): void {
+    this.repaint()
+  }
+
   public abstract contain(point: Point): boolean
 
   protected abstract getDisplayText(): string

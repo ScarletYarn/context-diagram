@@ -520,19 +520,24 @@ class Canvas {
     let comp = this.hit(e.srcEvent.layerX, e.srcEvent.layerY)
     if (comp) {
       this.editingComponent = comp
-      if (comp instanceof Machine) {
-        this._Vue.$emit('editMachine', <Machine>comp)
-      } else if (comp instanceof Domain) {
-        this._Vue.$emit('editDomain', <Domain>comp)
-      } else if (comp instanceof Requirement) {
-        this._Vue.$emit('editRequirement', <Requirement>comp)
-      } else if (comp instanceof InterfaceLine) {
-        this._Vue.$emit('edit-line', <InterfaceLine>comp)
-      } else if (comp instanceof Reference) {
-        this._Vue.$emit('edit-line', <Reference>comp)
-      } else if (comp instanceof Constraint) {
-        this._Vue.$emit('edit-line', <Constraint>comp)
+      if (comp instanceof Shape) {
+        this._Vue.$emit('edit-shape', <Shape>comp)
+      } else if (comp instanceof Line) {
+        this._Vue.$emit('edit-line', <Line>comp)
       }
+      // if (comp instanceof Machine) {
+      //   this._Vue.$emit('edit-shape', <Machine>comp)
+      // } else if (comp instanceof Domain) {
+      //   this._Vue.$emit('edit-shape', <Domain>comp)
+      // } else if (comp instanceof Requirement) {
+      //   this._Vue.$emit('edit-shape', <Requirement>comp)
+      // } else if (comp instanceof InterfaceLine) {
+      //   this._Vue.$emit('edit-line', <InterfaceLine>comp)
+      // } else if (comp instanceof Reference) {
+      //   this._Vue.$emit('edit-line', <Reference>comp)
+      // } else if (comp instanceof Constraint) {
+      //   this._Vue.$emit('edit-line', <Constraint>comp)
+      // }
     }
   }
 

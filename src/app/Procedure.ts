@@ -4,6 +4,18 @@ class Procedure {
   private step: number
   private subStep: number
   private canvas: Canvas
+  public static ruleSet = [
+    {
+      rule: 'One Machine',
+      valid: true
+    },
+    {
+      rule: 'Multiple Requirement',
+      valid: false
+    }
+  ]
+  // public ruleSet = ['One Machine', 'Multiple Requirement']
+  // public rules = [0]
 
   constructor(canvas: Canvas, step?: number, subStep?: number) {
     if (step) this.step = step

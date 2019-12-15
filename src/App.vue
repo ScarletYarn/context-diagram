@@ -228,7 +228,7 @@
         </v-card>
       </v-dialog>
       <v-btn @click="merge" text>Merge</v-btn>
-      <v-menu open-on-hover bottom offset-y>
+      <v-menu open-on-hover bottom offset-y transition="scale-transition">
         <template v-slot:activator="{ on }">
           <v-btn text v-on="on">Import</v-btn>
         </template>
@@ -238,8 +238,27 @@
           </v-list-item>
         </v-list>
       </v-menu>
-      <v-btn text @click="download()">Save</v-btn>
-      <v-menu open-on-hover bottom offset-y>
+      <v-dialog width="700px">
+        <template v-slot:activator="{ on }">
+          <v-btn text v-on="on">Custom</v-btn>
+        </template>
+        <v-card>
+          <v-card-title class="headline grey lighten-2" primary-title>
+            Custom rules
+          </v-card-title>
+          <v-card-actions>
+            <v-container width="80%">
+              <v-switch
+                v-for="item in rules"
+                :key="item.rule"
+                v-model="item.valid"
+                :label="item.rule"
+              />
+            </v-container>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <v-menu open-on-hover bottom offset-y transition="scale-transition">
         <template v-slot:activator="{ on }">
           <v-btn text v-on="on">Export</v-btn>
         </template>
@@ -256,28 +275,16 @@
       <v-btn text>Help</v-btn>
     </v-app-bar>
 
-    <machine-editor
-      @end-edit-machine="endEditMachine"
-      ref="machine-editor"
-      :active="onEditMachine"
-    />
-
-    <domain-editor
-      @end-edit-domain="endEditDomain"
-      ref="domain-editor"
-      :active="onEditDomain"
-    />
-
-    <requirement-editor
-      @end-edit-requirement="endEditRequirement"
-      ref="requirement-editor"
-      :active="onEditRequirement"
-    />
-
     <line-editor
       @end-edit-line="endEditLine"
       ref="line-editor"
       :active="onEditLine"
+    />
+
+    <shape-editor
+      @end-edit-shape="endEditShape"
+      :active="onEditShape"
+      :shape="editingShape"
     />
 
     <v-content class="grey lighten-1">
@@ -293,23 +300,17 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator'
 import Canvas from '@/app/Canvas'
-import MachineEditor from '@/components/MachineEditor.vue'
-import Machine from '@/app/graph/shape/Machine'
-import { Domain } from '@/app/graph/shape/Domain'
-import DomainEditor from '@/components/DomainEditor.vue'
-import RequirementEditor from '@/components/RequirementEditor.vue'
-import Requirement from '@/app/graph/shape/Requirement'
 import Procedure from '@/app/Procedure'
 import { Phenomenon } from '@/app/graph/Phenomenon'
 import LineEditor from '@/components/LineEditor.vue'
 import { Line } from '@/app/graph/line/Line'
+import ShapeEditor from '@/components/ShapeEditor.vue'
+import Shape from '@/app/graph/shape/Shape'
 
 @Component({
   components: {
-    LineEditor,
-    MachineEditor,
-    DomainEditor,
-    RequirementEditor
+    ShapeEditor,
+    LineEditor
   },
   watch: {
     activePen(val) {
@@ -323,14 +324,13 @@ import { Line } from '@/app/graph/line/Line'
         this.onEditMachine ||
         this.onEditDomain ||
         this.onEditRequirement ||
-        this.onEditLine
+        this.onEditLine ||
+        this.onEditShape
       )
         return
       if (ev.code === 'Backspace' || ev.code === 'Delete') this.deleteElement()
     })
-    this.$on('editMachine', this.editMachine)
-    this.$on('editDomain', this.editDomain)
-    this.$on('editRequirement', this.editRequirement)
+    this.$on('edit-shape', this.editShape)
     this.$on('edit-line', this.editLine)
     this.$on('giveWarn', this.giveWarn)
   }
@@ -382,14 +382,12 @@ export default class App extends Vue {
   canvas: Canvas | null = null
   procedure: Procedure | null = null
 
-  onEditMachine: boolean = false
-  editingMachine: Machine | undefined
+  get rules(): Array<{ rule: string; valid: boolean }> {
+    return Procedure.ruleSet
+  }
 
-  onEditDomain: boolean = false
-  editingDomain: Domain | undefined
-
-  onEditRequirement: boolean = false
-  editingRequirement: Requirement | undefined
+  onEditShape: boolean = false
+  editingShape: Shape | null = null
 
   onEditLine: boolean = false
   editingLine: Line | undefined
@@ -458,30 +456,9 @@ export default class App extends Vue {
     }
   }
 
-  editMachine(machine: Machine): void {
-    this.onEditMachine = true
-    this.editingMachine = machine
-    // @ts-ignore
-    this.$refs['machine-editor'].preSet(machine.description, machine.shortName)
-  }
-
-  editDomain(domain: Domain): void {
-    this.onEditDomain = true
-    this.editingDomain = domain
-    // @ts-ignore
-    this.$refs['domain-editor'].preSet(
-      domain.description,
-      domain.shortName,
-      domain.domainType,
-      domain.physicalProperty
-    )
-  }
-
-  editRequirement(requirement: Requirement): void {
-    this.onEditRequirement = true
-    this.editingRequirement = requirement
-    // @ts-ignore
-    this.$refs['requirement-editor'].preSet(requirement.description)
+  editShape(shape: Shape): void {
+    this.onEditShape = true
+    this.editingShape = shape
   }
 
   editLine(line: Line): void {
@@ -491,35 +468,9 @@ export default class App extends Vue {
     this.$refs['line-editor'].preSet(line)
   }
 
-  endEditMachine(info: { description: string; shortName: string }): void {
-    this.onEditMachine = false
-    if (!this.editingMachine) return
-    this.editingMachine.setInformation(info.description, info.shortName)
-    this.editingMachine = undefined
-  }
-
-  endEditDomain(info: {
-    description: string
-    shortName: string
-    domainType: number
-    physicalProperty: number
-  }): void {
-    this.onEditDomain = false
-    if (!this.editingDomain) return
-    this.editingDomain.setInformation(
-      info.description,
-      info.shortName,
-      info.domainType,
-      info.physicalProperty
-    )
-    this.editingDomain = undefined
-  }
-
-  endEditRequirement(info: { description: string }): void {
-    this.onEditRequirement = false
-    if (!this.editingRequirement) return
-    this.editingRequirement.setInformation(info.description)
-    this.editingRequirement = undefined
+  endEditShape(): void {
+    this.onEditShape = false
+    this.editingShape.flush()
   }
 
   endEditLine(): void {
