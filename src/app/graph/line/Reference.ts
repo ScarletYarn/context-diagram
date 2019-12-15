@@ -33,10 +33,6 @@ class Reference extends Line {
     return g
   }
 
-  protected getDisplayText(): string {
-    return this.description
-  }
-
   toSerializable(): Object {
     return {
       description: this.description,

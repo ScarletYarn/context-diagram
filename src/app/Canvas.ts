@@ -119,6 +119,14 @@ class Canvas {
       c.requirementList.push(requirement)
       c.componentsList.push(requirement)
     }
+    for (let item of Phenomenon.PhenomenonList) {
+      for (let itt of r.phenomenonList) {
+        if (item.name === itt.name) {
+          item.initiator = c.findShape(itt.initiator)
+          item.receiver = c.findShape(itt.receiver)
+        }
+      }
+    }
     for (let item of r.interfaceList) {
       c.stuffLine(item, c, 'interface')
     }
@@ -127,14 +135,6 @@ class Canvas {
     }
     for (let item of r.constraintList) {
       c.stuffLine(item, c, 'constraint')
-    }
-    for (let item of Phenomenon.PhenomenonList) {
-      for (let itt of r.phenomenonList) {
-        if (item.name === itt.name) {
-          item.initiator = c.findShape(itt.initiator)
-          item.receiver = c.findShape(itt.receiver)
-        }
-      }
     }
     return c
   }
@@ -185,6 +185,7 @@ class Canvas {
     for (let itt of item.phenomenonList) {
       line.phenomenonList.push(Phenomenon.getPhenomenon(itt.name, false, true))
     }
+    line.flush()
   }
 
   public exportImage(): void {

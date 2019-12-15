@@ -6,6 +6,7 @@ import Point from '@/app/util/Point'
 import Config from '@/app/util/Config'
 import Requirement from '@/app/graph/shape/Requirement'
 import { Domain } from '@/app/graph/shape/Domain'
+import Machine from '@/app/graph/shape/Machine'
 
 const config = new Config()
 
@@ -104,6 +105,7 @@ export abstract class Line extends Component {
     }
     if (flag) return
     this.phenomenonList.push(phenomenon)
+    this.repaint()
   }
 
   public hasPhenomenon(description: string): boolean {
@@ -117,6 +119,7 @@ export abstract class Line extends Component {
   public deletePhenomenon(phenomenon: Phenomenon): void {
     let index = this.phenomenonList.indexOf(phenomenon)
     if (index !== -1) this.phenomenonList.splice(index, 1)
+    this.repaint()
   }
 
   destroy(): void {
@@ -216,6 +219,31 @@ export abstract class Line extends Component {
 
   public selfContain(p: Point): boolean {
     return this.initiator.contain(p)
+  }
+
+  public flush(): void {
+    this.repaint()
+  }
+
+  /**
+   * ** New
+   * The display text of the line.
+   */
+  protected getDisplayText(): string {
+    let m = new Map<string, string[]>(),
+      str = `${this.description}:`
+    this.phenomenonList.forEach(e => {
+      if (!(e.initiator instanceof Machine || e.initiator instanceof Domain))
+        throw 'Phenomenon has Requirement participant.'
+      let des = e.initiator.shortName
+      if (!m.has(des)) m.set(des, [])
+      m.get(des).push(e.description)
+    })
+    for (let entry of m.entries()) {
+      str += entry[0] + '!{'
+      str += entry[1].join() + '}'
+    }
+    return str
   }
 
   /**
