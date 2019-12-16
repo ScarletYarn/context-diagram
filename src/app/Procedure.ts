@@ -12,6 +12,30 @@ class Procedure {
     {
       rule: 'Multiple Requirement',
       valid: false
+    },
+    {
+      rule: 'Interface Defined',
+      valid: true
+    },
+    {
+      rule: 'Multiple ProblemDomain',
+      valid: true
+    },
+    {
+      rule: 'No Machine Unconnected',
+      valid: true
+    },
+    {
+      rule: 'No ProblemDomain Unconnected',
+      valid: true
+    },
+    {
+      rule: 'Reference Defined',
+      valid: true
+    },
+    {
+      rule: 'Constraint Defined',
+      valid: true
     }
   ]
   // public ruleSet = ['One Machine', 'Multiple Requirement']
@@ -41,21 +65,21 @@ class Procedure {
     } else if (this.step === 1 && this.subStep === 3) {
       let countDomainList = this.canvas.domainList.length
       for (let interfaceLine of this.canvas.interfaceList) {
-        if (interfaceLine.phenomenonList.length === 0) {
+        if (this.ruleSet[2]['valid'] && interfaceLine.phenomenonList.length === 0) {
           err += 'Exist undefined interface.\n'
           break
         }
       }
-      if (countDomainList === 0) {
+      if (this.ruleSet[3]['valid'] && countDomainList === 0) {
         err += 'No ProblemDomain detected.\n'
       }
-      if (this.canvas.machine === null) {
+      if (this.ruleSet[0]['valid'] && this.canvas.machine === null) {
         err = 'No Machine detected.'
-      } else if (this.canvas.machine.isIsolated) {
+      } else if (this.ruleSet[4]['valid'] && this.canvas.machine.isIsolated) {
         err += 'Exist Unconnected Machine.\n'
       }
       for (let domain of this.canvas.domainList) {
-        if (domain.isIsolated) {
+        if (this.ruleSet[5]['valid'] && domain.isIsolated) {
           err += 'Exist Unconnected ProblemDomain.\n'
           break
         }
@@ -67,19 +91,21 @@ class Procedure {
       }
     } else if (this.step === 2 && this.subStep === 2) {
       for (let reference of this.canvas.referenceList) {
-        if (reference.phenomenonList.length === 0) {
-          err += 'Exist undefined interface.\n'
+        if (this.ruleSet[6]['valid'] && reference.phenomenonList.length === 0) {
+          err += 'Exist undefined reference.\n'
           break
         }
       }
       for (let constraint of this.canvas.constraintList) {
-        if (constraint.phenomenonList.length === 0) {
+        if (this.ruleSet[7]['valid'] && constraint.phenomenonList.length === 0) {
           err += 'Exist undefined constraint.\n'
         }
       }
       /* ** New: Change the detecting rules to check a list of requirements. */
       if (this.canvas.requirementList.length === 0) {
         err += 'No Requirement detected.\n'
+      }else if (this.ruleSet[1]['valid'] && this.canvas.requirementList.length === 1) {
+        err += 'Just One Requirement detected.\n'
       } else {
         for (let item of this.canvas.requirementList) {
           if (item.isIsolated) {
