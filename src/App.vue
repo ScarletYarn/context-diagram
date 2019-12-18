@@ -510,6 +510,10 @@ export default class App extends Vue {
         this.subStep = r.subStep
         this.canvas = Canvas.load(this, r)
         this.procedure = new Procedure(this.canvas, r.step, r.subStep)
+        /* ** New: Load the rule set. */
+        for (let item in r.ruleSet) {
+          Procedure.ruleSet[item] = r.ruleSet[item]
+        }
         this.flushAllow()
       }
       fr.readAsText(files[0])
@@ -534,7 +538,9 @@ export default class App extends Vue {
       referenceCount: this.canvas.referenceCount,
       constraintList: this.canvas.constraintList.map(e => e.toSerializable()),
       constraintCount: this.canvas.constraintCount,
-      phenomenonList: Phenomenon.PhenomenonList.map(e => e.toSerializable())
+      phenomenonList: Phenomenon.PhenomenonList.map(e => e.toSerializable()),
+      /* ** New: Save the rule set. */
+      ruleSet: Procedure.ruleSet
     }
     let buffer = JSON.stringify(final)
     let downloadBlobURL = URL.createObjectURL(

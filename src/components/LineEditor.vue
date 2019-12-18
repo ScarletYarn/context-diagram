@@ -9,14 +9,6 @@
           <v-row>
             <v-text-field label="description" v-model="description" required />
           </v-row>
-          <v-row justify="space-between">
-            <v-col>
-              <v-text-field label="width" />
-            </v-col>
-            <v-col>
-              <v-text-field label="height" />
-            </v-col>
-          </v-row>
           <v-row>
             <v-select
               :items="actorName"
