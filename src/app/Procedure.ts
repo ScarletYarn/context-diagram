@@ -6,10 +6,6 @@ class Procedure {
   private canvas: Canvas
   public static ruleSet = [
     {
-      rule: 'One Machine',
-      valid: true
-    },
-    {
       rule: 'Multiple Requirement',
       valid: false
     },
@@ -38,8 +34,6 @@ class Procedure {
       valid: true
     }
   ]
-  // public ruleSet = ['One Machine', 'Multiple Requirement']
-  // public rules = [0]
 
   constructor(canvas: Canvas, step?: number, subStep?: number) {
     if (step) this.step = step
@@ -76,7 +70,7 @@ class Procedure {
       if (Procedure.ruleSet[3]['valid'] && countDomainList === 0) {
         err += 'No ProblemDomain detected.\n'
       }
-      if (Procedure.ruleSet[0]['valid'] && this.canvas.machine === null) {
+      if (this.canvas.machine === null) {
         err = 'No Machine detected.'
       } else if (
         Procedure.ruleSet[4]['valid'] &&
@@ -117,10 +111,10 @@ class Procedure {
       if (this.canvas.requirementList.length === 0) {
         err += 'No Requirement detected.\n'
       } else if (
-        Procedure.ruleSet[1]['valid'] &&
-        this.canvas.requirementList.length === 1
+        !Procedure.ruleSet[0]['valid'] &&
+        this.canvas.requirementList.length > 1
       ) {
-        err += 'Just One Requirement detected.\n'
+        err += 'More than one Requirement detected.\n'
       } else {
         for (let item of this.canvas.requirementList) {
           if (item.isIsolated) {
