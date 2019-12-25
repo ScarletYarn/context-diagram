@@ -1,38 +1,24 @@
 import Canvas from '@/app/Canvas'
+import { DomainConnected } from '@/app/rules/DomainConnected'
+import { InterfaceDefined } from '@/app/rules/InterfaceDefined'
+import { MachineConnected } from '@/app/rules/MachineConnected'
+import { MultipleDomain } from '@/app/rules/MultipleDomain'
+import { MultipleRequirement } from '@/app/rules/MultipleRequirement'
+import { OneRequirement } from '@/app/rules/OneRequirement'
+import { ReferenceDefined } from '@/app/rules/ReferenceDefined'
 
 class Procedure {
   private step: number
   private subStep: number
-  private canvas: Canvas
+  private readonly canvas: Canvas
   public static ruleSet = [
-    {
-      rule: 'Multiple Requirement',
-      valid: false
-    },
-    {
-      rule: 'Interface Defined',
-      valid: true
-    },
-    {
-      rule: 'Multiple ProblemDomain',
-      valid: true
-    },
-    {
-      rule: 'No Machine Unconnected',
-      valid: true
-    },
-    {
-      rule: 'No ProblemDomain Unconnected',
-      valid: true
-    },
-    {
-      rule: 'Reference Defined',
-      valid: true
-    },
-    {
-      rule: 'Constraint Defined',
-      valid: true
-    }
+    new DomainConnected(),
+    new InterfaceDefined(),
+    new MachineConnected(),
+    new MultipleDomain(),
+    new MultipleRequirement(),
+    new OneRequirement(),
+    new ReferenceDefined()
   ]
 
   constructor(canvas: Canvas, step?: number, subStep?: number) {
@@ -49,93 +35,39 @@ class Procedure {
     step?: number
     subStep?: number
   } {
+    let flag = true
+    let info = ''
     let success = ''
-    let err = ''
-    if (
-      (this.step === 1 && this.subStep < 3) ||
-      (this.step === 2 && this.subStep < 2)
-    ) {
-      this.subStep++
-    } else if (this.step === 1 && this.subStep === 3) {
-      let countDomainList = this.canvas.domainList.length
-      for (let interfaceLine of this.canvas.interfaceList) {
-        if (
-          Procedure.ruleSet[2]['valid'] &&
-          interfaceLine.phenomenonList.length === 0
-        ) {
-          err += 'Exist undefined interface.\n'
-          break
-        }
+    for (let rule of Procedure.ruleSet) {
+      let res = rule.check(this.canvas, this.step, this.subStep)
+      flag = flag && res.flag
+      info += res.info
+    }
+    if (!flag) {
+      return {
+        err: info
       }
-      if (Procedure.ruleSet[3]['valid'] && countDomainList === 0) {
-        err += 'No ProblemDomain detected.\n'
-      }
-      if (this.canvas.machine === null) {
-        err = 'No Machine detected.'
-      } else if (
-        Procedure.ruleSet[4]['valid'] &&
-        this.canvas.machine.isIsolated
+    } else {
+      if (
+        (this.step === 1 && this.subStep < 3) ||
+        (this.step === 2 && this.subStep < 2)
       ) {
-        err += 'Exist Unconnected Machine.\n'
-      }
-      for (let domain of this.canvas.domainList) {
-        if (Procedure.ruleSet[5]['valid'] && domain.isIsolated) {
-          err += 'Exist Unconnected ProblemDomain.\n'
-          break
-        }
-      }
-      if (err === '') {
+        this.subStep++
+      } else if (this.step === 1 && this.subStep === 3) {
         this.step = 2
         this.subStep = 1
         success = 'Step one all right'
-      }
-    } else if (this.step === 2 && this.subStep === 2) {
-      for (let reference of this.canvas.referenceList) {
-        if (
-          Procedure.ruleSet[6]['valid'] &&
-          reference.phenomenonList.length === 0
-        ) {
-          err += 'Exist undefined reference.\n'
-          break
-        }
-      }
-      for (let constraint of this.canvas.constraintList) {
-        if (
-          Procedure.ruleSet[7]['valid'] &&
-          constraint.phenomenonList.length === 0
-        ) {
-          err += 'Exist undefined constraint.\n'
-        }
-      }
-      /* ** New: Change the detecting rules to check a list of requirements. */
-      if (this.canvas.requirementList.length === 0) {
-        err += 'No Requirement detected.\n'
-      } else if (
-        !Procedure.ruleSet[0]['valid'] &&
-        this.canvas.requirementList.length > 1
-      ) {
-        err += 'More than one Requirement detected.\n'
-      } else {
-        for (let item of this.canvas.requirementList) {
-          if (item.isIsolated) {
-            err += 'Exist Unconnected Requirement.\n'
-            break
-          }
-        }
-      }
-      if (err === '') {
+      } else if (this.step === 2 && this.subStep === 2) {
         this.step = 2
         this.subStep = 3
         success = 'Diagram all right'
       }
-    }
-    if (err.length !== 0) return { err: err }
-    else
       return {
         success: success,
         step: this.step,
         subStep: this.subStep
       }
+    }
   }
 
   public previous(): { step: number; subStep: number } {
